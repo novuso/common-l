@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.3/phpunit.xsd"
+    backupGlobals="false"
+    colors="true"
+    bootstrap="../bootstrap.test.php">
+    <testsuites>
+        <testsuite name="complete">
+            <directory>../../test</directory>
+        </testsuite>
+    </testsuites>
+    <listeners>
+        <listener class="\Mockery\Adapter\Phpunit\TestListener"></listener>
+    </listeners>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">../../src</directory>
+        </whitelist>
+    </filter>
+</phpunit>

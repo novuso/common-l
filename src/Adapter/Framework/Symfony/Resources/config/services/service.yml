@@ -1,0 +1,6 @@
+services:
+    # Novuso\Common\Application\Service\Container
+    novuso_common.service.container:
+        class: Novuso\Common\Adapter\Infrastructure\Service\SymfonyContainer
+        arguments:
+            - @service_container

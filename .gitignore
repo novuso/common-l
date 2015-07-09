@@ -1,0 +1,10 @@
+/.vagrant/
+/app/build/phpunit.xml
+/app/build/api/
+/vendor/
+/composer.phar
+/composer.lock
+/.idea/
+/nbproject/
+/*.sublime-project
+/*.sublime-workspace

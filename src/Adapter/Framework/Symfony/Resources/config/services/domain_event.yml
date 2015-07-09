@@ -1,0 +1,13 @@
+#
+# Use the following to tag subscriber services:
+#
+# tags:
+#     - { name: novuso_common.event_subscriber }
+#
+#==============================================================================
+services:
+    # Novuso\Common\Domain\Event\Dispatcher
+    novuso_common.domain_event.dispatcher:
+        class: Novuso\Common\Application\DomainEvent\ServiceAwareDispatcher
+        arguments:
+            - @novuso_common.service.container

@@ -1,0 +1,5 @@
+imports:
+    - { resource: services/command.yml }
+    - { resource: services/domain_event.yml }
+    - { resource: services/logging.yml }
+    - { resource: services/service.yml }

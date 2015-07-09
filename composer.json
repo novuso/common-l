@@ -1,0 +1,26 @@
+{
+    "name": "novuso/common",
+    "description": "Common library for the Novuso Framework",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.0-dev",
+        "novuso/system": "dev-master"
+    },
+    "require-dev": {
+        "codegyre/robo": "~0.5",
+        "mikey179/vfsStream": "~1.5",
+        "mockery/mockery": "~0.9",
+        "nikic/php-parser": "1.2.*",
+        "phpunit/phpunit": "~4.7",
+        "psr/log": "~1.0",
+        "sami/sami": "~3.0",
+        "silex/silex": "dev-master",
+        "symfony/symfony": "~2.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Novuso\\Common\\": "src",
+            "Novuso\\Test\\Common\\": "test"
+        }
+    }
+}

@@ -1,0 +1,6 @@
+services:
+    # Novuso\Common\Application\Logging\Logger
+    novuso_common.logging.logger:
+        class: Novuso\Common\Adapter\Infrastructure\Logging\PsrLogger
+        arguments:
+            - @logger
