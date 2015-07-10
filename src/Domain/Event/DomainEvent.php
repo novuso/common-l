@@ -3,6 +3,7 @@
 namespace Novuso\Common\Domain\Event;
 
 use JsonSerializable;
+use Novuso\Common\Domain\Model\Identifier;
 use Serializable;
 
 /**
@@ -22,6 +23,20 @@ use Serializable;
  */
 abstract class DomainEvent implements JsonSerializable, Serializable
 {
+    /**
+     * Retrieves the ID of the aggregate root
+     *
+     * @return Identifier
+     */
+    abstract public function aggregateId(): Identifier;
+
+    /**
+     * Retrieves the event version
+     *
+     * @return int
+     */
+    abstract public function version(): int;
+
     /**
      * Retrieves an array representation
      *
