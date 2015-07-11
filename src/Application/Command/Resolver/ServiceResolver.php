@@ -2,9 +2,8 @@
 
 namespace Novuso\Common\Application\Command\Resolver;
 
-use Novuso\Common\Application\Command\Command;
+use Novuso\Common\Application\Command\{Command, Handler};
 use Novuso\Common\Application\Command\Exception\HandlerNotFoundException;
-use Novuso\Common\Application\Command\Handler;
 
 /**
  * ServiceResolver resolves a handler from a service map

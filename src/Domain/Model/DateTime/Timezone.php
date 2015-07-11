@@ -6,8 +6,7 @@ use DateTimeZone;
 use Novuso\Common\Domain\Model\ValueObject;
 use Novuso\System\Exception\DomainException;
 use Novuso\System\Type\Comparable;
-use Novuso\System\Utility\Test;
-use Novuso\System\Utility\VarPrinter;
+use Novuso\System\Utility\{Test, VarPrinter};
 
 /**
  * Timezone represents a time zone

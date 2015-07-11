@@ -3,8 +3,7 @@
 namespace Novuso\Common\Adapter\Framework\Silex\Provider;
 
 use Novuso\Common\Application\DomainEvent\ServiceAwareDispatcher;
-use Pimple\Container;
-use Pimple\ServiceProviderInterface;
+use Pimple\{Container, ServiceProviderInterface};
 
 /**
  * DomainEventServiceProvider provides services for dispatching domain events

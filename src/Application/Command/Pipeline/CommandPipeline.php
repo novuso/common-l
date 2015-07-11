@@ -2,9 +2,7 @@
 
 namespace Novuso\Common\Application\Command\Pipeline;
 
-use Novuso\Common\Application\Command\Command;
-use Novuso\Common\Application\Command\CommandBus;
-use Novuso\Common\Application\Command\Middleware;
+use Novuso\Common\Application\Command\{Command, CommandBus, Middleware};
 
 /**
  * CommandPipeline is a pipeline of command bus middleware

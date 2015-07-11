@@ -3,8 +3,7 @@
 namespace Novuso\Common\Adapter\Framework\Silex\Provider;
 
 use Novuso\Common\Adapter\Infrastructure\Logging\PsrLogger;
-use Pimple\Container;
-use Pimple\ServiceProviderInterface;
+use Pimple\{Container, ServiceProviderInterface};
 
 /**
  * LoggingServiceProvider provides logging services for the application

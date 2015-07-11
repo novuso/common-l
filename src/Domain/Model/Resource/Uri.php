@@ -3,11 +3,9 @@
 namespace Novuso\Common\Domain\Model\Resource;
 
 use Novuso\Common\Domain\Model\ValueObject;
-use Novuso\System\Exception\DomainException;
-use Novuso\System\Exception\TypeException;
+use Novuso\System\Exception\{DomainException, TypeException};
 use Novuso\System\Type\Comparable;
-use Novuso\System\Utility\Test;
-use Novuso\System\Utility\VarPrinter;
+use Novuso\System\Utility\{Test, VarPrinter};
 
 /**
  * Uri represents a uniform resource identifier
@@ -508,7 +506,7 @@ class Uri extends ValueObject implements Comparable
     /**
      * {@inheritdoc}
      */
-    public function hashValue()
+    public function hashValue(): string
     {
         return $this->toRawString();
     }

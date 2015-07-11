@@ -2,12 +2,9 @@
 
 namespace Novuso\Common\Application\Command\Resolver;
 
-use Novuso\Common\Application\Command\Command;
-use Novuso\Common\Application\Command\Exception\HandlerNotFoundException;
-use Novuso\Common\Application\Command\Exception\InvalidCommandException;
-use Novuso\Common\Application\Command\Handler;
-use Novuso\System\Utility\ClassName;
-use Novuso\System\Utility\Test;
+use Novuso\Common\Application\Command\{Command, Handler};
+use Novuso\Common\Application\Command\Exception\{HandlerNotFoundException, InvalidCommandException};
+use Novuso\System\Utility\{ClassName, Test};
 
 /**
  * InMemoryMap is a command class to handler instance map

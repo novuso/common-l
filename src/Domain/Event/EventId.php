@@ -2,7 +2,7 @@
 
 namespace Novuso\Common\Domain\Event;
 
-use Novuso\Common\Domain\Model\UuidIdentifier;
+use Novuso\Common\Domain\Model\UniqueIdentifier;
 
 /**
  * EventId is a unique identifier for a domain event
@@ -12,6 +12,6 @@ use Novuso\Common\Domain\Model\UuidIdentifier;
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-final class EventId extends UuidIdentifier
+final class EventId extends UniqueIdentifier
 {
 }

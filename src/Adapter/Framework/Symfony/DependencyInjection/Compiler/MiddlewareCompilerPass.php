@@ -2,9 +2,8 @@
 
 namespace Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\{ContainerBuilder, Reference};
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * MiddlewareCompilerPass registers middleware with the command pipeline

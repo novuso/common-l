@@ -2,14 +2,11 @@
 
 namespace Novuso\Common\Application\Command\Resolver;
 
-use Novuso\Common\Application\Command\Command;
-use Novuso\Common\Application\Command\Exception\HandlerNotFoundException;
-use Novuso\Common\Application\Command\Exception\InvalidCommandException;
-use Novuso\Common\Application\Command\Handler;
+use Novuso\Common\Application\Command\{Command, Handler};
+use Novuso\Common\Application\Command\Exception\{HandlerNotFoundException, InvalidCommandException};
 use Novuso\Common\Application\Service\Container;
 use Novuso\Common\Application\Service\Exception\ServiceException;
-use Novuso\System\Utility\ClassName;
-use Novuso\System\Utility\Test;
+use Novuso\System\Utility\{ClassName, Test};
 
 /**
  * ServiceMap is a command class to handler service map

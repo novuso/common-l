@@ -2,7 +2,7 @@
 
 namespace Novuso\Common\Domain\Model\Money;
 
-use Novuso\Common\Domain\Model\Value;
+use Novuso\Common\Domain\Contract\Value;
 use Novuso\System\Type\Enum;
 
 /**

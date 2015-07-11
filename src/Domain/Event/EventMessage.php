@@ -4,8 +4,7 @@ namespace Novuso\Common\Domain\Event;
 
 use JsonSerializable;
 use Novuso\Common\Domain\Model\DateTime\DateTime;
-use Novuso\System\Type\Comparable;
-use Novuso\System\Type\Equatable;
+use Novuso\System\Type\{Comparable, Equatable};
 use Novuso\System\Utility\Test;
 use Serializable;
 

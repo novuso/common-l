@@ -3,8 +3,7 @@
 namespace Novuso\Common\Application\DomainEvent;
 
 use Novuso\Common\Application\Service\Container;
-use Novuso\Common\Domain\Event\EventMessage;
-use Novuso\Common\Domain\Event\InMemoryDispatcher;
+use Novuso\Common\Domain\Event\{EventMessage, InMemoryDispatcher};
 
 /**
  * ServiceAwareDispatcher lazy loads event subscribers from a container

@@ -2,8 +2,7 @@
 
 namespace Novuso\Common\Application\Service;
 
-use Novuso\Common\Application\Service\Exception\EntryNotFoundException;
-use Novuso\Common\Application\Service\Exception\ServiceException;
+use Novuso\Common\Application\Service\Exception\{EntryNotFoundException, ServiceException};
 
 /**
  * Container is the interface for an application service container

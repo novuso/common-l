@@ -3,8 +3,7 @@
 namespace Novuso\Common\Adapter\Framework\Silex\Provider;
 
 use Novuso\Common\Adapter\Infrastructure\Service\PimpleContainer;
-use Pimple\Container;
-use Pimple\ServiceProviderInterface;
+use Pimple\{Container, ServiceProviderInterface};
 
 /**
  * ContainerServiceProvider provides the service container to the application

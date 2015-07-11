@@ -3,8 +3,7 @@
 namespace Novuso\Common\Application\Command\Pipeline;
 
 use Exception;
-use Novuso\Common\Application\Command\Command;
-use Novuso\Common\Application\Command\CommandBus;
+use Novuso\Common\Application\Command\{Command, CommandBus};
 use Novuso\Common\Application\Command\Exception\CommandException;
 use Novuso\Common\Application\Command\Resolver\HandlerResolver;
 

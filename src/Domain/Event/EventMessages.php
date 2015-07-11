@@ -5,8 +5,7 @@ namespace Novuso\Common\Domain\Event;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
-use Novuso\System\Utility\Test;
-use Novuso\System\Utility\VarPrinter;
+use Novuso\System\Utility\{Test, VarPrinter};
 use Traversable;
 
 /**

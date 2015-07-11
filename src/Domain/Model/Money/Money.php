@@ -3,12 +3,9 @@
 namespace Novuso\Common\Domain\Model\Money;
 
 use Novuso\Common\Domain\Model\ValueObject;
-use Novuso\System\Exception\DomainException;
-use Novuso\System\Exception\RangeException;
-use Novuso\System\Exception\TypeException;
+use Novuso\System\Exception\{DomainException, RangeException, TypeException};
 use Novuso\System\Type\Comparable;
-use Novuso\System\Utility\Test;
-use Novuso\System\Utility\VarPrinter;
+use Novuso\System\Utility\{Test, VarPrinter};
 
 /**
  * Money represents a monetary value

@@ -2,10 +2,8 @@
 
 namespace Novuso\Common\Application\Command\Pipeline;
 
-use Novuso\Common\Application\Command\Command;
-use Novuso\Common\Application\Command\CommandBus;
+use Novuso\Common\Application\Command\{Command, CommandBus, Middleware};
 use Novuso\Common\Application\Command\Exception\CommandException;
-use Novuso\Common\Application\Command\Middleware;
 use Novuso\Common\Application\Logging\Logger;
 use Novuso\System\Utility\ClassName;
 

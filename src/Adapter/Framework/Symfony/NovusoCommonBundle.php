@@ -2,9 +2,11 @@
 
 namespace Novuso\Common\Adapter\Framework\Symfony;
 
-use Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler\CommandHandlerCompilerPass;
-use Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler\DomainEventCompilerPass;
-use Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler\MiddlewareCompilerPass;
+use Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler\{
+    CommandHandlerCompilerPass,
+    DomainEventCompilerPass,
+    MiddlewareCompilerPass
+};
 use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;

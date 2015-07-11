@@ -2,13 +2,9 @@
 
 namespace Novuso\Common\Adapter\Framework\Silex\Provider;
 
-use Novuso\Common\Application\Command\Pipeline\ApplicationBus;
-use Novuso\Common\Application\Command\Pipeline\CommandLogger;
-use Novuso\Common\Application\Command\Pipeline\CommandPipeline;
-use Novuso\Common\Application\Command\Resolver\ServiceMap;
-use Novuso\Common\Application\Command\Resolver\ServiceResolver;
-use Pimple\Container;
-use Pimple\ServiceProviderInterface;
+use Novuso\Common\Application\Command\Pipeline\{ApplicationBus, CommandLogger, CommandPipeline};
+use Novuso\Common\Application\Command\Resolver\{ServiceMap, ServiceResolver};
+use Pimple\{Container, ServiceProviderInterface};
 
 /**
  * CommandServiceProvider provides command services for the application

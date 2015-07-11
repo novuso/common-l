@@ -4,8 +4,7 @@ namespace Novuso\Common\Adapter\Infrastructure\Service;
 
 use Exception;
 use Novuso\Common\Application\Service\Container;
-use Novuso\Common\Application\Service\Exception\EntryNotFoundException;
-use Novuso\Common\Application\Service\Exception\ServiceException;
+use Novuso\Common\Application\Service\Exception\{EntryNotFoundException, ServiceException};
 use Novuso\System\Utility\VarPrinter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
