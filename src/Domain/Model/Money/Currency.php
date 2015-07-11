@@ -2338,8 +2338,7 @@ final class Currency extends Enum implements Value
             'code'    => 'USD',
             'numeric' => 840,
             'digits'  => 2,
-            'minor'   => 100,
-            'symbol'  => "\u{24}"
+            'minor'   => 100
         ],
         'USN' => [
             'display' => 'US Dollar (Next day)',
