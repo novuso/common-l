@@ -2,6 +2,7 @@
 
 namespace Novuso\Common\Domain\Model;
 
+use Novuso\Common\Domain\Contract\Value;
 use Novuso\System\Utility\Test;
 
 /**

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Novuso\Common\Domain\Model;
+namespace Novuso\Common\Domain\Contract;
 
 /**
  * Entity is the interface for a domain entity
@@ -17,5 +17,5 @@ interface Entity
      *
      * @return Identifier
      */
-    public function id();
+    public function id(): Identifier;
 }

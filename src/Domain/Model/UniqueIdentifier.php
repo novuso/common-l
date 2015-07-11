@@ -2,18 +2,19 @@
 
 namespace Novuso\Common\Domain\Model;
 
+use Novuso\Common\Domain\Contract\Identifier;
 use Novuso\Common\Domain\Model\Identity\Uuid;
 use Novuso\System\Utility\Test;
 
 /**
- * UuidIdentifier is the base class for UUID identifiers
+ * UniqueIdentifier is the base class for UUID identifiers
  *
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-abstract class UuidIdentifier implements Identifier
+abstract class UniqueIdentifier implements Identifier
 {
     /**
      * UUID
@@ -23,7 +24,7 @@ abstract class UuidIdentifier implements Identifier
     protected $uuid;
 
     /**
-     * Constructs UuidIdentifier
+     * Constructs UniqueIdentifier
      *
      * @param Uuid $uuid The UUID
      */
@@ -63,7 +64,7 @@ abstract class UuidIdentifier implements Identifier
      */
     public function toString(): string
     {
-        return $this->uuid->toString();
+        return strtoupper($this->uuid->toString());
     }
 
     /**
@@ -71,7 +72,7 @@ abstract class UuidIdentifier implements Identifier
      */
     public function __toString(): string
     {
-        return $this->uuid->toString();
+        return $this->toString();
     }
 
     /**
@@ -79,7 +80,7 @@ abstract class UuidIdentifier implements Identifier
      */
     public function jsonSerialize(): string
     {
-        return $this->uuid->jsonSerialize();
+        return $this->toString();
     }
 
     /**

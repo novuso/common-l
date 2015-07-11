@@ -1,14 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Novuso\Common\Domain\Model;
+namespace Novuso\Common\Domain\Contract;
 
 use Novuso\Common\Domain\Event\EventMessages;
 
 /**
  * AggregateRoot is the interface for an aggregate root
- *
- * This interface has a trait implementation provided by:
- * Novuso\Common\Domain\Event\RecordedEvents
  *
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
@@ -22,12 +19,12 @@ interface AggregateRoot extends Entity
      *
      * @return EventMessages
      */
-    public function getRecordedEvents(): EventMessages;
+    public function extractRecordedEvents(): EventMessages;
 
     /**
-     * Checks if there are recorded events
+     * Retrieves the concurrency version
      *
-     * @return bool
+     * @return int
      */
-    public function hasRecordedEvents(): bool;
+    public function concurrencyVersion(): int;
 }

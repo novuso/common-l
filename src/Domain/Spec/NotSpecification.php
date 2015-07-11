@@ -17,7 +17,7 @@ class NotSpecification extends CompositeSpecification
      *
      * @var Specification
      */
-    private $spec;
+    protected $spec;
 
     /**
      * Constructs NotSpecification

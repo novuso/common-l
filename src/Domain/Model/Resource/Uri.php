@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Novuso\Common\Domain\Model\Identity;
+namespace Novuso\Common\Domain\Model\Resource;
 
 use Novuso\Common\Domain\Model\ValueObject;
 use Novuso\System\Exception\DomainException;

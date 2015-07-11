@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 
-namespace Novuso\Common\Domain\Model\Internet;
+namespace Novuso\Common\Domain\Model\Resource;
 
-use Novuso\Common\Domain\Model\Identity\Uri;
 use Novuso\System\Exception\DomainException;
 
 /**

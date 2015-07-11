@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Novuso\Common\Domain\Model\Internet;
+namespace Novuso\Common\Domain\Model\Contact;
 
 use Novuso\Common\Domain\Model\ValueObject;
 use Novuso\System\Exception\DomainException;
@@ -28,11 +28,13 @@ final class EmailAddress extends ValueObject implements Comparable
     /**
      * Constructs EmailAddress
      *
+     * @internal
+     *
      * @param string $value The email address value
      *
      * @throws DomainException When the email address is not valid
      */
-    public function __construct(string $value)
+    private function __construct(string $value)
     {
         if (filter_var($value, FILTER_VALIDATE_EMAIL) === false) {
             $message = sprintf(
@@ -46,13 +48,15 @@ final class EmailAddress extends ValueObject implements Comparable
     }
 
     /**
-     * Retrieves the email value
+     * Creates instance from a string
      *
-     * @return string
+     * @param string $value The email address string
+     *
+     * @return EmailAddress
      */
-    public function value(): string
+    public static function fromString(string $value): EmailAddress
     {
-        return $this->value;
+        return new self($value);
     }
 
     /**

@@ -17,14 +17,14 @@ class OrSpecification extends CompositeSpecification
      *
      * @var Specification
      */
-    private $firstSpec;
+    protected $firstSpec;
 
     /**
      * Second specification
      *
      * @var Specification
      */
-    private $secondSpec;
+    protected $secondSpec;
 
     /**
      * Constructs OrSpecification

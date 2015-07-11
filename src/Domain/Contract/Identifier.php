@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Novuso\Common\Domain\Model;
+namespace Novuso\Common\Domain\Contract;
 
 use Novuso\System\Exception\DomainException;
 use Novuso\System\Type\Comparable;
