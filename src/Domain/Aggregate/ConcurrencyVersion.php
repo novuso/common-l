@@ -1,37 +1,41 @@
 <?php declare(strict_types=1);
 
-namespace Novuso\Common\Domain\Contract;
-
-use Novuso\Common\Domain\Event\EventMessages;
+namespace Novuso\Common\Domain\Aggregate;
 
 /**
- * AggregateRoot is the interface for an aggregate root
+ * ConcurrencyVersion provides methods for concurrency versioning
  *
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-interface AggregateRoot extends Entity
+trait ConcurrencyVersion
 {
     /**
-     * Retrieves and clears recorded event messages
+     * Concurrency version
      *
-     * @return EventMessages
+     * @var int
      */
-    public function extractRecordedEvents(): EventMessages;
+    protected $concurrencyVersion = 1;
 
     /**
      * Retrieves the concurrency version
      *
      * @return int
      */
-    public function concurrencyVersion(): int;
+    public function concurrencyVersion(): int
+    {
+        return $this->concurrencyVersion;
+    }
 
     /**
      * Increments the concurrency version
      *
      * @return void
      */
-    public function incrementConcurrencyVersion();
+    public function incrementConcurrencyVersion()
+    {
+        $this->concurrencyVersion++;
+    }
 }
