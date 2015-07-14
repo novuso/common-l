@@ -3,7 +3,7 @@
 namespace Novuso\Common\Domain\Event;
 
 use JsonSerializable;
-use Novuso\Common\Domain\Model\Identifier;
+use Novuso\Common\Domain\Contract\Identifier;
 use Serializable;
 
 /**
