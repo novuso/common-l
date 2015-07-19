@@ -16,9 +16,10 @@ interface Subscriber
      * Retrieves event registration
      *
      * The returned array keys are event types. The event type string is the
-     * canonicalized and underscored version of the class name. Use the
-     * Novuso\System\Utility\ClassName::underscore($className) to retrieve the
-     * event type, passing in the event's fully-qualified class name.
+     * canonicalized version of the class name.
+     *
+     * Novuso\System\Utility\ClassName::canonical($className) will retrieve the
+     * event type, when passed in the fully-qualified class name of the event.
      *
      * Array values can be:
      *
