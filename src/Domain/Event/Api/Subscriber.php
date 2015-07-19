@@ -30,9 +30,9 @@ interface Subscriber
      *
      * Example:
      *
-     * * ['event_type' => 'methodName']
-     * * ['event_type' => ['methodName', 10]]
-     * * ['event_type' => [['methodOne', 10], ['methodTwo']]]
+     * * ['Event.Type' => 'methodName']
+     * * ['Event.Type' => ['methodName', 10]]
+     * * ['Event.Type' => [['methodOne', 10], ['methodTwo']]]
      *
      * Event handler signature: function (EventMessage $message): void {}
      *
