@@ -3,6 +3,7 @@
 namespace Novuso\Test\Common\Domain\Model\DateTime;
 
 use DateTime as NativeDateTime;
+use DateTimeZone;
 use Novuso\Common\Domain\Model\DateTime\Time;
 use PHPUnit_Framework_TestCase;
 
@@ -11,124 +12,211 @@ use PHPUnit_Framework_TestCase;
  */
 class TimeTest extends PHPUnit_Framework_TestCase
 {
-    public function test_that_now_accepts_timezone_argument()
-    {
-        $time = Time::now('America/Chicago');
-        $this->assertInstanceOf(Time::class, $time);
-    }
-
     public function test_that_create_returns_expected_instance()
     {
-        $time = Time::create(16, 30, 12);
-        $this->assertSame('16:30:12', $time->toString());
+        $time = Time::create(16, 30, 6, 32401);
+        $this->assertSame('16:30:06.032401', $time->toString());
+    }
+
+    public function test_that_now_returns_expected_instance()
+    {
+        $dateTime = new NativeDateTime('now', new DateTimeZone('America/Chicago'));
+        $time = Time::now('America/Chicago');
+        $hour = (int) $dateTime->format('G');
+        $this->assertSame($hour, $time->hour());
     }
 
     public function test_that_from_native_returns_expected_instance()
     {
-        $dateTime = new NativeDateTime('now');
+        $string = '2015-06-20T16:30:06.032401';
+        $dateTime = NativeDateTime::createFromFormat('Y-m-d\TH:i:s.u', $string, new DateTimeZone('America/Chicago'));
         $time = Time::fromNative($dateTime);
-        $this->assertSame($dateTime->format('H:i:s'), $time->toString());
+        $this->assertSame('16:30:06.032401', $time->toString());
     }
 
     public function test_that_from_timestamp_returns_expected_instance()
     {
-        $dateTime = new NativeDateTime('now');
-        $timestamp = $dateTime->getTimestamp();
-        $time = Time::fromTimestamp($timestamp);
-        $this->assertSame($dateTime->format('H:i:s'), $time->toString());
+        $time = Time::fromTimestamp(1434835806, 32401, 'America/Chicago');
+        $this->assertSame('16:30:06.032401', $time->toString());
     }
 
-    public function test_that_it_is_json_encodable()
+    public function test_that_from_string_returns_expected_instance()
     {
-        $startTime = Time::create(16, 30, 0);
-        $data = ['startTime' => $startTime];
-        $this->assertSame('{"startTime":"16:30:00"}', json_encode($data));
+        $timeString = '16:30:06.032401';
+        $time = Time::fromString($timeString);
+        $this->assertSame($timeString, $time->toString());
+    }
+
+    public function test_that_hour_returns_expected_value()
+    {
+        $time = Time::create(16, 30, 6, 32401);
+        $this->assertSame(16, $time->hour());
+    }
+
+    public function test_that_minute_returns_expected_value()
+    {
+        $time = Time::create(16, 30, 6, 32401);
+        $this->assertSame(30, $time->minute());
+    }
+
+    public function test_that_second_returns_expected_value()
+    {
+        $time = Time::create(16, 30, 6, 32401);
+        $this->assertSame(6, $time->second());
+    }
+
+    public function test_that_micro_returns_expected_value()
+    {
+        $time = Time::create(16, 30, 6, 32401);
+        $this->assertSame(32401, $time->micro());
     }
 
     public function test_that_compare_to_returns_zero_for_same_instance()
     {
-        $time = Time::create(16, 30, 12);
+        $time = Time::create(16, 30, 6, 32401);
         $this->assertSame(0, $time->compareTo($time));
     }
 
     public function test_that_compare_to_returns_zero_for_same_value()
     {
-        $time1 = Time::create(16, 30, 12);
-        $time2 = Time::create(16, 30, 12);
+        $time1 = Time::create(16, 30, 6, 32401);
+        $time2 = Time::create(16, 30, 6, 32401);
         $this->assertSame(0, $time1->compareTo($time2));
     }
 
     public function test_that_compare_to_returns_one_for_greater_hour()
     {
-        $time1 = Time::create(17, 30, 12);
-        $time2 = Time::create(16, 30, 12);
+        $time1 = Time::create(17, 30, 6, 32401);
+        $time2 = Time::create(16, 30, 6, 32401);
         $this->assertSame(1, $time1->compareTo($time2));
     }
 
     public function test_that_compare_to_returns_neg_one_for_lesser_hour()
     {
-        $time1 = Time::create(16, 30, 12);
-        $time2 = Time::create(17, 30, 12);
+        $time1 = Time::create(16, 30, 6, 32401);
+        $time2 = Time::create(17, 30, 6, 32401);
         $this->assertSame(-1, $time1->compareTo($time2));
     }
 
     public function test_that_compare_to_returns_one_for_greater_minute()
     {
-        $time1 = Time::create(16, 31, 12);
-        $time2 = Time::create(16, 30, 12);
+        $time1 = Time::create(16, 31, 6, 32401);
+        $time2 = Time::create(16, 30, 6, 32401);
         $this->assertSame(1, $time1->compareTo($time2));
     }
 
     public function test_that_compare_to_returns_neg_one_for_lesser_minute()
     {
-        $time1 = Time::create(16, 30, 12, 3106);
-        $time2 = Time::create(16, 31, 12, 3106);
+        $time1 = Time::create(16, 30, 6, 32401);
+        $time2 = Time::create(16, 31, 6, 32401);
         $this->assertSame(-1, $time1->compareTo($time2));
     }
 
     public function test_that_compare_to_returns_one_for_greater_second()
     {
-        $time1 = Time::create(16, 30, 13);
-        $time2 = Time::create(16, 30, 12);
+        $time1 = Time::create(16, 30, 7, 32401);
+        $time2 = Time::create(16, 30, 6, 32401);
         $this->assertSame(1, $time1->compareTo($time2));
     }
 
     public function test_that_compare_to_returns_neg_one_for_lesser_second()
     {
-        $time1 = Time::create(16, 30, 12);
-        $time2 = Time::create(16, 30, 13);
+        $time1 = Time::create(16, 30, 6, 32401);
+        $time2 = Time::create(16, 30, 7, 32401);
+        $this->assertSame(-1, $time1->compareTo($time2));
+    }
+
+    public function test_that_compare_to_returns_one_for_greater_micro()
+    {
+        $time1 = Time::create(16, 30, 6, 32402);
+        $time2 = Time::create(16, 30, 6, 32401);
+        $this->assertSame(1, $time1->compareTo($time2));
+    }
+
+    public function test_that_compare_to_returns_neg_one_for_lesser_micro()
+    {
+        $time1 = Time::create(16, 30, 6, 32401);
+        $time2 = Time::create(16, 30, 6, 32402);
         $this->assertSame(-1, $time1->compareTo($time2));
     }
 
     /**
-     * @expectedException AssertionError
+     * @expectedException Novuso\System\Exception\TypeException
      */
-    public function test_that_now_triggers_assert_error_for_invalid_timezone()
+    public function test_that_create_throws_exception_for_invalid_hour_type()
     {
-        Time::now('Universal');
+        Time::create('16', 30, 6, 32401);
+    }
+
+    /**
+     * @expectedException Novuso\System\Exception\TypeException
+     */
+    public function test_that_create_throws_exception_for_invalid_minute_type()
+    {
+        Time::create(16, '30', 6, 32401);
+    }
+
+    /**
+     * @expectedException Novuso\System\Exception\TypeException
+     */
+    public function test_that_create_throws_exception_for_invalid_second_type()
+    {
+        Time::create(16, 30, '6', 32401);
+    }
+
+    /**
+     * @expectedException Novuso\System\Exception\TypeException
+     */
+    public function test_that_create_throws_exception_for_invalid_micro_type()
+    {
+        Time::create(16, 30, 6, '32401');
     }
 
     /**
      * @expectedException Novuso\System\Exception\DomainException
      */
-    public function test_that_constructor_throws_exception_for_hour_out_of_range()
+    public function test_that_create_throws_exception_for_hour_out_of_range()
     {
-        Time::create(24, 30, 12);
+        Time::create(24, 30, 6, 32401);
     }
 
     /**
      * @expectedException Novuso\System\Exception\DomainException
      */
-    public function test_that_constructor_throws_exception_for_minute_out_of_range()
+    public function test_that_create_throws_exception_for_minute_out_of_range()
     {
-        Time::create(16, -30, 12);
+        Time::create(16, 74, 6, 32401);
     }
 
     /**
      * @expectedException Novuso\System\Exception\DomainException
      */
-    public function test_that_constructor_throws_exception_for_second_out_of_range()
+    public function test_that_create_throws_exception_for_second_out_of_range()
     {
-        Time::create(16, 30, 120);
+        Time::create(16, 30, -6, 32401);
+    }
+
+    /**
+     * @expectedException Novuso\System\Exception\DomainException
+     */
+    public function test_that_create_throws_exception_for_micro_out_of_range()
+    {
+        Time::create(16, 30, 6, 3240124);
+    }
+
+    /**
+     * @expectedException Novuso\System\Exception\TypeException
+     */
+    public function test_that_from_string_throws_exception_for_invalid_type()
+    {
+        Time::fromString(new NativeDateTime());
+    }
+
+    /**
+     * @expectedException Novuso\System\Exception\DomainException
+     */
+    public function test_that_from_string_throws_exception_for_invalid_format()
+    {
+        Time::fromString('16:30:06');
     }
 }

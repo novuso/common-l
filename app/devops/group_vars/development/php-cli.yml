@@ -1,0 +1,4 @@
+---
+php_cli_error_reporting: "E_ALL"
+php_cli_display_errors: "On"
+php_cli_display_startup_errors: "On"

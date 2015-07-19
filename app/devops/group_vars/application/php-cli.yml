@@ -1,0 +1,3 @@
+---
+php_cli_extra_settings:
+- setting: "xdebug.max_nesting_level=250"

@@ -16,8 +16,10 @@ return [
     'bin'      => $root_dir.'/vendor/bin',
     'build'    => $root_dir.'/app/build',
     'cache'    => $root_dir.'/app/cache',
+    'coverage' => $root_dir.'/app/build/coverage',
+    'devops'   => $root_dir.'/app/devops',
     'docapi'   => $root_dir.'/app/build/api',
-    'script'   => $root_dir.'/app/script',
+    'reports'  => $root_dir.'/app/build/logs',
     'src'      => $root_dir.'/src',
     'test'     => $root_dir.'/test',
     'vendor'   => $root_dir.'/vendor'

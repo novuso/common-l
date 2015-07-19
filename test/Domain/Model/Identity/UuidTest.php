@@ -117,6 +117,47 @@ class UuidTest extends PHPUnit_Framework_TestCase
         $this->assertFalse(Uuid::isValid('5f32efa0-2f13-4fcf-87d686-c86a734247'));
     }
 
+    public function test_that_is_valid_returns_false_for_invalid_type()
+    {
+        $this->assertFalse(Uuid::isValid(Uuid::random()));
+    }
+
+    public function test_that_time_low_returns_expected_value()
+    {
+        $uuid = Uuid::parse('5f32efa0-2f13-4fcf-87d6-86c86a734247');
+        $this->assertSame('5f32efa0', $uuid->timeLow());
+    }
+
+    public function test_that_time_mid_returns_expected_value()
+    {
+        $uuid = Uuid::parse('5f32efa0-2f13-4fcf-87d6-86c86a734247');
+        $this->assertSame('2f13', $uuid->timeMid());
+    }
+
+    public function test_that_time_hi_and_version_returns_expected_value()
+    {
+        $uuid = Uuid::parse('5f32efa0-2f13-4fcf-87d6-86c86a734247');
+        $this->assertSame('4fcf', $uuid->timeHiAndVersion());
+    }
+
+    public function test_that_clock_seq_hi_and_reserved_returns_expected_value()
+    {
+        $uuid = Uuid::parse('5f32efa0-2f13-4fcf-87d6-86c86a734247');
+        $this->assertSame('87', $uuid->clockSeqHiAndReserved());
+    }
+
+    public function test_that_clock_seq_low_returns_expected_value()
+    {
+        $uuid = Uuid::parse('5f32efa0-2f13-4fcf-87d6-86c86a734247');
+        $this->assertSame('d6', $uuid->clockSeqLow());
+    }
+
+    public function test_that_node_returns_expected_value()
+    {
+        $uuid = Uuid::parse('5f32efa0-2f13-4fcf-87d6-86c86a734247');
+        $this->assertSame('86c86a734247', $uuid->node());
+    }
+
     public function test_that_most_significant_bits_returns_expected_value()
     {
         $uuid = Uuid::fromHex('71967621a9244c58a8f2e073967744e0');
@@ -211,20 +252,6 @@ class UuidTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, $uuid->toArray());
     }
 
-    public function test_that_it_is_json_encodable()
-    {
-        $uuid = Uuid::parse('71967621-a924-4c58-a8f2-e073967744e0');
-        $data = ['uuid' => $uuid];
-        $this->assertSame('{"uuid":"71967621-a924-4c58-a8f2-e073967744e0"}', json_encode($data));
-    }
-
-    public function test_that_it_is_serializable()
-    {
-        $string = serialize(Uuid::parse('71967621-a924-4c58-a8f2-e073967744e0'));
-        $uuid = unserialize($string);
-        $this->assertSame('71967621-a924-4c58-a8f2-e073967744e0', $uuid->toString());
-    }
-
     public function test_that_compare_to_returns_zero_for_same_instance()
     {
         $uuid = Uuid::parse('71967621-a924-4c58-a8f2-e073967744e0');
@@ -264,6 +291,46 @@ class UuidTest extends PHPUnit_Framework_TestCase
         $uuid1 = Uuid::parse('71967621-a924-4c58-a8f2-e073967744e0');
         $uuid2 = Uuid::parse('71967621-a924-4c58-a8f2-e073967744e1');
         $this->assertSame(-1, $uuid1->compareTo($uuid2));
+    }
+
+    public function test_that_equals_returns_true_for_same_instance()
+    {
+        $uuid = Uuid::parse('5f32efa0-2f13-4fcf-87d6-86c86a734247');
+        $this->assertTrue($uuid->equals($uuid));
+    }
+
+    public function test_that_equals_returns_true_for_same_value()
+    {
+        $uuid1 = Uuid::parse('5f32efa0-2f13-4fcf-87d6-86c86a734247');
+        $uuid2 = Uuid::parse('5f32efa0-2f13-4fcf-87d6-86c86a734247');
+        $this->assertTrue($uuid1->equals($uuid2));
+    }
+
+    public function test_that_equals_returns_false_for_invalid_type()
+    {
+        $uuid = Uuid::parse('5f32efa0-2f13-4fcf-87d6-86c86a734247');
+        $this->assertFalse($uuid->equals('5f32efa0-2f13-4fcf-87d6-86c86a734247'));
+    }
+
+    public function test_that_equals_returns_false_for_unequal_values()
+    {
+        $uuid1 = Uuid::parse('5f32efa0-2f13-4fcf-87d6-86c86a734247');
+        $uuid2 = Uuid::parse('5f32efa0-2f12-4fcf-87d6-86c86a734247');
+        $this->assertFalse($uuid1->equals($uuid2));
+    }
+
+    public function test_that_hash_value_returns_expected_string()
+    {
+        $uuid = Uuid::parse('5f32efa0-2f13-4fcf-87d6-86c86a734247');
+        $this->assertSame('5f32efa02f134fcf87d686c86a734247', $uuid->hashValue());
+    }
+
+    /**
+     * @expectedException Novuso\System\Exception\TypeException
+     */
+    public function test_that_parse_throws_exception_with_invalid_type()
+    {
+        Uuid::parse(Uuid::random());
     }
 
     /**

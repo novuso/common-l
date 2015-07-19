@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Domain\Model\Money;
 
@@ -40,9 +40,9 @@ final class LocaleFormatter implements Formatter
      *
      * @return LocaleFormatter
      */
-    public static function fromLocale(string $locale)
+    public static function fromLocale($locale)
     {
-        $formatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
+        $formatter = new NumberFormatter((string) $locale, NumberFormatter::CURRENCY);
 
         return new self($formatter);
     }
@@ -50,7 +50,7 @@ final class LocaleFormatter implements Formatter
     /**
      * {@inheritdoc}
      */
-    public function format(Money $money): string
+    public function format(Money $money)
     {
         $amount = $money->amount();
         $minor = $money->currency()->minor();

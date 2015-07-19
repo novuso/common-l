@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Domain\Model\DateTime;
 
@@ -7,8 +7,10 @@ use DateTimeInterface;
 use DateTimeZone;
 use Novuso\Common\Domain\Model\ValueObject;
 use Novuso\System\Exception\DomainException;
+use Novuso\System\Exception\TypeException;
 use Novuso\System\Type\Comparable;
-use Novuso\System\Utility\{Test, VarPrinter};
+use Novuso\System\Utility\Test;
+use Novuso\System\Utility\VarPrinter;
 
 /**
  * Time represents the time of day
@@ -63,6 +65,20 @@ final class Time extends ValueObject implements Comparable
     const MAX_SECOND = 59;
 
     /**
+     * Minimum microsecond
+     *
+     * @var int
+     */
+    const MIN_MICRO = 0;
+
+    /**
+     * Maximum microsecond
+     *
+     * @var int
+     */
+    const MAX_MICRO = 999999;
+
+    /**
      * Hour
      *
      * @var int
@@ -84,6 +100,13 @@ final class Time extends ValueObject implements Comparable
     protected $second;
 
     /**
+     * Microsecond
+     *
+     * @var int
+     */
+    protected $micro;
+
+    /**
      * Constructs Time
      *
      * @internal
@@ -91,32 +114,38 @@ final class Time extends ValueObject implements Comparable
      * @param int $hour   The hour
      * @param int $minute The minute
      * @param int $second The second
+     * @param int $micro  The microsecond
      *
-     * @throws DomainException When the time is invalid
+     * @throws TypeException When argument types are invalid
+     * @throws DomainException When the time is not valid
      */
-    private function __construct(int $hour, int $minute, int $second)
+    private function __construct($hour, $minute, $second, $micro)
     {
-        self::guardTime($hour, $minute, $second);
+        $this->guardTypes($hour, $minute, $second, $micro);
+        $this->guardTime($hour, $minute, $second, $micro);
 
         $this->hour = $hour;
         $this->minute = $minute;
         $this->second = $second;
+        $this->micro = $micro;
     }
 
     /**
-     * Creates an instance from time values
+     * Creates instance from time values
      *
      * @param int $hour   The hour
      * @param int $minute The minute
      * @param int $second The second
+     * @param int $micro  The microsecond
      *
      * @return Time
      *
-     * @throws DomainException When the time is invalid
+     * @throws TypeException When argument types are invalid
+     * @throws DomainException When the time is not valid
      */
-    public static function create(int $hour, int $minute, int $second): Time
+    public static function create($hour, $minute, $second, $micro)
     {
-        return new self($hour, $minute, $second);
+        return new self($hour, $minute, $second, $micro);
     }
 
     /**
@@ -126,17 +155,20 @@ final class Time extends ValueObject implements Comparable
      *
      * @return Time
      */
-    public static function now(string $timezone = null): Time
+    public static function now($timezone = null)
     {
-        $timezone = ($timezone === null) ? date_default_timezone_get() : $timezone;
-        assert(Test::timezone($timezone), sprintf('Invalid timezone: %s', $timezone));
+        $time = sprintf('%.6f', microtime(true));
+        $timezone = ($timezone === null) ? date_default_timezone_get() : (string) $timezone;
+        assert(Test::isTimezone($timezone), sprintf('Invalid timezone: %s', $timezone));
 
-        $dateTime = new DateTimeImmutable('now', new DateTimeZone($timezone));
+        $dateTime = DateTimeImmutable::createFromFormat('U.u', $time, new DateTimeZone('UTC'));
+        $dateTime = $dateTime->setTimezone(new DateTimeZone($timezone));
         $hour = (int) $dateTime->format('G');
         $minute = (int) $dateTime->format('i');
         $second = (int) $dateTime->format('s');
+        $micro = (int) $dateTime->format('u');
 
-        return new self($hour, $minute, $second);
+        return new self($hour, $minute, $second, $micro);
     }
 
     /**
@@ -146,34 +178,75 @@ final class Time extends ValueObject implements Comparable
      *
      * @return Time
      */
-    public static function fromNative(DateTimeInterface $dateTime): Time
+    public static function fromNative(DateTimeInterface $dateTime)
     {
         $hour = (int) $dateTime->format('G');
         $minute = (int) $dateTime->format('i');
         $second = (int) $dateTime->format('s');
+        $micro = (int) $dateTime->format('u');
 
-        return new self($hour, $minute, $second);
+        return new self($hour, $minute, $second, $micro);
     }
 
     /**
      * Creates an instance from a timestamp and timezone
      *
      * @param int         $timestamp The timestamp
+     * @param int         $micro     The microsecond
      * @param string|null $timezone  The timezone string or null for default
      *
-     * @return Time
+     * @return Date
      */
-    public static function fromTimestamp(int $timestamp, string $timezone = null): Time
+    public static function fromTimestamp($timestamp, $micro = 0, $timezone = null)
     {
-        $timezone = ($timezone === null) ? date_default_timezone_get() : $timezone;
-        assert(Test::timezone($timezone), sprintf('Invalid timezone: %s', $timezone));
+        $timezone = ($timezone === null) ? date_default_timezone_get() : (string) $timezone;
+        assert(Test::isTimezone($timezone), sprintf('Invalid timezone: %s', $timezone));
 
-        $dateTime = new DateTimeImmutable(sprintf('@%d', $timestamp), new DateTimeZone($timezone));
+        $time = sprintf('%d.%06d', (int) $timestamp, (int) $micro);
+        $dateTime = DateTimeImmutable::createFromFormat('U.u', $time, new DateTimeZone('UTC'));
+        $dateTime = $dateTime->setTimezone(new DateTimeZone($timezone));
         $hour = (int) $dateTime->format('G');
         $minute = (int) $dateTime->format('i');
         $second = (int) $dateTime->format('s');
+        $micro = (int) $dateTime->format('u');
 
-        return new self($hour, $minute, $second);
+        return new self($hour, $minute, $second, $micro);
+    }
+
+    /**
+     * Creates instance from a formatted time string
+     *
+     * @param string $time The time string
+     *
+     * @return Time
+     *
+     * @throws TypeException When time is not a string
+     * @throws DomainException When the time is not valid
+     */
+    public static function fromString($time)
+    {
+        if (!is_string($time)) {
+            $message = sprintf(
+                '%s expects $time to be a string; received (%s) %s',
+                __METHOD__,
+                gettype($time),
+                VarPrinter::toString($time)
+            );
+            throw TypeException::create($message);
+        }
+
+        $pattern = '/\A(?P<hour>[\d]{2}):(?P<minute>[\d]{2}):(?P<second>[\d]{2}).(?P<micro>[\d]{6})\z/';
+        if (!preg_match($pattern, $time, $matches)) {
+            $message = sprintf('%s expects $time in "H:i:s.u" format', __METHOD__);
+            throw DomainException::create($message);
+        }
+
+        $hour = (int) $matches['hour'];
+        $minute = (int) $matches['minute'];
+        $second = (int) $matches['second'];
+        $micro = (int) $matches['micro'];
+
+        return new self($hour, $minute, $second, $micro);
     }
 
     /**
@@ -181,7 +254,7 @@ final class Time extends ValueObject implements Comparable
      *
      * @return int
      */
-    public function hour(): int
+    public function hour()
     {
         return $this->hour;
     }
@@ -191,7 +264,7 @@ final class Time extends ValueObject implements Comparable
      *
      * @return int
      */
-    public function minute(): int
+    public function minute()
     {
         return $this->minute;
     }
@@ -201,44 +274,44 @@ final class Time extends ValueObject implements Comparable
      *
      * @return int
      */
-    public function second(): int
+    public function second()
     {
         return $this->second;
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieves the microsecond
+     *
+     * @return int
      */
-    public function toString(): string
+    public function micro()
     {
-        return sprintf(
-            '%02d:%02d:%02d',
-            $this->hour,
-            $this->minute,
-            $this->second
-        );
+        return $this->micro;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize(): string
+    public function toString()
     {
-        return $this->toString();
+        return sprintf('%02d:%02d:%02d.%06d', $this->hour, $this->minute, $this->second, $this->micro);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function compareTo($object): int
+    public function compareTo($object)
     {
         if ($this === $object) {
             return 0;
         }
 
-        assert(Test::sameType($this, $object), sprintf('Comparison requires instance of %s', static::class));
+        assert(
+            Test::areSameType($this, $object),
+            sprintf('Comparison requires instance of %s', static::class)
+        );
 
-        $comp = strcmp($this->toString(), $object->toString());
+        $comp = strnatcmp($this->toString(), $object->toString());
 
         if ($comp > 0) {
             return 1;
@@ -251,17 +324,73 @@ final class Time extends ValueObject implements Comparable
     }
 
     /**
+     * Validates argument types
+     *
+     * @param int $hour   The hour
+     * @param int $minute The minute
+     * @param int $second The second
+     * @param int $micro  The microsecond
+     *
+     * @return void
+     *
+     * @throws TypeException When argument types are invalid
+     */
+    private function guardTypes($hour, $minute, $second, $micro)
+    {
+        if (!is_int($hour)) {
+            $message = sprintf(
+                '%s::__construct expects $hour to be an integer; received (%s) %s',
+                static::class,
+                gettype($hour),
+                VarPrinter::toString($hour)
+            );
+            throw TypeException::create($message);
+        }
+
+        if (!is_int($minute)) {
+            $message = sprintf(
+                '%s::__construct expects $minute to be an integer; received (%s) %s',
+                static::class,
+                gettype($minute),
+                VarPrinter::toString($minute)
+            );
+            throw TypeException::create($message);
+        }
+
+        if (!is_int($second)) {
+            $message = sprintf(
+                '%s::__construct expects $second to be an integer; received (%s) %s',
+                static::class,
+                gettype($second),
+                VarPrinter::toString($second)
+            );
+            throw TypeException::create($message);
+        }
+
+        if (!is_int($micro)) {
+            $message = sprintf(
+                '%s::__construct expects $micro to be an integer; received (%s) %s',
+                static::class,
+                gettype($micro),
+                VarPrinter::toString($micro)
+            );
+            throw TypeException::create($message);
+        }
+    }
+
+    /**
      * Validates the time
      *
      * @param int $hour   The hour
      * @param int $minute The minute
      * @param int $second The second
+     * @param int $micro  The microsecond
      *
      * @return void
      *
-     * @throws DomainException When the time is invalid
+     * @throws DomainException When the time is not valid
      */
-    private static function guardTime(int $hour, int $minute, int $second)
+    private function guardTime($hour, $minute, $second, $micro)
     {
         if ($hour < self::MIN_HOUR || $hour > self::MAX_HOUR) {
             $message = sprintf(
@@ -289,6 +418,16 @@ final class Time extends ValueObject implements Comparable
                 $second,
                 self::MIN_SECOND,
                 self::MAX_SECOND
+            );
+            throw DomainException::create($message);
+        }
+
+        if ($micro < self::MIN_MICRO || $micro > self::MAX_MICRO) {
+            $message = sprintf(
+                'Microsecond (%d) out of range[%d, %d]',
+                $micro,
+                self::MIN_MICRO,
+                self::MAX_MICRO
             );
             throw DomainException::create($message);
         }

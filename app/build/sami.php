@@ -16,13 +16,13 @@ $paths = require dirname(__DIR__).'/paths.php';
 $iterator = Finder::create()
     ->files()
     ->name('*.php')
-    ->in($paths['src']);
+    ->in([$paths['src'], $paths['vendor'].'/novuso/system/src']);
 
 $options = [
     'theme'                => 'default',
     'title'                => 'Novuso Common API',
     'build_dir'            => $paths['docapi'],
-    'cache_dir'            => $paths['cache'].'/dev/sami',
+    'cache_dir'            => $paths['cache'].'/sami',
     'default_opened_level' => 1
 ];
 

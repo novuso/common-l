@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Domain\Model\DateTime;
 
@@ -6,7 +6,8 @@ use DateTimeZone;
 use Novuso\Common\Domain\Model\ValueObject;
 use Novuso\System\Exception\DomainException;
 use Novuso\System\Type\Comparable;
-use Novuso\System\Utility\{Test, VarPrinter};
+use Novuso\System\Utility\Test;
+use Novuso\System\Utility\VarPrinter;
 
 /**
  * Timezone represents a time zone
@@ -36,7 +37,7 @@ final class Timezone extends ValueObject implements Comparable
      */
     private function __construct($value)
     {
-        if (!Test::timezone($value)) {
+        if (!Test::isTimezone($value)) {
             $message = sprintf('Invalid timezone: %s', VarPrinter::toString($value));
             throw DomainException::create($message);
         }
@@ -57,17 +58,15 @@ final class Timezone extends ValueObject implements Comparable
      *
      * @throws DomainException When the value is not a valid timezone
      */
-    public static function create($value): Timezone
+    public static function create($value)
     {
         return new self($value);
     }
 
     /**
-     * Retrieves the timezone value
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function value(): string
+    public function toString()
     {
         return $this->value;
     }
@@ -75,35 +74,23 @@ final class Timezone extends ValueObject implements Comparable
     /**
      * {@inheritdoc}
      */
-    public function toString(): string
-    {
-        return $this->value;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function jsonSerialize(): string
-    {
-        return $this->value;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function compareTo($object): int
+    public function compareTo($object)
     {
         if ($this === $object) {
             return 0;
         }
 
-        assert(Test::sameType($this, $object), sprintf('Comparison requires instance of %s', static::class));
+        assert(
+            Test::areSameType($this, $object),
+            sprintf('Comparison requires instance of %s', static::class)
+        );
 
-        $thisVal = $this->value();
-        $thatVal = $object->value();
+        $thisVal = $this->value;
+        $thatVal = $object->value;
 
         $thisParts = explode('/', $thisVal);
         $thatParts = explode('/', $thatVal);
+
         if (count($thisParts) > 1 && count($thatParts) > 1) {
             return $this->compareParts($thisParts, $thatParts);
         } elseif (count($thisParts) > 1) {
@@ -125,7 +112,7 @@ final class Timezone extends ValueObject implements Comparable
      *
      * @return int
      */
-    private function compareParts(array $thisParts, array $thatParts): int
+    private function compareParts(array $thisParts, array $thatParts)
     {
         $compMajor = strnatcmp($thisParts[0], $thatParts[0]);
         if ($compMajor > 0) {

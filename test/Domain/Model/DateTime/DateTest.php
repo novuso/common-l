@@ -3,6 +3,7 @@
 namespace Novuso\Test\Common\Domain\Model\DateTime;
 
 use DateTime as NativeDateTime;
+use DateTimeZone;
 use Novuso\Common\Domain\Model\DateTime\Date;
 use PHPUnit_Framework_TestCase;
 
@@ -11,38 +12,55 @@ use PHPUnit_Framework_TestCase;
  */
 class DateTest extends PHPUnit_Framework_TestCase
 {
-    public function test_that_now_accepts_timezone_argument()
-    {
-        $date = Date::now('America/Chicago');
-        $this->assertInstanceOf(Date::class, $date);
-    }
-
-    public function test_that_from_date_returns_expected_instance()
+    public function test_that_create_returns_expected_instance()
     {
         $date = Date::create(2015, 6, 20);
         $this->assertSame('2015-06-20', $date->toString());
     }
 
+    public function test_that_now_returns_expected_instance()
+    {
+        $dateTime = new NativeDateTime('now', new DateTimeZone('America/Chicago'));
+        $date = Date::now('America/Chicago');
+        $this->assertSame($dateTime->format('Y-m-d'), $date->toString());
+    }
+
     public function test_that_from_native_returns_expected_instance()
     {
-        $dateTime = new NativeDateTime('now');
+        $dateTime = new NativeDateTime('now', new DateTimeZone('America/Chicago'));
         $date = Date::fromNative($dateTime);
         $this->assertSame($dateTime->format('Y-m-d'), $date->toString());
     }
 
     public function test_that_from_timestamp_returns_expected_instance()
     {
-        $dateTime = new NativeDateTime('now');
-        $timestamp = $dateTime->getTimestamp();
-        $date = Date::fromTimestamp($timestamp);
-        $this->assertSame($dateTime->format('Y-m-d'), $date->toString());
+        $date = Date::fromTimestamp(1434835806, 'America/Chicago');
+        $this->assertSame('2015-06-20', $date->toString());
     }
 
-    public function test_that_it_is_json_encodable()
+    public function test_that_from_string_returns_expected_instance()
     {
-        $created = Date::create(2015, 6, 20);
-        $data = ['created' => $created];
-        $this->assertSame('{"created":"2015-06-20"}', json_encode($data));
+        $dateString = '2015-06-20';
+        $date = Date::fromString($dateString);
+        $this->assertSame($dateString, $date->toString());
+    }
+
+    public function test_that_year_returns_expected_value()
+    {
+        $date = Date::create(2015, 6, 20);
+        $this->assertSame(2015, $date->year());
+    }
+
+    public function test_that_month_returns_expected_value()
+    {
+        $date = Date::create(2015, 6, 20);
+        $this->assertSame(6, $date->month());
+    }
+
+    public function test_that_day_returns_expected_value()
+    {
+        $date = Date::create(2015, 6, 20);
+        $this->assertSame(20, $date->day());
     }
 
     public function test_that_compare_to_returns_zero_for_same_instance()
@@ -101,18 +119,50 @@ class DateTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException AssertionError
+     * @expectedException Novuso\System\Exception\TypeException
      */
-    public function test_that_now_triggers_assert_error_for_invalid_timezone()
+    public function test_that_create_throws_exception_for_invalid_year_type()
     {
-        Date::now('Universal');
+        Date::create('2015', 6, 20);
+    }
+
+    /**
+     * @expectedException Novuso\System\Exception\TypeException
+     */
+    public function test_that_create_throws_exception_for_invalid_month_type()
+    {
+        Date::create(2015, '6', 20);
+    }
+
+    /**
+     * @expectedException Novuso\System\Exception\TypeException
+     */
+    public function test_that_create_throws_exception_for_invalid_day_type()
+    {
+        Date::create(2015, 6, '20');
     }
 
     /**
      * @expectedException Novuso\System\Exception\DomainException
      */
-    public function test_that_constructor_throws_exception_for_invalid_date()
+    public function test_that_create_throws_exception_for_invalid_date()
     {
         Date::create(2015, 2, 30);
+    }
+
+    /**
+     * @expectedException Novuso\System\Exception\TypeException
+     */
+    public function test_that_from_string_throws_exception_for_invalid_type()
+    {
+        Date::fromString(new NativeDateTime());
+    }
+
+    /**
+     * @expectedException Novuso\System\Exception\DomainException
+     */
+    public function test_that_from_string_throws_exception_for_invalid_format()
+    {
+        Date::fromString('06-20-2015');
     }
 }

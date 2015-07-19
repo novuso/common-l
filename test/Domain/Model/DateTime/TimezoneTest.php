@@ -29,14 +29,7 @@ class TimezoneTest extends PHPUnit_Framework_TestCase
     public function test_that_create_returns_expected_instance()
     {
         $timezone = Timezone::create('UTC');
-        $this->assertSame('UTC', $timezone->value());
-    }
-
-    public function test_that_it_is_json_encodable()
-    {
-        $timezone = Timezone::create('America/Chicago');
-        $data = ['timezone' => $timezone];
-        $this->assertSame('{"timezone":"America\/Chicago"}', json_encode($data));
+        $this->assertSame('UTC', $timezone->toString());
     }
 
     public function test_that_compare_to_returns_zero_for_same_instance()

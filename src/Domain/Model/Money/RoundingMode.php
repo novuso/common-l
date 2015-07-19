@@ -1,8 +1,7 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Domain\Model\Money;
 
-use Novuso\Common\Domain\Model\Value;
 use Novuso\System\Type\Enum;
 
 /**
@@ -13,7 +12,7 @@ use Novuso\System\Type\Enum;
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-final class RoundingMode extends Enum implements Value
+final class RoundingMode extends Enum
 {
     /**
      * Round up when half way

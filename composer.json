@@ -3,24 +3,26 @@
     "description": "Common library for the Novuso Framework",
     "license": "MIT",
     "require": {
-        "php": ">=7.0-dev",
+        "php": ">=5.6",
         "novuso/system": "dev-master"
     },
     "require-dev": {
         "codegyre/robo": "~0.5",
         "mikey179/vfsStream": "~1.5",
         "mockery/mockery": "~0.9",
-        "nikic/php-parser": "1.2.*",
+        "phpmd/phpmd": "~2.2",
         "phpunit/phpunit": "~4.7",
         "psr/log": "~1.0",
         "sami/sami": "~3.0",
         "silex/silex": "dev-master",
+        "squizlabs/php_codesniffer": "~2.3",
         "symfony/symfony": "~2.7"
     },
     "autoload": {
         "psr-4": {
             "Novuso\\Common\\": "src",
             "Novuso\\Test\\Common\\": "test"
-        }
+        },
+        "files": ["inc/random.php"]
     }
 }
