@@ -59,7 +59,7 @@ class CommonServiceProvider implements ServiceProviderInterface
         };
 
         // Novuso\Common\Application\Command\CommandBus
-        $app['novuso_common.command_bus'] = function () use ($app) {
+        $app['novuso_common.command_bus'] = function ($app) {
             $pipeline = new CommandPipeline($app['novuso_common.application_bus']);
 
             foreach ($app['novuso_common.command_middleware'] as $serviceId) {
