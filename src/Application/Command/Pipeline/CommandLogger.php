@@ -4,27 +4,27 @@ namespace Novuso\Common\Application\Command\Pipeline;
 
 use Novuso\Common\Application\Command\Command;
 use Novuso\Common\Application\Command\CommandBus;
-use Novuso\Common\Application\Command\Middleware;
+use Novuso\Common\Application\Command\Filter;
 use Novuso\Common\Application\Command\Exception\CommandException;
 use Novuso\Common\Application\Logging\Logger;
 use Novuso\System\Utility\ClassName;
 
 /**
- * CommandLogger is middleware that logs application commands
+ * CommandLogger is a filter that logs application commands
  *
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-class CommandLogger implements Middleware
+class CommandLogger implements Filter
 {
     /**
      * Command bus
      *
      * @var CommandBus
      */
-    protected $commandBus;
+    protected $outbound;
 
     /**
      * Logger
@@ -46,9 +46,9 @@ class CommandLogger implements Middleware
     /**
      * {@inheritdoc}
      */
-    public function setCommandBus(CommandBus $commandBus)
+    public function setOutbound(CommandBus $outbound)
     {
-        $this->commandBus = $commandBus;
+        $this->outbound = $outbound;
     }
 
     /**
@@ -61,7 +61,7 @@ class CommandLogger implements Middleware
                 sprintf('Command received: %s at %s', ClassName::short($command), date(DATE_ATOM)),
                 ['command' => $command->serialize()]
             );
-            $this->commandBus->execute($command);
+            $this->outbound->execute($command);
             $this->logger->info(
                 sprintf('Command acknowledged: %s at %s', ClassName::short($command), date(DATE_ATOM)),
                 ['command' => $command->serialize()]

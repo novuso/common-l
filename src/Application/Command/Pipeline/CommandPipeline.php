@@ -4,10 +4,10 @@ namespace Novuso\Common\Application\Command\Pipeline;
 
 use Novuso\Common\Application\Command\Command;
 use Novuso\Common\Application\Command\CommandBus;
-use Novuso\Common\Application\Command\Middleware;
+use Novuso\Common\Application\Command\Filter;
 
 /**
- * CommandPipeline is a pipeline of command bus middleware
+ * CommandPipeline is a command pipeline
  *
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
@@ -21,7 +21,7 @@ class CommandPipeline implements CommandBus
      *
      * @var CommandBus
      */
-    protected $commandBus;
+    protected $pipeline;
 
     /**
      * Constructs CommandPipeline
@@ -30,20 +30,20 @@ class CommandPipeline implements CommandBus
      */
     public function __construct(ApplicationBus $commandBus)
     {
-        $this->commandBus = $commandBus;
+        $this->pipeline = $commandBus;
     }
 
     /**
-     * Adds middleware to the pipeline
+     * Adds a filter to the pipeline
      *
-     * @param Middleware $middleware The command bus middleware
+     * @param Filter $filter The command filter
      *
      * @return void
      */
-    public function addMiddleware(Middleware $middleware)
+    public function addFilter(Filter $filter)
     {
-        $middleware->setCommandBus($this->commandBus);
-        $this->commandBus = $middleware;
+        $filter->setOutbound($this->pipeline);
+        $this->pipeline = $filter;
     }
 
     /**
@@ -51,6 +51,6 @@ class CommandPipeline implements CommandBus
      */
     public function execute(Command $command)
     {
-        $this->commandBus->execute($command);
+        $this->pipeline->execute($command);
     }
 }

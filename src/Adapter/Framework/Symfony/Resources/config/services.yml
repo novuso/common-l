@@ -1,8 +1,8 @@
 #==============================================================================
-# Use the following to tag command middleware services:
+# Use the following to tag command filter services:
 #
 # tags:
-#     - { name: novuso_common.command_middleware }
+#     - { name: novuso_common.command_filter }
 #==============================================================================
 # Use the following to tag command handler services:
 #
@@ -64,5 +64,5 @@ services:
         arguments:
             - @novuso_common.logger
         tags:
-            - { name: novuso_common.command_middleware }
+            - { name: novuso_common.command_filter }
         public: false

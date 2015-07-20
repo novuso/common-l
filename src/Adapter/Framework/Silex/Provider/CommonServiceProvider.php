@@ -62,8 +62,8 @@ class CommonServiceProvider implements ServiceProviderInterface
         $app['novuso_common.command_bus'] = function ($app) {
             $pipeline = new CommandPipeline($app['novuso_common.application_bus']);
 
-            foreach ($app['novuso_common.command_middleware'] as $serviceId) {
-                $pipeline->addMiddleware($app[$serviceId]);
+            foreach ($app['novuso_common.command_filters'] as $serviceId) {
+                $pipeline->addFilter($app[$serviceId]);
             }
 
             return $pipeline;
@@ -92,9 +92,9 @@ class CommonServiceProvider implements ServiceProviderInterface
             return new CommandLogger($app['novuso_common.logger']);
         };
 
-        // Register command middleware services
+        // Register command filter services
         // ['middleware_service_id']
-        $app['novuso_common.command_middleware'] = ['novuso_common.command_logger'];
+        $app['novuso_common.command_filters'] = ['novuso_common.command_logger'];
 
         // Register command handler services
         // ['handler_service_id' => 'Command\\Class']

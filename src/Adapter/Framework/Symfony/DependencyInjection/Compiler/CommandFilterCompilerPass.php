@@ -7,14 +7,14 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 
 /**
- * MiddlewareCompilerPass registers middleware with the command pipeline
+ * CommandFilterCompilerPass registers filters with the command pipeline
  *
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-class MiddlewareCompilerPass implements CompilerPassInterface
+class CommandFilterCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
@@ -23,10 +23,10 @@ class MiddlewareCompilerPass implements CompilerPassInterface
         }
 
         $definition = $container->findDefinition('novuso_common.command_bus');
-        $taggedServices = $container->findTaggedServiceIds('novuso_common.command_middleware');
+        $taggedServices = $container->findTaggedServiceIds('novuso_common.command_filter');
 
         foreach (array_keys($taggedServices) as $id) {
-            $definition->addMethodCall('addMiddleware', [new Reference($id)]);
+            $definition->addMethodCall('addFilter', [new Reference($id)]);
         }
     }
 }

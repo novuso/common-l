@@ -2,9 +2,9 @@
 
 namespace Novuso\Common\Adapter\Framework\Symfony;
 
+use Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler\CommandFilterCompilerPass;
 use Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler\CommandHandlerCompilerPass;
 use Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler\DomainEventCompilerPass;
-use Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler\MiddlewareCompilerPass;
 use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -29,9 +29,9 @@ class NovusoCommonBundle extends Bundle
     public function build(ContainerBuilder $container)
     {
         parent::build($container);
+        $container->addCompilerPass(new CommandFilterCompilerPass());
         $container->addCompilerPass(new CommandHandlerCompilerPass());
         $container->addCompilerPass(new DomainEventCompilerPass());
-        $container->addCompilerPass(new MiddlewareCompilerPass());
     }
 
     /**
