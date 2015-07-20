@@ -1,6 +1,8 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Application\Command;
+
+use Novuso\System\Serialization\Serializable;
 
 /**
  * Command is the interface for an application command
@@ -17,12 +19,6 @@ namespace Novuso\Common\Application\Command;
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-interface Command
+interface Command extends Serializable
 {
-    /**
-     * Retrieves an array representation
-     *
-     * @return array
-     */
-    public function toArray(): array;
 }

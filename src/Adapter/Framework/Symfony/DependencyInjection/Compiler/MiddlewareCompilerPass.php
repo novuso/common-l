@@ -1,8 +1,9 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler;
 
-use Symfony\Component\DependencyInjection\{ContainerBuilder, Reference};
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 
 /**
@@ -17,14 +18,14 @@ class MiddlewareCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        if (!$container->has('novuso_common.command.pipeline.command_pipeline')) {
+        if (!$container->has('novuso_common.command_bus')) {
             return;
         }
 
-        $definition = $container->findDefinition('novuso_common.command.pipeline.command_pipeline');
+        $definition = $container->findDefinition('novuso_common.command_bus');
         $taggedServices = $container->findTaggedServiceIds('novuso_common.command_middleware');
 
-        foreach ($taggedServices as $id => $tags) {
+        foreach (array_keys($taggedServices) as $id) {
             $definition->addMethodCall('addMiddleware', [new Reference($id)]);
         }
     }

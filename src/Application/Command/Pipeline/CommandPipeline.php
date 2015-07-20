@@ -1,8 +1,10 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Application\Command\Pipeline;
 
-use Novuso\Common\Application\Command\{Command, CommandBus, Middleware};
+use Novuso\Common\Application\Command\Command;
+use Novuso\Common\Application\Command\CommandBus;
+use Novuso\Common\Application\Command\Middleware;
 
 /**
  * CommandPipeline is a pipeline of command bus middleware

@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Adapter\Infrastructure\Logging;
 
@@ -35,7 +35,7 @@ class PsrLogger implements Logger
     /**
      * {@inheritdoc}
      */
-    public function emergency(string $message, array $context = [])
+    public function emergency($message, array $context = [])
     {
         $this->logger->emergency($message, $context);
     }
@@ -43,7 +43,7 @@ class PsrLogger implements Logger
     /**
      * {@inheritdoc}
      */
-    public function alert(string $message, array $context = [])
+    public function alert($message, array $context = [])
     {
         $this->logger->alert($message, $context);
     }
@@ -51,7 +51,7 @@ class PsrLogger implements Logger
     /**
      * {@inheritdoc}
      */
-    public function critical(string $message, array $context = [])
+    public function critical($message, array $context = [])
     {
         $this->logger->critical($message, $context);
     }
@@ -59,7 +59,7 @@ class PsrLogger implements Logger
     /**
      * {@inheritdoc}
      */
-    public function error(string $message, array $context = [])
+    public function error($message, array $context = [])
     {
         $this->logger->error($message, $context);
     }
@@ -67,7 +67,7 @@ class PsrLogger implements Logger
     /**
      * {@inheritdoc}
      */
-    public function warning(string $message, array $context = [])
+    public function warning($message, array $context = [])
     {
         $this->logger->warning($message, $context);
     }
@@ -75,7 +75,7 @@ class PsrLogger implements Logger
     /**
      * {@inheritdoc}
      */
-    public function notice(string $message, array $context = [])
+    public function notice($message, array $context = [])
     {
         $this->logger->notice($message, $context);
     }
@@ -83,7 +83,7 @@ class PsrLogger implements Logger
     /**
      * {@inheritdoc}
      */
-    public function info(string $message, array $context = [])
+    public function info($message, array $context = [])
     {
         $this->logger->info($message, $context);
     }
@@ -91,7 +91,7 @@ class PsrLogger implements Logger
     /**
      * {@inheritdoc}
      */
-    public function debug(string $message, array $context = [])
+    public function debug($message, array $context = [])
     {
         $this->logger->debug($message, $context);
     }

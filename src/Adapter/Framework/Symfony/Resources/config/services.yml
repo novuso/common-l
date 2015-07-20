@@ -1,5 +1,68 @@
-imports:
-    - { resource: services/command.yml }
-    - { resource: services/domain_event.yml }
-    - { resource: services/logging.yml }
-    - { resource: services/service.yml }
+#==============================================================================
+# Use the following to tag command middleware services:
+#
+# tags:
+#     - { name: novuso_common.command_middleware }
+#==============================================================================
+# Use the following to tag command handler services:
+#
+# tags:
+#     -
+#         name: novuso_common.command_handler
+#         command: My\Example\App\RegisterUserCommand
+#==============================================================================
+# Use the following to tag subscriber services:
+#
+# tags:
+#     - { name: novuso_common.event_subscriber }
+#==============================================================================
+services:
+    # Novuso\Common\Application\Service\Container
+    novuso_common.service_container:
+        class: Novuso\Common\Adapter\Infrastructure\Service\SymfonyContainer
+        arguments:
+            - @service_container
+
+    # Novuso\Common\Application\Logging\Logger
+    novuso_common.logger:
+        class: Novuso\Common\Adapter\Infrastructure\Logging\PsrLogger
+        arguments:
+            - @logger
+
+    # Novuso\Common\Domain\Event\Dispatcher
+    novuso_common.event_dispatcher:
+        class: Novuso\Common\Application\DomainEvent\ServiceAwareDispatcher
+        arguments:
+            - @novuso_common.service_container
+
+    # Novuso\Common\Application\Command\CommandBus
+    novuso_common.command_bus:
+        class: Novuso\Common\Application\Command\Pipeline\CommandPipeline
+        arguments:
+            - @novuso_common.application_bus
+
+    # Novuso\Common\Application\Command\Resolver\ServiceMap
+    novuso_common.command_resolver.service_map:
+        class: Novuso\Common\Application\Command\Resolver\ServiceMap
+        arguments:
+            - @novuso_common.service_container
+
+    novuso_common.application_bus:
+        class: Novuso\Common\Application\Command\Pipeline\ApplicationBus
+        arguments:
+            - @novuso_common.command_resolver
+        public: false
+
+    novuso_common.command_resolver:
+        class: Novuso\Common\Application\Command\Resolver\ServiceResolver
+        arguments:
+            - @novuso_common.command_resolver.service_map
+        public: false
+
+    novuso_common.command_logger:
+        class: Novuso\Common\Application\Command\Pipeline\CommandLogger
+        arguments:
+            - @novuso_common.logger
+        tags:
+            - { name: novuso_common.command_middleware }
+        public: false

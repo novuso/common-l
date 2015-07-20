@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Application\Logging;
 
@@ -27,7 +27,7 @@ interface Logger
      *
      * @return void
      */
-    public function emergency(string $message, array $context = []);
+    public function emergency($message, array $context = []);
 
     /**
      * Logs an alert; action must be taken immediately
@@ -44,7 +44,7 @@ interface Logger
      *
      * @return void
      */
-    public function alert(string $message, array $context = []);
+    public function alert($message, array $context = []);
 
     /**
      * Logs a critical condition
@@ -61,7 +61,7 @@ interface Logger
      *
      * @return void
      */
-    public function critical(string $message, array $context = []);
+    public function critical($message, array $context = []);
 
     /**
      * Logs an error condition
@@ -78,7 +78,7 @@ interface Logger
      *
      * @return void
      */
-    public function error(string $message, array $context = []);
+    public function error($message, array $context = []);
 
     /**
      * Logs a warning condition
@@ -95,7 +95,7 @@ interface Logger
      *
      * @return void
      */
-    public function warning(string $message, array $context = []);
+    public function warning($message, array $context = []);
 
     /**
      * Logs a normal but significant event
@@ -112,7 +112,7 @@ interface Logger
      *
      * @return void
      */
-    public function notice(string $message, array $context = []);
+    public function notice($message, array $context = []);
 
     /**
      * Logs an informational message
@@ -129,7 +129,7 @@ interface Logger
      *
      * @return void
      */
-    public function info(string $message, array $context = []);
+    public function info($message, array $context = []);
 
     /**
      * Logs a debug-level message
@@ -146,5 +146,5 @@ interface Logger
      *
      * @return void
      */
-    public function debug(string $message, array $context = []);
+    public function debug($message, array $context = []);
 }

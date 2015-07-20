@@ -1,0 +1,13 @@
+---
+- hosts: all
+  roles:
+  - novuso.upgrade
+  - novuso.time
+  - novuso.swap
+  - novuso.base
+  - novuso.firewall
+  - novuso.git
+  - novuso.php-ext
+  - novuso.php-cli
+  - novuso.composer
+  - app-dev

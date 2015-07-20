@@ -1,9 +1,12 @@
 /.vagrant/
 /app/build/phpunit.xml
 /app/build/api/
-/vendor/
+/app/build/coverage/
+/app/build/logs/
+/app/devops/group_vars/*/parameters.yml
 /composer.phar
 /composer.lock
+/vendor/
 /.idea/
 /nbproject/
 /*.sublime-project

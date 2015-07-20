@@ -1,8 +1,8 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Domain\Event;
 
-use Novuso\Common\Domain\Model\UniqueIdentifier;
+use Novuso\Common\Domain\Model\UniqueId;
 
 /**
  * EventId is a unique identifier for a domain event
@@ -12,6 +12,6 @@ use Novuso\Common\Domain\Model\UniqueIdentifier;
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-final class EventId extends UniqueIdentifier
+final class EventId extends UniqueId
 {
 }

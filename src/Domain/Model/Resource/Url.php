@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Domain\Model\Resource;
 
@@ -35,11 +35,12 @@ final class Url extends Uri
      *
      * @throws DomainException When the query is invalid
      */
-    protected static function normalizeQuery(string $query = null)
+    protected static function normalizeQuery($query)
     {
         if (null === $query) {
             return null;
         }
+
         if ('' === $query) {
             return '';
         }

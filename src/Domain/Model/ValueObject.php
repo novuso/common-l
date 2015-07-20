@@ -1,8 +1,8 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Domain\Model;
 
-use Novuso\Common\Domain\Contract\Value;
+use Novuso\Common\Domain\Model\Api\Value;
 use Novuso\System\Utility\Test;
 
 /**
@@ -28,17 +28,12 @@ abstract class ValueObject implements Value
     /**
      * {@inheritdoc}
      */
-    abstract public function toString(): string;
+    abstract public function toString();
 
     /**
      * {@inheritdoc}
      */
-    abstract public function jsonSerialize();
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __toString(): string
+    public function __toString()
     {
         return $this->toString();
     }
@@ -46,32 +41,13 @@ abstract class ValueObject implements Value
     /**
      * {@inheritdoc}
      */
-    public function serialize(): string
-    {
-        return serialize(get_object_vars($this));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function unserialize($str)
-    {
-        $properties = unserialize($str);
-        foreach ($properties as $property => $value) {
-            $this->$property = $value;
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function equals($object): bool
+    public function equals($object)
     {
         if ($this === $object) {
             return true;
         }
 
-        if (!Test::sameType($this, $object)) {
+        if (!Test::areSameType($this, $object)) {
             return false;
         }
 
@@ -81,7 +57,7 @@ abstract class ValueObject implements Value
     /**
      * {@inheritdoc}
      */
-    public function hashValue(): string
+    public function hashValue()
     {
         return $this->toString();
     }

@@ -1,8 +1,10 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Application\Command\Pipeline;
 
-use Novuso\Common\Application\Command\{Command, CommandBus, Middleware};
+use Novuso\Common\Application\Command\Command;
+use Novuso\Common\Application\Command\CommandBus;
+use Novuso\Common\Application\Command\Middleware;
 use Novuso\Common\Application\Command\Exception\CommandException;
 use Novuso\Common\Application\Logging\Logger;
 use Novuso\System\Utility\ClassName;
@@ -56,18 +58,18 @@ class CommandLogger implements Middleware
     {
         try {
             $this->logger->info(
-                sprintf('Command executed: %s at %s', ClassName::short($command), date(DATE_ATOM)),
-                ['command' => $command->toArray()]
+                sprintf('Command received: %s at %s', ClassName::short($command), date(DATE_ATOM)),
+                ['command' => $command->serialize()]
             );
             $this->commandBus->execute($command);
             $this->logger->info(
                 sprintf('Command acknowledged: %s at %s', ClassName::short($command), date(DATE_ATOM)),
-                ['command' => $command->toArray()]
+                ['command' => $command->serialize()]
             );
         } catch (Exception $exception) {
             $this->logger->error(
                 sprintf('Command failed: %s at %s', ClassName::short($command), date(DATE_ATOM)),
-                ['command' => $command->toArray(), 'exception' => $exception]
+                ['command' => $command->serialize(), 'exception' => $exception]
             );
             throw CommandException::create($exception->getMessage(), $exception);
         }

@@ -1,9 +1,10 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Application\Command\Resolver;
 
-use Novuso\Common\Application\Command\{Command, Handler};
+use Novuso\Common\Application\Command\Command;
 use Novuso\Common\Application\Command\Exception\HandlerNotFoundException;
+use Novuso\Common\Application\Command\Handler;
 
 /**
  * ServiceResolver resolves a handler from a service map
@@ -35,7 +36,7 @@ class ServiceResolver implements HandlerResolver
     /**
      * {@inheritdoc}
      */
-    public function resolve(Command $command): Handler
+    public function resolve(Command $command)
     {
         $commandClass = get_class($command);
 

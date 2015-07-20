@@ -1,0 +1,16 @@
+---
+- name: "github credentials"
+  shell: "composer config -g github-oauth.github.com {{ app_github_access_token }}"
+  args:
+    chdir: "{{ app_root_dir }}"
+  when: app_github_access_token is string
+  changed_when: false
+
+- name: "composer install"
+  composer:
+    command: install
+    no_dev: no
+    optimize_autoloader: no
+    prefer_dist: yes
+    working_dir: "{{ app_root_dir }}"
+  changed_when: false

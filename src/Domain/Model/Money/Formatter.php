@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Domain\Model\Money;
 
@@ -19,5 +19,5 @@ interface Formatter
      *
      * @return string
      */
-    public function format(Money $money): string;
+    public function format(Money $money);
 }

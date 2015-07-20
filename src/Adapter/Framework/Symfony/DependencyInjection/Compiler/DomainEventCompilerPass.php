@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler;
 
@@ -19,14 +19,14 @@ class DomainEventCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        if (!$container->has('novuso_common.domain_event.dispatcher')) {
+        if (!$container->has('novuso_common.event_dispatcher')) {
             return;
         }
 
-        $definition = $container->findDefinition('novuso_common.domain_event.dispatcher');
+        $definition = $container->findDefinition('novuso_common.event_dispatcher');
         $taggedServices = $container->findTaggedServiceIds('novuso_common.event_subscriber');
 
-        foreach ($taggedServices as $id => $tags) {
+        foreach (array_keys($taggedServices) as $id) {
             $def = $container->getDefinition($id);
 
             if (!$def->isPublic()) {

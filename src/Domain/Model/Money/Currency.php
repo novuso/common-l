@@ -1,8 +1,7 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Domain\Model\Money;
 
-use Novuso\Common\Domain\Contract\Value;
 use Novuso\System\Type\Enum;
 
 /**
@@ -15,7 +14,7 @@ use Novuso\System\Type\Enum;
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-final class Currency extends Enum implements Value
+final class Currency extends Enum
 {
     /**
      * UAE Dirham
@@ -1028,9 +1027,11 @@ final class Currency extends Enum implements Value
     /**
      * Turkish Lira
      *
+     * TRY is a reserved word.
+     *
      * @var string
      */
-    const TRY = 'TRY';
+    const _TRY = 'TRY';
 
     /**
      * Trinidad and Tobago Dollar
@@ -1792,7 +1793,7 @@ final class Currency extends Enum implements Value
             'code'    => 'JPY',
             'numeric' => 392,
             'digits'  => 0,
-            'minor'   => 100
+            'minor'   => 1
         ],
         'KES' => [
             'display' => 'Kenyan Shilling',
@@ -2550,7 +2551,7 @@ final class Currency extends Enum implements Value
      *
      * @return string
      */
-    public function displayName(): string
+    public function displayName()
     {
         return self::$currencies[$this->value]['display'];
     }
@@ -2560,7 +2561,7 @@ final class Currency extends Enum implements Value
      *
      * @return string
      */
-    public function code(): string
+    public function code()
     {
         return self::$currencies[$this->value]['code'];
     }
@@ -2570,7 +2571,7 @@ final class Currency extends Enum implements Value
      *
      * @return int
      */
-    public function numericCode(): int
+    public function numericCode()
     {
         return self::$currencies[$this->value]['numeric'];
     }
@@ -2582,7 +2583,7 @@ final class Currency extends Enum implements Value
      *
      * @return int
      */
-    public function digits(): int
+    public function digits()
     {
         return self::$currencies[$this->value]['digits'];
     }
@@ -2592,7 +2593,7 @@ final class Currency extends Enum implements Value
      *
      * @return int
      */
-    public function minor(): int
+    public function minor()
     {
         return self::$currencies[$this->value]['minor'];
     }

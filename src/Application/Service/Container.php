@@ -1,8 +1,9 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Application\Service;
 
-use Novuso\Common\Application\Service\Exception\{EntryNotFoundException, ServiceException};
+use Novuso\Common\Application\Service\Exception\EntryNotFoundException;
+use Novuso\Common\Application\Service\Exception\ServiceException;
 
 /**
  * Container is the interface for an application service container
@@ -24,7 +25,7 @@ interface Container
      * @throws EntryNotFoundException When the entry is not found
      * @throws ServiceException When an error occurs during processing
      */
-    public function get(string $id);
+    public function get($id);
 
     /**
      * Checks if an entry ID is defined
@@ -33,5 +34,5 @@ interface Container
      *
      * @return bool
      */
-    public function has(string $id): bool;
+    public function has($id);
 }

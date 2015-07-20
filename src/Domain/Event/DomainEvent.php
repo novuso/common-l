@@ -1,13 +1,13 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Domain\Event;
 
-use JsonSerializable;
-use Novuso\Common\Domain\Contract\Identifier;
-use Serializable;
+use Novuso\Common\Domain\Event\Api\Event;
+use Novuso\System\Exception\DomainException;
+use ReflectionClass;
 
 /**
- * DomainEvent is the base class for domain events
+ * DomainEvent is the base class for a domain event
  *
  * Implementations must adhere to event characteristics:
  *
@@ -16,96 +16,61 @@ use Serializable;
  * * It may hold references to value objects, primitives, and identifiers
  * * It is encodable for communication with other systems
  *
+ * Note: The default serialization methods assume child classes use public
+ *       constructors, and that argument names match property names. If that
+ *       is not the case, you must override deserialize() and serialize().
+ *
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-abstract class DomainEvent implements JsonSerializable, Serializable
+abstract class DomainEvent implements Event
 {
     /**
-     * Retrieves the event version
-     *
-     * @return int
+     * {@inheritdoc}
      */
-    abstract public function version(): int;
-
-    /**
-     * Retrieves the ID of the aggregate root
-     *
-     * @return Identifier
-     */
-    abstract public function aggregateId(): Identifier;
-
-    /**
-     * Retrieves an array representation
-     *
-     * @return array
-     */
-    abstract public function toArray(): array;
-
-    /**
-     * Retrieves a string representation
-     *
-     * @return string
-     */
-    public function toString(): string
+    public static function deserialize(array $data)
     {
-        return json_encode($this->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        $class = new ReflectionClass(static::class);
+        $constructor = $class->getConstructor();
+        $parameters = $constructor->getParameters();
+        $arguments = [];
+        foreach ($parameters as $param) {
+            if (array_key_exists($param->name, $data)) {
+                $arguments[] = $data[$param->name];
+            } elseif ($param->isDefaultValueAvailable()) {
+                $arguments[] = $param->getDefaultValue();
+            } else {
+                $message = sprintf('Unable to deserialize %s', static::class);
+                throw DomainException::create($message);
+            }
+        }
+
+        return $class->newInstanceArgs($arguments);
     }
 
     /**
-     * Handles casting to a string
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function __toString(): string
+    public function serialize()
+    {
+        return get_object_vars($this);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toString()
+    {
+        return json_encode($this->serialize(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
     {
         return $this->toString();
-    }
-
-    /**
-     * Retrieves a JSON representation
-     *
-     * @return string
-     */
-    public function toJson(): string
-    {
-        return json_encode($this->jsonSerialize());
-    }
-
-    /**
-     * Retrieves a value for JSON encoding
-     *
-     * @return array
-     */
-    public function jsonSerialize(): array
-    {
-        return $this->toArray();
-    }
-
-    /**
-     * Retrieves a serialized representation
-     *
-     * @return string
-     */
-    public function serialize(): string
-    {
-        return serialize(get_object_vars($this));
-    }
-
-    /**
-     * Handles construction from a serialized representation
-     *
-     * @param string $str The serialized representation
-     *
-     * @return void
-     */
-    public function unserialize($str)
-    {
-        $properties = unserialize($str);
-        foreach ($properties as $property => $value) {
-            $this->$property = $value;
-        }
     }
 }

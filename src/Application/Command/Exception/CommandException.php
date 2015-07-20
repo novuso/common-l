@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Application\Command\Exception;
 
@@ -21,7 +21,7 @@ class CommandException extends Exception
      * @param int            $code     The exception code
      * @param Exception|null $previous The previous exception for chaining
      */
-    public function __construct(string $message = '', int $code = 1100, Exception $previous = null)
+    public function __construct($message = '', $code = 1100, Exception $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }
@@ -32,9 +32,9 @@ class CommandException extends Exception
      * @param string         $message  The exception message
      * @param Exception|null $previous The previous exception for chaining
      *
-     * @return Exception
+     * @return CommandException
      */
-    public static function create(string $message = '', Exception $previous = null): Exception
+    public static function create($message = '', Exception $previous = null)
     {
         return new static($message, 1100, $previous);
     }

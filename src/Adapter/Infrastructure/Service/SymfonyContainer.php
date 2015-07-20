@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Adapter\Infrastructure\Service;
 
 use Exception;
 use Novuso\Common\Application\Service\Container;
-use Novuso\Common\Application\Service\Exception\{EntryNotFoundException, ServiceException};
+use Novuso\Common\Application\Service\Exception\EntryNotFoundException;
+use Novuso\Common\Application\Service\Exception\ServiceException;
 use Novuso\System\Utility\VarPrinter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -38,7 +39,7 @@ class SymfonyContainer implements Container
     /**
      * {@inheritdoc}
      */
-    public function get(string $id)
+    public function get($id)
     {
         if (!$this->container->has($id)) {
             $message = sprintf('Identifier (%s) is not defined', VarPrinter::toString($id));
@@ -57,7 +58,7 @@ class SymfonyContainer implements Container
     /**
      * {@inheritdoc}
      */
-    public function has(string $id): bool
+    public function has($id)
     {
         return $this->container->has($id);
     }

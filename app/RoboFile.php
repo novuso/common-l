@@ -34,6 +34,8 @@ class RoboFile extends Tasks
         $this->info('Starting build');
         $this->dirPrepare();
         $this->phpLint();
+        $this->phpCodeStyle();
+        $this->phpMessDetect();
         $this->phpTest();
         $this->docsPhpApi(['force' => true]);
         $this->info('build complete');
@@ -162,6 +164,8 @@ class RoboFile extends Tasks
         $this->info('Cleaning artifact directories');
         $this->taskFileSystemStack()
             ->remove($paths['docapi'])
+            ->remove($paths['coverage'])
+            ->remove($paths['reports'])
             ->run();
         $this->info('Artifact directories cleaned');
     }
@@ -178,6 +182,8 @@ class RoboFile extends Tasks
         $this->info('Preparing artifact directories');
         $this->taskFileSystemStack()
             ->mkdir($paths['docapi'])
+            ->mkdir($paths['coverage'])
+            ->mkdir($paths['reports'])
             ->run();
         $this->info('Artifact directories prepared');
     }
@@ -217,6 +223,34 @@ class RoboFile extends Tasks
     //===================================================//
 
     /**
+     * Performs code style check on PHP source
+     *
+     * @param array $opts The options
+     *
+     * @option $report Generate an XML report for continuous integration
+     */
+    public function phpCodeStyle($opts = ['report' => false])
+    {
+        $report = isset($opts['report']) && $opts['report'] ? true : false;
+        $paths = $this->getPaths();
+        $this->stopOnFail(true);
+        $this->yell('php:code-style');
+        $this->info('Starting code style check for PHP source files');
+        $exec = $this->taskExec('php')
+            ->arg($paths['bin'].'/phpcs');
+        if ($report) {
+            $exec->option('report=checkstyle');
+            $exec->option('report-file='.$paths['reports'].'/checkstyle.xml');
+            $exec->option('warning-severity=0');
+        }
+        $exec->option('standard='.$paths['build'].'/phpcs.xml')
+            ->arg($paths['src'])
+            ->printed($report ? false : true)
+            ->run();
+        $this->info('PHP source files passed code style check');
+    }
+
+    /**
      * Performs syntax check on PHP source
      */
     public function phpLint()
@@ -237,6 +271,33 @@ class RoboFile extends Tasks
                 ->run();
         }
         $this->info('PHP source files passed syntax check');
+    }
+
+    /**
+     * Performs mess detection on PHP source
+     *
+     * @param array $opts The options
+     *
+     * @option $report Generate an XML report for continuous integration
+     */
+    public function phpMessDetect($opts = ['report' => false])
+    {
+        $report = isset($opts['report']) && $opts['report'] ? true : false;
+        $paths = $this->getPaths();
+        $this->stopOnFail(true);
+        $this->yell('php:mess-detect');
+        $this->info('Starting mess detection in PHP source files');
+        $exec = $this->taskExec('php')
+            ->arg($paths['bin'].'/phpmd')
+            ->arg($paths['src'])
+            ->arg($report ? 'xml' : 'text')
+            ->arg($paths['build'].'/phpmd.xml');
+        if ($report) {
+            $exec->option('reportfile', $paths['reports'].'/pmd.xml');
+        }
+        $exec->printed($report ? false : true)
+            ->run();
+        $this->info('PHP source files passed mess detection');
     }
 
     /**

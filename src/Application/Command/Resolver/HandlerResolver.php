@@ -1,8 +1,9 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Application\Command\Resolver;
 
-use Novuso\Common\Application\Command\{Command, Handler};
+use Novuso\Common\Application\Command\Command;
+use Novuso\Common\Application\Command\Handler;
 use Novuso\Common\Application\Command\Exception\HandlerNotFoundException;
 
 /**
@@ -24,5 +25,5 @@ interface HandlerResolver
      *
      * @throws HandlerNotFoundException When the handler is not found
      */
-    public function resolve(Command $command): Handler;
+    public function resolve(Command $command);
 }

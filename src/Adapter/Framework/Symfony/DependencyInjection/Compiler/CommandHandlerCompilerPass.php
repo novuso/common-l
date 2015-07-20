@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler;
 
@@ -17,11 +17,11 @@ class CommandHandlerCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        if (!$container->has('novuso_common.command.resolver.service_map')) {
+        if (!$container->has('novuso_common.command_resolver.service_map')) {
             return;
         }
 
-        $definition = $container->findDefinition('novuso_common.command.resolver.service_map');
+        $definition = $container->findDefinition('novuso_common.command_resolver.service_map');
         $taggedServices = $container->findTaggedServiceIds('novuso_common.command_handler');
 
         foreach ($taggedServices as $id => $tags) {
