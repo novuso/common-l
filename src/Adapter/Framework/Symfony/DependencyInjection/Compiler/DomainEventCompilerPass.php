@@ -44,7 +44,7 @@ class DomainEventCompilerPass implements CompilerPassInterface
             $refClass = new ReflectionClass($class);
 
             if (!$refClass->implementsInterface(Subscriber::class)) {
-                $message = sprintf('Service "%s" must implement interface "%s"', $id, $interface);
+                $message = sprintf('Service "%s" must implement interface "%s"', $id, Subscriber::class);
                 throw new InvalidArgumentException($message);
             }
 
