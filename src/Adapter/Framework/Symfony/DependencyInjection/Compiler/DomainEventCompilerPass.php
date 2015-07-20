@@ -4,6 +4,7 @@ namespace Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler;
 
 use InvalidArgumentException;
 use ReflectionClass;
+use Novuso\Common\Domain\Event\Api\Subscriber;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 
@@ -41,9 +42,8 @@ class DomainEventCompilerPass implements CompilerPassInterface
 
             $class = $container->getParameterBag()->resolveValue($def->getClass());
             $refClass = new ReflectionClass($class);
-            $interface = 'Novuso\\Common\\Domain\\Event\\Subscriber';
 
-            if ($refClass->implementsInterface($interface)) {
+            if (!$refClass->implementsInterface(Subscriber::class)) {
                 $message = sprintf('Service "%s" must implement interface "%s"', $id, $interface);
                 throw new InvalidArgumentException($message);
             }
