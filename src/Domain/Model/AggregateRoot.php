@@ -2,9 +2,9 @@
 
 namespace Novuso\Common\Domain\Model;
 
-use Novuso\Common\Domain\Event\Api\Event;
-use Novuso\Common\Domain\Event\Api\EventStream;
+use Novuso\Common\Domain\Event\Api\DomainEvent;
 use Novuso\Common\Domain\Event\EventCollection;
+use Novuso\Common\Domain\Event\EventStream;
 use Novuso\Common\Domain\Model\Api\RootEntity;
 use Novuso\System\Exception\OperationException;
 use Novuso\System\Type\Contract;
@@ -116,14 +116,14 @@ abstract class AggregateRoot implements RootEntity
     /**
      * Records a domain event
      *
-     * @param Event $eventData The event data
-     * @param array $metaData  The meta data
+     * @param DomainEvent $domainEvent The domain event
+     * @param array       $metaData    The meta data
      *
      * @return void
      */
-    protected function recordThat(Event $eventData, array $metaData = [])
+    protected function recordThat(DomainEvent $domainEvent, array $metaData = [])
     {
-        $this->eventCollection()->add($eventData, $metaData);
+        $this->eventCollection()->add($domainEvent, $metaData);
     }
 
     /**
