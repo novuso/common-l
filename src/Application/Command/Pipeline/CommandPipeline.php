@@ -79,17 +79,17 @@ class CommandPipeline implements CommandBus, Filter
     /**
      * {@inheritdoc}
      */
-    public function process(Command $command, callable $next)
+    public function execute(Command $command)
     {
-        $this->commandBus->execute($command);
+        $this->pipe($command);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function execute(Command $command)
+    public function process(Command $command, callable $next)
     {
-        $this->pipe($command);
+        $this->commandBus->execute($command);
     }
 
     /**
