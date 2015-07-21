@@ -16,6 +16,11 @@
 # tags:
 #     - { name: novuso_common.event_subscriber }
 #==============================================================================
+parameters:
+    # List of Novuso\Common\Application\Command\Filter instances
+    novuso_common.command_filters: []
+    # Map of ['handler_service_id' => 'Command\\Class']
+    novuso_common.command_handlers: []
 services:
     # Novuso\Common\Application\Service\Container
     novuso_common.service_container:
@@ -40,12 +45,14 @@ services:
         class: Novuso\Common\Application\Command\Pipeline\CommandPipeline
         arguments:
             - @novuso_common.application_bus
+            - %novuso_common.command_filters%
 
     # Novuso\Common\Application\Command\Resolver\ServiceMap
     novuso_common.command_resolver.service_map:
         class: Novuso\Common\Application\Command\Resolver\ServiceMap
         arguments:
             - @novuso_common.service_container
+            - %novuso_common.command_handlers%
 
     novuso_common.application_bus:
         class: Novuso\Common\Application\Command\Pipeline\ApplicationBus

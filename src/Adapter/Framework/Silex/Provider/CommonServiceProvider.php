@@ -60,24 +60,18 @@ class CommonServiceProvider implements ServiceProviderInterface
 
         // Novuso\Common\Application\Command\CommandBus
         $app['novuso_common.command_bus'] = function ($app) {
-            $pipeline = new CommandPipeline($app['novuso_common.application_bus']);
-
-            foreach ($app['novuso_common.command_filters'] as $serviceId) {
-                $pipeline->addFilter($app[$serviceId]);
-            }
-
-            return $pipeline;
+            return new CommandPipeline(
+                $app['novuso_common.application_bus'],
+                $app['novuso_common.command_filters']
+            );
         };
 
         // Novuso\Common\Application\Command\Resolver\ServiceMap
         $app['novuso_common.command_resolver.service_map'] = function ($app) {
-            $serviceMap = new ServiceMap($app['novuso_common.service_container']);
-
-            foreach ($app['novuso_common.command_handlers'] as $serviceId => $commandClass) {
-                $serviceMap->setHandler($commandClass, $serviceId);
-            }
-
-            return $serviceMap;
+            return new ServiceMap(
+                $app['novuso_common.service_container'],
+                $app['novuso_common.command_handlers']
+            );
         };
 
         $app['novuso_common.application_bus'] = function ($app) {
@@ -92,9 +86,16 @@ class CommonServiceProvider implements ServiceProviderInterface
             return new CommandLogger($app['novuso_common.logger']);
         };
 
+        // Extends command bus to add logging filter
+        $app->extend('novuso_common.command_bus', function ($pipeline, $app) {
+            $pipeline->addFilter($app['novuso_common.command_logger']);
+
+            return $pipeline;
+        });
+
         // Register command filter services
         // ['middleware_service_id']
-        $app['novuso_common.command_filters'] = ['novuso_common.command_logger'];
+        $app['novuso_common.command_filters'] = [];
 
         // Register command handler services
         // ['handler_service_id' => 'Command\\Class']

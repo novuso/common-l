@@ -10,27 +10,17 @@ namespace Novuso\Common\Application\Command;
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-interface Filter extends CommandBus
+interface Filter
 {
     /**
-     * Sets the outbound pipe
+     * Processes a command and calls the next pipe
      *
-     * The instance passed to this method must receive a delegated call to its
-     * execute method during command execution. This allows the command to pass
-     * completely through the pipeline.
+     * Next signature: function (Command $command): void {}
      *
-     * Example:
-     *
-     *     public function execute(Command $command)
-     *     {
-     *         // do something with $command
-     *
-     *         $this->outbound->execute($command);
-     *     }
-     *
-     * @param CommandBus $outbound A CommandBus instance
+     * @param Command  $command The command
+     * @param callable $next    The next pipe
      *
      * @return void
      */
-    public function setOutbound(CommandBus $outbound);
+    public function process(Command $command, callable $next);
 }

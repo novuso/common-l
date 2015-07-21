@@ -3,7 +3,6 @@
 namespace Novuso\Common\Application\Command\Pipeline;
 
 use Novuso\Common\Application\Command\Command;
-use Novuso\Common\Application\Command\CommandBus;
 use Novuso\Common\Application\Command\Filter;
 use Novuso\Common\Application\Command\Exception\CommandException;
 use Novuso\Common\Application\Logging\Logger;
@@ -19,13 +18,6 @@ use Novuso\System\Utility\ClassName;
  */
 class CommandLogger implements Filter
 {
-    /**
-     * Command bus
-     *
-     * @var CommandBus
-     */
-    protected $outbound;
-
     /**
      * Logger
      *
@@ -46,22 +38,16 @@ class CommandLogger implements Filter
     /**
      * {@inheritdoc}
      */
-    public function setOutbound(CommandBus $outbound)
-    {
-        $this->outbound = $outbound;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function execute(Command $command)
+    public function process(Command $command, callable $next)
     {
         try {
             $this->logger->info(
                 sprintf('Command received: %s at %s', ClassName::short($command), date(DATE_ATOM)),
                 ['command' => $command->serialize()]
             );
-            $this->outbound->execute($command);
+
+            $next($command);
+
             $this->logger->info(
                 sprintf('Command acknowledged: %s at %s', ClassName::short($command), date(DATE_ATOM)),
                 ['command' => $command->serialize()]
