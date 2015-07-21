@@ -7,8 +7,8 @@ use Novuso\Common\Domain\Model\Api\Identifier;
 use Novuso\Common\Domain\Model\DateTime\DateTime;
 use Novuso\System\Serialization\Serializable;
 use Novuso\System\Type\Comparable;
-use Novuso\System\Type\Contract;
 use Novuso\System\Type\Equatable;
+use Novuso\System\Type\Type;
 use Novuso\System\Utility\Test;
 
 /**
@@ -31,7 +31,7 @@ final class EventMessage implements Comparable, Equatable, Serializable
     /**
      * Event type
      *
-     * @var Contract
+     * @var Type
      */
     protected $eventType;
 
@@ -45,7 +45,7 @@ final class EventMessage implements Comparable, Equatable, Serializable
     /**
      * Aggregate Type
      *
-     * @var Contract
+     * @var Type
      */
     protected $aggregateType;
 
@@ -82,7 +82,7 @@ final class EventMessage implements Comparable, Equatable, Serializable
      *
      * @param EventId     $eventId       The event ID
      * @param Identifier  $aggregateId   The aggregate ID
-     * @param Contract    $aggregateType The aggregate type
+     * @param Type        $aggregateType The aggregate type
      * @param DateTime    $dateTime      The timestamp
      * @param MetaData    $metaData      The meta data
      * @param DomainEvent $domainEvent   The domain event
@@ -91,14 +91,14 @@ final class EventMessage implements Comparable, Equatable, Serializable
     public function __construct(
         EventId $eventId,
         Identifier $aggregateId,
-        Contract $aggregateType,
+        Type $aggregateType,
         DateTime $dateTime,
         MetaData $metaData,
         DomainEvent $domainEvent,
         $sequence = 0
     ) {
         $this->eventId = $eventId;
-        $this->eventType = Contract::create($domainEvent);
+        $this->eventType = Type::create($domainEvent);
         $this->aggregateId = $aggregateId;
         $this->aggregateType = $aggregateType;
         $this->dateTime = $dateTime;
@@ -114,12 +114,12 @@ final class EventMessage implements Comparable, Equatable, Serializable
     {
         $sequence = $data['sequence'];
         $eventId = EventId::fromString($data['eventId']);
-        $aggIdClass = Contract::create($data['identifierType'])->toClassName();
+        $aggIdClass = Type::create($data['identifierType'])->toClassName();
         $aggregateId = $aggIdClass::fromString($data['identifier']);
-        $aggregateType = Contract::create($data['aggregateType']);
+        $aggregateType = Type::create($data['aggregateType']);
         $dateTime = DateTime::fromString($data['dateTime']);
         $metaData = MetaData::deserialize($data['metaData']);
-        $eventClass = Contract::create($data['eventType'])->toClassName();
+        $eventClass = Type::create($data['eventType'])->toClassName();
         $domainEvent = $eventClass::deserialize($data['domainEvent']);
 
         return new self($eventId, $aggregateId, $aggregateType, $dateTime, $metaData, $domainEvent, $sequence);
@@ -130,7 +130,7 @@ final class EventMessage implements Comparable, Equatable, Serializable
      */
     public function serialize()
     {
-        $aggregateIdType = Contract::create($this->aggregateId);
+        $aggregateIdType = Type::create($this->aggregateId);
 
         return [
             'sequence'       => $this->sequenceNumber,
@@ -168,7 +168,7 @@ final class EventMessage implements Comparable, Equatable, Serializable
     /**
      * Retrieves the event type
      *
-     * @return Contract
+     * @return Type
      */
     public function eventType()
     {
@@ -188,7 +188,7 @@ final class EventMessage implements Comparable, Equatable, Serializable
     /**
      * Retrieves the aggregate contract
      *
-     * @return Contract
+     * @return Type
      */
     public function aggregateType()
     {

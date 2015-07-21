@@ -7,7 +7,7 @@ use Novuso\Common\Domain\Event\EventCollection;
 use Novuso\Common\Domain\Event\EventStream;
 use Novuso\Common\Domain\Model\Api\RootEntity;
 use Novuso\System\Exception\OperationException;
-use Novuso\System\Type\Contract;
+use Novuso\System\Type\Type;
 use Novuso\System\Utility\Test;
 
 /**
@@ -155,7 +155,7 @@ abstract class AggregateRoot implements RootEntity
     protected function eventCollection()
     {
         if ($this->eventCollection === null) {
-            $this->eventCollection = new EventCollection($this->id(), Contract::create($this));
+            $this->eventCollection = new EventCollection($this->id(), Type::create($this));
         }
 
         return $this->eventCollection;

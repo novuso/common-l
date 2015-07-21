@@ -7,7 +7,7 @@ use Novuso\Common\Domain\Event\Api\DomainEvent;
 use Novuso\Common\Domain\Model\Api\Identifier;
 use Novuso\Common\Domain\DateTime\DateTime;
 use Novuso\System\Collection\ArrayList;
-use Novuso\System\Type\Contract;
+use Novuso\System\Type\Type;
 use Novuso\System\Utility\Test;
 
 /**
@@ -30,7 +30,7 @@ final class EventCollection implements Countable
     /**
      * Aggregate type
      *
-     * @var Contract
+     * @var Type
      */
     protected $aggregateType;
 
@@ -59,9 +59,9 @@ final class EventCollection implements Countable
      * Constructs EventCollection
      *
      * @param Identifier $aggregateId   The aggregate ID
-     * @param Contract   $aggregateType The aggregate type
+     * @param Type       $aggregateType The aggregate type
      */
-    public function __construct(Identifier $aggregateId, Contract $aggregateType)
+    public function __construct(Identifier $aggregateId, Type $aggregateType)
     {
         $this->aggregateId = $aggregateId;
         $this->aggregateType = $aggregateType;

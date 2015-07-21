@@ -4,11 +4,11 @@ namespace Novuso\Common\Application\Command\Resolver;
 
 use Novuso\Common\Application\Command\Command;
 use Novuso\Common\Application\Command\Exception\HandlerNotFoundException;
-use Novuso\Common\Application\Command\Exception\InvalidContractException;
+use Novuso\Common\Application\Command\Exception\InvalidCommandException;
 use Novuso\Common\Application\Command\Handler;
 use Novuso\Common\Application\Service\Container;
 use Novuso\Common\Application\Service\Exception\ServiceException;
-use Novuso\System\Type\Contract;
+use Novuso\System\Type\Type;
 use Novuso\System\Utility\Test;
 
 /**
@@ -41,7 +41,7 @@ class ServiceMap
      * @param Container $container             The service container
      * @param array     $commandToServiceIdMap A map of class names to service IDs
      *
-     * @throws InvalidContractException When a command class is not valid
+     * @throws InvalidCommandException When a command class is not valid
      */
     public function __construct(Container $container, array $commandToServiceIdMap = [])
     {
@@ -61,7 +61,7 @@ class ServiceMap
      *
      * @return void
      *
-     * @throws InvalidContractException When a command class is not valid
+     * @throws InvalidCommandException When a command class is not valid
      */
     public function addHandlers(array $commandToServiceIdMap)
     {
@@ -78,18 +78,18 @@ class ServiceMap
      *
      * @return void
      *
-     * @throws InvalidContractException When a command class is not valid
+     * @throws InvalidCommandException When a command class is not valid
      */
     public function setHandler($commandClass, $serviceId)
     {
         if (!Test::implementsInterface($commandClass, Command::class)) {
             $message = sprintf('Invalid command class: %s', $commandClass);
-            throw InvalidContractException::create($message);
+            throw InvalidCommandException::create($message);
         }
 
-        $contract = Contract::create($commandClass)->toString();
+        $type = Type::create($commandClass)->toString();
 
-        $this->handlers[$contract] = $serviceId;
+        $this->handlers[$type] = $serviceId;
     }
 
     /**
@@ -103,14 +103,14 @@ class ServiceMap
      */
     public function getHandler($commandClass)
     {
-        $contract = Contract::create($commandClass)->toString();
+        $type = Type::create($commandClass)->toString();
 
-        if (!isset($this->handlers[$contract])) {
+        if (!isset($this->handlers[$type])) {
             $message = sprintf('Handler not defined for command: %s', $commandClass);
             throw HandlerNotFoundException::create($message);
         }
 
-        $serviceId = $this->handlers[$contract];
+        $serviceId = $this->handlers[$type];
 
         try {
             $handler = $this->container->get($serviceId);
@@ -130,13 +130,13 @@ class ServiceMap
      */
     public function hasHandler($commandClass)
     {
-        $contract = Contract::create($commandClass)->toString();
+        $type = Type::create($commandClass)->toString();
 
-        if (!isset($this->handlers[$contract])) {
+        if (!isset($this->handlers[$type])) {
             return false;
         }
 
-        $serviceId = $this->handlers[$contract];
+        $serviceId = $this->handlers[$type];
 
         return $this->container->has($serviceId);
     }

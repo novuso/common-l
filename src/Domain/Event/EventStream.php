@@ -6,7 +6,7 @@ use ArrayIterator;
 use Countable;
 use IteratorAggregate;
 use Novuso\Common\Domain\Model\Api\Identifier;
-use Novuso\System\Type\Contract;
+use Novuso\System\Type\Type;
 use Novuso\System\Utility\Test;
 use Novuso\System\Utility\VarPrinter;
 use Traversable;
@@ -31,7 +31,7 @@ final class EventStream implements Countable, IteratorAggregate
     /**
      * Associated Type
      *
-     * @var Contract
+     * @var Type
      */
     protected $type;
 
@@ -53,10 +53,10 @@ final class EventStream implements Countable, IteratorAggregate
      * Constructs EventStream
      *
      * @param Identifier     $id       The associated ID
-     * @param Contract       $type     The associated type
+     * @param Type           $type     The associated type
      * @param EventMessage[] $messages A list of event messages
      */
-    public function __construct(Identifier $id, Contract $type, array $messages)
+    public function __construct(Identifier $id, Type $type, array $messages)
     {
         assert(
             Test::isListOf($messages, EventMessage::class),
@@ -82,7 +82,7 @@ final class EventStream implements Countable, IteratorAggregate
     /**
      * Retrieves the associated type
      *
-     * @return Contract
+     * @return Type
      */
     public function type()
     {

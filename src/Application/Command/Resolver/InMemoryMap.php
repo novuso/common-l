@@ -5,8 +5,8 @@ namespace Novuso\Common\Application\Command\Resolver;
 use Novuso\Common\Application\Command\Command;
 use Novuso\Common\Application\Command\Handler;
 use Novuso\Common\Application\Command\Exception\HandlerNotFoundException;
-use Novuso\Common\Application\Command\Exception\InvalidContractException;
-use Novuso\System\Type\Contract;
+use Novuso\Common\Application\Command\Exception\InvalidCommandException;
+use Novuso\System\Type\Type;
 use Novuso\System\Utility\Test;
 
 /**
@@ -36,7 +36,7 @@ class InMemoryMap
      *
      * @param array $commandToHandlerMap A map of class names to handlers
      *
-     * @throws InvalidContractException When a command class is not valid
+     * @throws InvalidCommandException When a command class is not valid
      */
     public function __construct(array $commandToHandlerMap = [])
     {
@@ -55,7 +55,7 @@ class InMemoryMap
      *
      * @return void
      *
-     * @throws InvalidContractException When a command class is not valid
+     * @throws InvalidCommandException When a command class is not valid
      */
     public function addHandlers(array $commandToHandlerMap)
     {
@@ -72,18 +72,18 @@ class InMemoryMap
      *
      * @return void
      *
-     * @throws InvalidContractException When the command class is not valid
+     * @throws InvalidCommandException When the command class is not valid
      */
     public function setHandler($commandClass, Handler $handler)
     {
         if (!Test::implementsInterface($commandClass, Command::class)) {
             $message = sprintf('Invalid command class: %s', $commandClass);
-            throw InvalidContractException::create($message);
+            throw InvalidCommandException::create($message);
         }
 
-        $contract = Contract::create($commandClass)->toString();
+        $type = Type::create($commandClass)->toString();
 
-        $this->handlers[$contract] = $handler;
+        $this->handlers[$type] = $handler;
     }
 
     /**
@@ -97,14 +97,14 @@ class InMemoryMap
      */
     public function getHandler($commandClass)
     {
-        $contract = Contract::create($commandClass)->toString();
+        $type = Type::create($commandClass)->toString();
 
-        if (!isset($this->handlers[$contract])) {
+        if (!isset($this->handlers[$type])) {
             $message = sprintf('Handler not defined for command: %s', $commandClass);
             throw HandlerNotFoundException::create($message);
         }
 
-        return $this->handlers[$contract];
+        return $this->handlers[$type];
     }
 
     /**
@@ -116,8 +116,8 @@ class InMemoryMap
      */
     public function hasHandler($commandClass)
     {
-        $contract = Contract::create($commandClass)->toString();
+        $type = Type::create($commandClass)->toString();
 
-        return isset($this->handlers[$contract]);
+        return isset($this->handlers[$type]);
     }
 }
