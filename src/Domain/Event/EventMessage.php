@@ -2,22 +2,24 @@
 
 namespace Novuso\Common\Domain\Event;
 
-use Novuso\Common\Domain\Event\Api\Event;
-use Novuso\Common\Domain\Event\Api\EventMessage;
+use Novuso\Common\Domain\Event\Api\DomainEvent;
 use Novuso\Common\Domain\Model\Api\Identifier;
 use Novuso\Common\Domain\Model\DateTime\DateTime;
+use Novuso\System\Serialization\Serializable;
+use Novuso\System\Type\Comparable;
 use Novuso\System\Type\Contract;
+use Novuso\System\Type\Equatable;
 use Novuso\System\Utility\Test;
 
 /**
- * DomainEventMessage is a message wrapper for a domain event
+ * EventMessage is a message wrapper for a domain event
  *
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-final class DomainEventMessage implements EventMessage
+final class EventMessage implements Comparable, Equatable, Serializable
 {
     /**
      * Event ID
@@ -64,9 +66,9 @@ final class DomainEventMessage implements EventMessage
     /**
      * Domain event data
      *
-     * @var Event
+     * @var DomainEvent
      */
-    protected $eventData;
+    protected $domainEvent;
 
     /**
      * Sequence number
@@ -76,15 +78,15 @@ final class DomainEventMessage implements EventMessage
     protected $sequenceNumber;
 
     /**
-     * Constructs DomainEventMessage
+     * Constructs EventMessage
      *
-     * @param EventId    $eventId       The event ID
-     * @param Identifier $aggregateId   The aggregate ID
-     * @param Contract   $aggregateType The aggregate type
-     * @param DateTime   $dateTime      The timestamp
-     * @param MetaData   $metaData      The meta data
-     * @param Event      $eventData     The event data
-     * @param int        $sequence      The sequence number
+     * @param EventId     $eventId       The event ID
+     * @param Identifier  $aggregateId   The aggregate ID
+     * @param Contract    $aggregateType The aggregate type
+     * @param DateTime    $dateTime      The timestamp
+     * @param MetaData    $metaData      The meta data
+     * @param DomainEvent $domainEvent   The domain event
+     * @param int         $sequence      The sequence number
      */
     public function __construct(
         EventId $eventId,
@@ -92,16 +94,16 @@ final class DomainEventMessage implements EventMessage
         Contract $aggregateType,
         DateTime $dateTime,
         MetaData $metaData,
-        Event $eventData,
+        DomainEvent $domainEvent,
         $sequence = 0
     ) {
         $this->eventId = $eventId;
-        $this->eventType = Contract::create($eventData);
+        $this->eventType = Contract::create($domainEvent);
         $this->aggregateId = $aggregateId;
         $this->aggregateType = $aggregateType;
         $this->dateTime = $dateTime;
         $this->metaData = $metaData;
-        $this->eventData = $eventData;
+        $this->domainEvent = $domainEvent;
         $this->sequenceNumber = (int) $sequence;
     }
 
@@ -118,9 +120,9 @@ final class DomainEventMessage implements EventMessage
         $dateTime = DateTime::fromString($data['dateTime']);
         $metaData = MetaData::deserialize($data['metaData']);
         $eventClass = Contract::create($data['eventType'])->toClassName();
-        $eventData = $eventClass::deserialize($data['eventData']);
+        $domainEvent = $eventClass::deserialize($data['domainEvent']);
 
-        return new self($eventId, $aggregateId, $aggregateType, $dateTime, $metaData, $eventData, $sequence);
+        return new self($eventId, $aggregateId, $aggregateType, $dateTime, $metaData, $domainEvent, $sequence);
     }
 
     /**
@@ -139,12 +141,14 @@ final class DomainEventMessage implements EventMessage
             'aggregateIdType' => $aggregateIdType->toString(),
             'dateTime'        => $this->dateTime->toString(),
             'metaData'        => $this->metaData->serialize(),
-            'eventData'       => $this->eventData->serialize()
+            'domainEvent'     => $this->domainEvent->serialize()
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieves a unique identifier
+     *
+     * @return Identifier
      */
     public function eventId()
     {
@@ -152,7 +156,9 @@ final class DomainEventMessage implements EventMessage
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieves the sequence number
+     *
+     * @return int
      */
     public function sequenceNumber()
     {
@@ -160,7 +166,9 @@ final class DomainEventMessage implements EventMessage
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieves the event type
+     *
+     * @return Contract
      */
     public function eventType()
     {
@@ -168,7 +176,9 @@ final class DomainEventMessage implements EventMessage
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieves the aggregate ID
+     *
+     * @return Identifier
      */
     public function aggregateId()
     {
@@ -176,7 +186,9 @@ final class DomainEventMessage implements EventMessage
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieves the aggregate contract
+     *
+     * @return Contract
      */
     public function aggregateType()
     {
@@ -184,7 +196,9 @@ final class DomainEventMessage implements EventMessage
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieves the timestamp
+     *
+     * @return DateTime
      */
     public function dateTime()
     {
@@ -192,7 +206,9 @@ final class DomainEventMessage implements EventMessage
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieves the meta data
+     *
+     * @return MetaData
      */
     public function metaData()
     {
@@ -200,15 +216,19 @@ final class DomainEventMessage implements EventMessage
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieves the domain event
+     *
+     * @return DomainEvent
      */
-    public function eventData()
+    public function domainEvent()
     {
-        return $this->eventData;
+        return $this->domainEvent;
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieves a string representation
+     *
+     * @return string
      */
     public function toString()
     {
@@ -216,7 +236,9 @@ final class DomainEventMessage implements EventMessage
     }
 
     /**
-     * {@inheritdoc}
+     * Handles casting to a string
+     *
+     * @return string
      */
     public function __toString()
     {

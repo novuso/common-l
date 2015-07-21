@@ -3,7 +3,6 @@
 namespace Novuso\Common\Domain\Model;
 
 use Novuso\Common\Domain\Model\Api\Entity;
-use Novuso\Common\Domain\Model\Api\Identifier;
 use Novuso\System\Utility\Test;
 
 /**
@@ -17,31 +16,9 @@ use Novuso\System\Utility\Test;
 abstract class DomainEntity implements Entity
 {
     /**
-     * Entity ID
-     *
-     * @var Identifier
-     */
-    protected $id;
-
-    /**
-     * Constructs DomainEntity
-     *
-     * @internal
-     *
-     * @param Identifier $id The entity ID
-     */
-    protected function __construct(Identifier $id)
-    {
-        $this->id = $id;
-    }
-
-    /**
      * {@inheritdoc}
      */
-    public function id()
-    {
-        return $this->id;
-    }
+    abstract public function id();
 
     /**
      * {@inheritdoc}
@@ -57,7 +34,7 @@ abstract class DomainEntity implements Entity
             sprintf('Comparison requires instance of %s', static::class)
         );
 
-        return $this->id->compareTo($object->id);
+        return $this->id()->compareTo($object->id());
     }
 
     /**
@@ -73,7 +50,7 @@ abstract class DomainEntity implements Entity
             return false;
         }
 
-        return $this->id->equals($object->id);
+        return $this->id()->equals($object->id());
     }
 
     /**
@@ -81,6 +58,6 @@ abstract class DomainEntity implements Entity
      */
     public function hashValue()
     {
-        return $this->id->hashValue();
+        return $this->id()->hashValue();
     }
 }

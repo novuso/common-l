@@ -3,8 +3,7 @@
 namespace Novuso\Common\Domain\Event;
 
 use Countable;
-use Novuso\Common\Domain\Event\Api\Event;
-use Novuso\Common\Domain\Event\Api\EventStream;
+use Novuso\Common\Domain\Event\Api\DomainEvent;
 use Novuso\Common\Domain\Model\Api\Identifier;
 use Novuso\Common\Domain\DateTime\DateTime;
 use Novuso\System\Collection\ArrayList;
@@ -66,7 +65,7 @@ final class EventCollection implements Countable
     {
         $this->aggregateId = $aggregateId;
         $this->aggregateType = $aggregateType;
-        $this->eventMessages = ArrayList::of(DomainEventMessage::class);
+        $this->eventMessages = ArrayList::of(EventMessage::class);
     }
 
     /**
@@ -90,14 +89,14 @@ final class EventCollection implements Countable
     }
 
     /**
-     * Adds an event
+     * Adds a domain event
      *
-     * @param Event $eventData The event data
-     * @param array $metaData  An associated array of metadata
+     * @param DomainEvent $domainEvent The domain event
+     * @param array       $metaData    An associated array of metadata
      *
      * @return void
      */
-    public function add(Event $eventData, array $metaData = [])
+    public function add(DomainEvent $domainEvent, array $metaData = [])
     {
         $dateTime = DateTime::now();
         $eventId = EventId::generate();
@@ -106,12 +105,13 @@ final class EventCollection implements Countable
         $metaData = new MetaData($metaData);
         $sequence = $this->nextSequence();
 
-        $eventMessage = new DomainEventMessage(
+        $eventMessage = new EventMessage(
             $eventId,
             $aggregateId,
             $aggregateType,
             $dateTime,
             $metaData,
+            $domainEvent,
             $sequence
         );
 
@@ -126,7 +126,11 @@ final class EventCollection implements Countable
      */
     public function eventStream()
     {
-        return new DomainEventStream($this->eventMessages->toArray());
+        return new EventStream(
+            $this->aggregateId,
+            $this->aggregateType,
+            $this->eventMessages->toArray()
+        );
     }
 
     /**
@@ -138,15 +142,14 @@ final class EventCollection implements Countable
      */
     public function initializeSequence($committedSequence)
     {
-        assert($this->eventMessages->isEmpty(), sprintf('%s must be called before events are added', __METHOD__));
-
+        assert($this->eventMessages->isEmpty(), 'Cannot initialize sequence after adding events');
         $this->committedSequence = (int) $committedSequence;
     }
 
     /**
      * Retrieves the committed sequence number
      *
-     * @return int
+     * @return int|null
      */
     public function committedSequence()
     {
@@ -156,7 +159,7 @@ final class EventCollection implements Countable
     /**
      * Retrieves the last sequence number
      *
-     * @return int
+     * @return int|null
      */
     public function lastSequence()
     {
@@ -178,7 +181,7 @@ final class EventCollection implements Countable
     public function commitEvents()
     {
         $this->committedSequence = $this->lastSequence();
-        $this->eventMessages = ArrayList::of(DomainEventMessage::class);
+        $this->eventMessages = ArrayList::of(EventMessage::class);
     }
 
     /**

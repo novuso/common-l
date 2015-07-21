@@ -12,7 +12,7 @@ use Novuso\Common\Domain\Event\Api\EventStream;
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-interface RootEntity extends Entity, RecordsEvents
+interface RootEntity extends Entity
 {
     /**
      * Retrieves the concurrency version
@@ -22,11 +22,11 @@ interface RootEntity extends Entity, RecordsEvents
     public function concurrencyVersion();
 
     /**
-     * Retrieves recorded event messages
+     * Removes and returns recorded event messages
      *
      * @return EventStream
      */
-    public function getRecordedEvents();
+    public function extractRecordedEvents();
 
     /**
      * Checks if there are recorded event messages
@@ -34,11 +34,4 @@ interface RootEntity extends Entity, RecordsEvents
      * @return bool
      */
     public function hasRecordedEvents();
-
-    /**
-     * Clears recorded event messages
-     *
-     * @return void
-     */
-    public function clearRecordedEvents();
 }

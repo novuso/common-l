@@ -2,10 +2,11 @@
 
 namespace Novuso\Common\Domain\Event\Api;
 
+use Novuso\System\Exception\DomainException;
 use Novuso\System\Serialization\Serializable;
 
 /**
- * Event is the interface for a domain event
+ * DomainEvent is the interface for a domain event
  *
  * Implementations must adhere to event characteristics:
  *
@@ -19,19 +20,23 @@ use Novuso\System\Serialization\Serializable;
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-interface Event extends Serializable
+interface DomainEvent extends Serializable
 {
     /**
-     * Retrieves a string representation
+     * Creates instance from serialized representation
      *
-     * @return string
+     * @param array $data The serialized representation
+     *
+     * @return DomainEvent
+     *
+     * @throws DomainException When the data is invalid
      */
-    public function toString();
+    public static function deserialize(array $data);
 
     /**
-     * Handles casting to a string
+     * Retrieves serialized representation
      *
-     * @return string
+     * @return array
      */
-    public function __toString();
+    public function serialize();
 }

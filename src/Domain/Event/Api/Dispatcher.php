@@ -2,6 +2,8 @@
 
 namespace Novuso\Common\Domain\Event\Api;
 
+use Novuso\Common\Domain\Event\EventMessage;
+
 /**
  * Dispatcher is the interface for a domain event dispatcher
  *
@@ -12,13 +14,6 @@ namespace Novuso\Common\Domain\Event\Api;
  */
 interface Dispatcher
 {
-    /**
-     * Special type for all events
-     *
-     * @var string
-     */
-    const ALL_EVENTS = '__ALL_EVENTS__';
-
     /**
      * Dispatches a domain event message
      *

@@ -4,13 +4,16 @@ namespace Novuso\Common\Domain\Event;
 
 use Countable;
 use IteratorAggregate;
-use Novuso\System\Collection\HashTable;
+use Novuso\System\Collection\SortedTable;
 use Novuso\System\Exception\KeyException;
 use Novuso\System\Serialization\Serializable;
+use Novuso\System\Utility\VarPrinter;
 use Traversable;
 
 /**
  * MetaData is informational data for a domain event message
+ *
+ * Data is stored as a table with string keys and string values.
  *
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
@@ -20,11 +23,11 @@ use Traversable;
 final class MetaData implements Countable, IteratorAggregate, Serializable
 {
     /**
-     * Hash table
+     * Meta data
      *
-     * @var HashTable
+     * @var SortedTable
      */
-    protected $table;
+    protected $data;
 
     /**
      * Constructs MetaData
@@ -33,10 +36,10 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
      */
     public function __construct(array $metaData)
     {
-        $this->table = HashTable::of('string', 'string');
+        $this->data = SortedTable::string('string');
 
         foreach ($metaData as $key => $value) {
-            $this->table->set($key, $value);
+            $this->data->set((string) $key, VarPrinter::toString($value));
         }
     }
 
@@ -55,7 +58,7 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
     {
         $output = [];
 
-        foreach ($this->table as $key => $value) {
+        foreach ($this->data as $key => $value) {
             $output[$key] = $value;
         }
 
@@ -69,7 +72,7 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
      */
     public function isEmpty()
     {
-        return $this->table->isEmpty();
+        return $this->data->isEmpty();
     }
 
     /**
@@ -79,7 +82,7 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
      */
     public function count()
     {
-        return $this->table->count();
+        return $this->data->count();
     }
 
     /**
@@ -93,7 +96,7 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
      */
     public function get($key)
     {
-        return $this->table->get($key);
+        return $this->data->get($key);
     }
 
     /**
@@ -105,7 +108,7 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
      */
     public function has($key)
     {
-        return $this->table->has($key);
+        return $this->data->has($key);
     }
 
     /**
@@ -115,7 +118,7 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
      */
     public function keys()
     {
-        return $this->table->keys();
+        return $this->data->keys();
     }
 
     /**
@@ -127,7 +130,7 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
     {
         $output = [];
 
-        foreach ($this->table as $key => $value) {
+        foreach ($this->data as $key => $value) {
             $output[$key] = $value;
         }
 
@@ -151,6 +154,6 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
      */
     public function getIterator()
     {
-        return $this->table->getIterator();
+        return $this->data->getIterator();
     }
 }

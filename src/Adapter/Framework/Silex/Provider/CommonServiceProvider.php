@@ -5,11 +5,10 @@ namespace Novuso\Common\Adapter\Framework\Silex\Provider;
 use Novuso\Common\Adapter\Infrastructure\Logging\PsrLogger;
 use Novuso\Common\Adapter\Infrastructure\Service\PimpleContainer;
 use Novuso\Common\Application\Command\Pipeline\ApplicationBus;
-use Novuso\Common\Application\Command\Pipeline\CommandLogger;
 use Novuso\Common\Application\Command\Pipeline\CommandPipeline;
 use Novuso\Common\Application\Command\Resolver\ServiceMap;
 use Novuso\Common\Application\Command\Resolver\ServiceResolver;
-use Novuso\Common\Application\Event\ServiceAwareDispatcher;
+use Novuso\Common\Application\DomainEvent\Dispatcher\ServiceAwareDispatcher;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -81,17 +80,6 @@ class CommonServiceProvider implements ServiceProviderInterface
         $app['novuso_common.command_resolver'] = function ($app) {
             return new ServiceResolver($app['novuso_common.command_resolver.service_map']);
         };
-
-        $app['novuso_common.command_logger'] = function ($app) {
-            return new CommandLogger($app['novuso_common.logger']);
-        };
-
-        // Extends command bus to add logging filter
-        $app->extend('novuso_common.command_bus', function ($pipeline, $app) {
-            $pipeline->addFilter($app['novuso_common.command_logger']);
-
-            return $pipeline;
-        });
 
         // Register command filter services
         // ['middleware_service_id']

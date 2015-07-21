@@ -2,6 +2,7 @@
 
 namespace Novuso\Common\Application\Command;
 
+use Novuso\System\Exception\DomainException;
 use Novuso\System\Serialization\Serializable;
 
 /**
@@ -21,4 +22,21 @@ use Novuso\System\Serialization\Serializable;
  */
 interface Command extends Serializable
 {
+    /**
+     * Creates instance from serialized representation
+     *
+     * @param array $data The serialized representation
+     *
+     * @return Command
+     *
+     * @throws DomainException When the data is invalid
+     */
+    public static function deserialize(array $data);
+
+    /**
+     * Retrieves serialized representation
+     *
+     * @return array
+     */
+    public function serialize();
 }

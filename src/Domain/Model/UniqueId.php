@@ -3,6 +3,7 @@
 namespace Novuso\Common\Domain\Model;
 
 use Novuso\Common\Domain\Model\Api\Identifier;
+use Novuso\Common\Domain\Model\Api\IdGenerator;
 use Novuso\Common\Domain\Model\Identity\Uuid;
 use Novuso\System\Exception\TypeException;
 use Novuso\System\Utility\Test;
@@ -16,7 +17,7 @@ use Novuso\System\Utility\VarPrinter;
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-abstract class UniqueId implements Identifier
+abstract class UniqueId implements Identifier, IdGenerator
 {
     /**
      * UUID
@@ -38,9 +39,7 @@ abstract class UniqueId implements Identifier
     }
 
     /**
-     * Generates a new identifier
-     *
-     * @return UniqueId
+     * {@inheritdoc}
      */
     public static function generate()
     {

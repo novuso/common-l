@@ -3,8 +3,8 @@
 namespace Novuso\Common\Domain\Event\Dispatcher;
 
 use Novuso\Common\Domain\Event\Api\Dispatcher;
-use Novuso\Common\Domain\Event\Api\EventMessage;
 use Novuso\Common\Domain\Event\Api\Subscriber;
+use Novuso\Common\Domain\Event\EventMessage;
 use Novuso\System\Exception\ImmutableException;
 
 /**

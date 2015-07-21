@@ -3,8 +3,8 @@
 namespace Novuso\Common\Domain\Event\Dispatcher;
 
 use Novuso\Common\Domain\Event\Api\Dispatcher;
-use Novuso\Common\Domain\Event\Api\EventMessage;
 use Novuso\Common\Domain\Event\Api\Subscriber;
+use Novuso\Common\Domain\Event\EventMessage;
 
 /**
  * InMemoryDispatcher dispatches domain events to registered handlers
@@ -71,7 +71,7 @@ class InMemoryDispatcher implements Dispatcher
             call_user_func($handler, $message);
         }
 
-        $allEvents = Dispatcher::ALL_EVENTS;
+        $allEvents = Subscriber::ALL_EVENTS;
 
         if (!isset($this->handlers[$allEvents])) {
             return;

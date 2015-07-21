@@ -6,12 +6,15 @@ use Novuso\Common\Domain\Model\DomainEntity;
 
 final class User extends DomainEntity
 {
-    public static function register(UserId $id)
+    protected $id;
+
+    public function __construct(UserId $id)
     {
-        $user = new static($id);
+        $this->id = $id;
+    }
 
-        //
-
-        return $user;
+    public function id()
+    {
+        return $this->id;
     }
 }

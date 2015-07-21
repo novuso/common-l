@@ -13,6 +13,13 @@ namespace Novuso\Common\Domain\Event\Api;
 interface Subscriber
 {
     /**
+     * Special type for all events
+     *
+     * @var string
+     */
+    const ALL_EVENTS = '__ALL_EVENTS__';
+
+    /**
      * Retrieves event registration
      *
      * The returned array keys are event types. The event type string is the

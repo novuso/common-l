@@ -36,7 +36,7 @@ services:
 
     # Novuso\Common\Domain\Event\Dispatcher
     novuso_common.event_dispatcher:
-        class: Novuso\Common\Application\DomainEvent\ServiceAwareDispatcher
+        class: Novuso\Common\Application\DomainEvent\Dispatcher\ServiceAwareDispatcher
         arguments:
             - @novuso_common.service_container
 
@@ -64,12 +64,4 @@ services:
         class: Novuso\Common\Application\Command\Resolver\ServiceResolver
         arguments:
             - @novuso_common.command_resolver.service_map
-        public: false
-
-    novuso_common.command_logger:
-        class: Novuso\Common\Application\Command\Pipeline\CommandLogger
-        arguments:
-            - @novuso_common.logger
-        tags:
-            - { name: novuso_common.command_filter }
         public: false
