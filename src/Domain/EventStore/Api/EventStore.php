@@ -17,10 +17,10 @@ use Novuso\System\Type\Contract;
 interface EventStore
 {
     /**
-     * Loads events for an aggregate by ID and type
+     * Loads event stream by ID and type
      *
-     * @param Identifier $id   The aggregate ID
-     * @param Contract   $type The aggregate type
+     * @param Identifier $id   The stream ID
+     * @param Contract   $type The stream type
      *
      * @return EventStream
      */

@@ -12,7 +12,7 @@ use Novuso\System\Utility\VarPrinter;
 use Traversable;
 
 /**
- * EventStream is a stream of domain event messages
+ * EventStream is a stream of event messages
  *
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
@@ -22,18 +22,18 @@ use Traversable;
 final class EventStream implements Countable, IteratorAggregate
 {
     /**
-     * Aggregate ID
+     * Associated ID
      *
      * @var Identifier
      */
-    protected $aggregateId;
+    protected $id;
 
     /**
-     * Aggregate Type
+     * Associated Type
      *
      * @var Contract
      */
-    protected $aggregateType;
+    protected $type;
 
     /**
      * Event Messages
@@ -52,41 +52,41 @@ final class EventStream implements Countable, IteratorAggregate
     /**
      * Constructs EventStream
      *
-     * @param Identifier     $aggregateId   The aggregate ID
-     * @param Contract       $aggregateType The aggregate type
-     * @param EventMessage[] $messages      A list of event messages
+     * @param Identifier     $id       The associated ID
+     * @param Contract       $type     The associated type
+     * @param EventMessage[] $messages A list of event messages
      */
-    public function __construct(Identifier $aggregateId, Contract $aggregateType, array $messages)
+    public function __construct(Identifier $id, Contract $type, array $messages)
     {
         assert(
             Test::isListOf($messages, EventMessage::class),
             sprintf('Invalid event messages: %s', VarPrinter::toString($messages))
         );
 
-        $this->aggregateId = $aggregateId;
-        $this->aggregateType = $aggregateType;
+        $this->id = $id;
+        $this->type = $type;
         $this->messages = array_values($messages);
         $this->count = count($this->messages);
     }
 
     /**
-     * Retrieves the aggregate ID
+     * Retrieves the associated ID
      *
      * @return Identifier
      */
-    public function aggregateId()
+    public function id()
     {
-        return $this->aggregateId;
+        return $this->id;
     }
 
     /**
-     * Retrieves the aggregate type
+     * Retrieves the associated type
      *
      * @return Contract
      */
-    public function aggregateType()
+    public function type()
     {
-        return $this->aggregateType;
+        return $this->type;
     }
 
     /**

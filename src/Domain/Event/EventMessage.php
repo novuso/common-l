@@ -114,8 +114,8 @@ final class EventMessage implements Comparable, Equatable, Serializable
     {
         $sequence = $data['sequence'];
         $eventId = EventId::fromString($data['eventId']);
-        $aggIdClass = Contract::create($data['aggregateIdType'])->toClassName();
-        $aggregateId = $aggIdClass::fromString($data['aggregateId']);
+        $aggIdClass = Contract::create($data['identifierType'])->toClassName();
+        $aggregateId = $aggIdClass::fromString($data['identifier']);
         $aggregateType = Contract::create($data['aggregateType']);
         $dateTime = DateTime::fromString($data['dateTime']);
         $metaData = MetaData::deserialize($data['metaData']);
@@ -133,15 +133,15 @@ final class EventMessage implements Comparable, Equatable, Serializable
         $aggregateIdType = Contract::create($this->aggregateId);
 
         return [
-            'sequence'        => $this->sequenceNumber,
-            'eventId'         => $this->eventId->toString(),
-            'eventType'       => $this->eventType->toString(),
-            'aggregateId'     => $this->aggregateId->toString(),
-            'aggregateType'   => $this->aggregateType->toString(),
-            'aggregateIdType' => $aggregateIdType->toString(),
-            'dateTime'        => $this->dateTime->toString(),
-            'metaData'        => $this->metaData->serialize(),
-            'domainEvent'     => $this->domainEvent->serialize()
+            'sequence'       => $this->sequenceNumber,
+            'eventId'        => $this->eventId->toString(),
+            'eventType'      => $this->eventType->toString(),
+            'identifier'     => $this->aggregateId->toString(),
+            'identifierType' => $aggregateIdType->toString(),
+            'aggregateType'  => $this->aggregateType->toString(),
+            'dateTime'       => $this->dateTime->toString(),
+            'metaData'       => $this->metaData->serialize(),
+            'domainEvent'    => $this->domainEvent->serialize()
         ];
     }
 
