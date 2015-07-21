@@ -40,5 +40,5 @@ interface RootEntity extends Entity, RecordsEvents
      *
      * @return void
      */
-    public function commitEvents();
+    public function clearRecordedEvents();
 }

@@ -24,19 +24,6 @@ trait RecordedEvents
     protected $eventCollection;
 
     /**
-     * Records a domain event
-     *
-     * @param Event $eventData The event data
-     * @param array $metaData  The meta data
-     *
-     * @return void
-     */
-    public function recordThat(Event $eventData, array $metaData = [])
-    {
-        $this->eventCollection()->add($eventData, $metaData);
-    }
-
-    /**
      * Retrieves recorded event messages
      *
      * @return EventStream
@@ -61,9 +48,22 @@ trait RecordedEvents
      *
      * @return void
      */
-    public function commitEvents()
+    public function clearRecordedEvents()
     {
         $this->eventCollection()->commitEvents();
+    }
+
+    /**
+     * Records a domain event
+     *
+     * @param Event $eventData The event data
+     * @param array $metaData  The meta data
+     *
+     * @return void
+     */
+    protected function recordThat(Event $eventData, array $metaData = [])
+    {
+        $this->eventCollection()->add($eventData, $metaData);
     }
 
     /**

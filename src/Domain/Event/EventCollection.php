@@ -36,18 +36,18 @@ final class EventCollection implements Countable
     protected $aggregateType;
 
     /**
-     * Last commited sequence number
+     * Committed sequence number
      *
      * @var int|null
      */
-    protected $lastCommitedSequenceNumber;
+    protected $committedSequence;
 
     /**
      * Last sequence number
      *
      * @var int|null
      */
-    protected $lastSequenceNumber;
+    protected $lastSequence;
 
     /**
      * Event messages
@@ -104,7 +104,7 @@ final class EventCollection implements Countable
         $aggregateId = $this->aggregateId;
         $aggregateType = $this->aggregateType;
         $metaData = new MetaData($metaData);
-        $sequence = $this->nextSequenceNumber();
+        $sequence = $this->nextSequence();
 
         $eventMessage = new DomainEventMessage(
             $eventId,
@@ -115,7 +115,7 @@ final class EventCollection implements Countable
             $sequence
         );
 
-        $this->lastSequenceNumber = $eventMessage->sequenceNumber();
+        $this->lastSequence = $eventMessage->sequenceNumber();
         $this->eventMessages->add($eventMessage);
     }
 
@@ -132,25 +132,25 @@ final class EventCollection implements Countable
     /**
      * Initializes the sequence
      *
-     * @param int $lastCommitedSequenceNumber The last commited number
+     * @param int $committedSequence The commited sequence number
      *
      * @return void
      */
-    public function initializeSequence($lastCommitedSequenceNumber)
+    public function initializeSequence($committedSequence)
     {
         assert($this->eventMessages->isEmpty(), sprintf('%s must be called before events are added', __METHOD__));
 
-        $this->lastCommitedSequenceNumber = (int) $lastCommitedSequenceNumber;
+        $this->committedSequence = (int) $committedSequence;
     }
 
     /**
-     * Retrieves the last committed sequence number
+     * Retrieves the committed sequence number
      *
      * @return int
      */
-    public function lastCommitedSequenceNumber()
+    public function committedSequence()
     {
-        return $this->lastCommitedSequenceNumber;
+        return $this->committedSequence;
     }
 
     /**
@@ -158,26 +158,26 @@ final class EventCollection implements Countable
      *
      * @return int
      */
-    public function lastSequenceNumber()
+    public function lastSequence()
     {
         if ($this->eventMessages->isEmpty()) {
-            return $this->lastCommitedSequenceNumber;
-        } elseif ($this->lastSequenceNumber === null) {
+            return $this->committedSequence;
+        } elseif ($this->lastSequence === null) {
             $last = $this->eventMessages->last();
-            $this->lastSequenceNumber = $last->sequenceNumber();
+            $this->lastSequence = $last->sequenceNumber();
         }
 
-        return $this->lastSequenceNumber;
+        return $this->lastSequence;
     }
 
     /**
-     * Clears events and updates last committed sequence number
+     * Clears events and updates committed sequence number
      *
      * @return void
      */
     public function commitEvents()
     {
-        $this->lastCommitedSequenceNumber = $this->lastSequenceNumber();
+        $this->committedSequence = $this->lastSequence();
         $this->eventMessages = ArrayList::of(DomainEventMessage::class);
     }
 
@@ -186,9 +186,9 @@ final class EventCollection implements Countable
      *
      * @return int
      */
-    private function nextSequenceNumber()
+    private function nextSequence()
     {
-        $number = $this->lastSequenceNumber();
+        $number = $this->lastSequence();
 
         if ($number === null) {
             return 0;
