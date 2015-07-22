@@ -21,18 +21,18 @@ use Novuso\System\Utility\Test;
 final class EventCollection implements Countable
 {
     /**
-     * Aggregate ID
+     * Associated ID
      *
      * @var Identifier
      */
-    protected $aggregateId;
+    protected $id;
 
     /**
-     * Aggregate type
+     * Associated type
      *
      * @var Type
      */
-    protected $aggregateType;
+    protected $type;
 
     /**
      * Committed sequence number
@@ -58,13 +58,13 @@ final class EventCollection implements Countable
     /**
      * Constructs EventCollection
      *
-     * @param Identifier $aggregateId   The aggregate ID
-     * @param Type       $aggregateType The aggregate type
+     * @param Identifier $id   The associated ID
+     * @param Type       $type The associated type
      */
-    public function __construct(Identifier $aggregateId, Type $aggregateType)
+    public function __construct(Identifier $id, Type $type)
     {
-        $this->aggregateId = $aggregateId;
-        $this->aggregateType = $aggregateType;
+        $this->id = $id;
+        $this->type = $type;
         $this->eventMessages = ArrayList::of(EventMessage::class);
     }
 
@@ -100,15 +100,13 @@ final class EventCollection implements Countable
     {
         $dateTime = DateTime::now();
         $eventId = EventId::generate();
-        $aggregateId = $this->aggregateId;
-        $aggregateType = $this->aggregateType;
         $metaData = new MetaData($metaData);
         $sequence = $this->nextSequence();
 
         $eventMessage = new EventMessage(
             $eventId,
-            $aggregateId,
-            $aggregateType,
+            $this->id,
+            $this->type,
             $dateTime,
             $metaData,
             $domainEvent,
@@ -126,11 +124,7 @@ final class EventCollection implements Countable
      */
     public function eventStream()
     {
-        return new EventStream(
-            $this->aggregateId,
-            $this->aggregateType,
-            $this->eventMessages->toArray()
-        );
+        return new EventStream($this->id, $this->type, $this->eventMessages->toArray());
     }
 
     /**

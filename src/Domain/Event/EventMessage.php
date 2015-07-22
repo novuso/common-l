@@ -36,18 +36,18 @@ final class EventMessage implements Comparable, Equatable, Serializable
     protected $eventType;
 
     /**
-     * Aggregate ID
+     * Associated ID
      *
      * @var Identifier
      */
-    protected $aggregateId;
+    protected $identifier;
 
     /**
-     * Aggregate Type
+     * Associated Type
      *
      * @var Type
      */
-    protected $aggregateType;
+    protected $objectType;
 
     /**
      * Timestamp
@@ -80,18 +80,18 @@ final class EventMessage implements Comparable, Equatable, Serializable
     /**
      * Constructs EventMessage
      *
-     * @param EventId     $eventId       The event ID
-     * @param Identifier  $aggregateId   The aggregate ID
-     * @param Type        $aggregateType The aggregate type
-     * @param DateTime    $dateTime      The timestamp
-     * @param MetaData    $metaData      The meta data
-     * @param DomainEvent $domainEvent   The domain event
-     * @param int         $sequence      The sequence number
+     * @param EventId     $eventId     The event ID
+     * @param Identifier  $identifier  The associated ID
+     * @param Type        $objectType  The associated type
+     * @param DateTime    $dateTime    The timestamp
+     * @param MetaData    $metaData    The meta data
+     * @param DomainEvent $domainEvent The domain event
+     * @param int         $sequence    The sequence number
      */
     public function __construct(
         EventId $eventId,
-        Identifier $aggregateId,
-        Type $aggregateType,
+        Identifier $identifier,
+        Type $objectType,
         DateTime $dateTime,
         MetaData $metaData,
         DomainEvent $domainEvent,
@@ -99,8 +99,8 @@ final class EventMessage implements Comparable, Equatable, Serializable
     ) {
         $this->eventId = $eventId;
         $this->eventType = Type::create($domainEvent);
-        $this->aggregateId = $aggregateId;
-        $this->aggregateType = $aggregateType;
+        $this->identifier = $identifier;
+        $this->objectType = $objectType;
         $this->dateTime = $dateTime;
         $this->metaData = $metaData;
         $this->domainEvent = $domainEvent;
@@ -114,15 +114,15 @@ final class EventMessage implements Comparable, Equatable, Serializable
     {
         $sequence = $data['sequence'];
         $eventId = EventId::fromString($data['eventId']);
-        $aggIdClass = Type::create($data['identifierType'])->toClassName();
-        $aggregateId = $aggIdClass::fromString($data['identifier']);
-        $aggregateType = Type::create($data['aggregateType']);
+        $idClass = Type::create($data['identifierType'])->toClassName();
+        $identifier = $idClass::fromString($data['identifier']);
+        $objectType = Type::create($data['objectType']);
         $dateTime = DateTime::fromString($data['dateTime']);
         $metaData = MetaData::deserialize($data['metaData']);
         $eventClass = Type::create($data['eventType'])->toClassName();
         $domainEvent = $eventClass::deserialize($data['domainEvent']);
 
-        return new self($eventId, $aggregateId, $aggregateType, $dateTime, $metaData, $domainEvent, $sequence);
+        return new self($eventId, $identifier, $objectType, $dateTime, $metaData, $domainEvent, $sequence);
     }
 
     /**
@@ -130,15 +130,15 @@ final class EventMessage implements Comparable, Equatable, Serializable
      */
     public function serialize()
     {
-        $aggregateIdType = Type::create($this->aggregateId);
+        $identifierType = Type::create($this->identifier);
 
         return [
             'sequence'       => $this->sequenceNumber,
             'eventId'        => $this->eventId->toString(),
             'eventType'      => $this->eventType->toString(),
-            'identifier'     => $this->aggregateId->toString(),
-            'identifierType' => $aggregateIdType->toString(),
-            'aggregateType'  => $this->aggregateType->toString(),
+            'identifier'     => $this->identifier->toString(),
+            'identifierType' => $identifierType->toString(),
+            'objectType'     => $this->objectType->toString(),
             'dateTime'       => $this->dateTime->toString(),
             'metaData'       => $this->metaData->serialize(),
             'domainEvent'    => $this->domainEvent->serialize()
@@ -176,23 +176,23 @@ final class EventMessage implements Comparable, Equatable, Serializable
     }
 
     /**
-     * Retrieves the aggregate ID
+     * Retrieves the associated ID
      *
      * @return Identifier
      */
-    public function aggregateId()
+    public function identifier()
     {
-        return $this->aggregateId;
+        return $this->identifier;
     }
 
     /**
-     * Retrieves the aggregate contract
+     * Retrieves the associated type
      *
      * @return Type
      */
-    public function aggregateType()
+    public function objectType()
     {
-        return $this->aggregateType;
+        return $this->objectType;
     }
 
     /**
@@ -259,8 +259,8 @@ final class EventMessage implements Comparable, Equatable, Serializable
             sprintf('Comparison requires instance of %s', static::class)
         );
         assert(
-            Test::areEqual($this->aggregateId, $object->aggregateId),
-            'Comparison must be for a single aggregate'
+            Test::areEqual($this->identifier, $object->identifier),
+            'Comparison must be for a single identifier'
         );
 
         $thisSeq = $this->sequenceNumber;
