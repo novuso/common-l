@@ -982,14 +982,16 @@ class Uri extends ValueObject implements Comparable
                         $output = substr($output, 0, $pos);
                     }
                     break;
-                case ('/..' == substr($path, 0, 3) && (substr($path, 3, 1) === false || substr($path, 3, 1) === '/')):
+                case ('/..' == substr($path, 0, 3)
+                    && (substr($path, 3, 1) === false || substr($path, 3, 1) === '' || substr($path, 3, 1) === '/')):
                     $path = '/'.substr($path, 3);
                     $pos = strrpos($output, '/', -1);
                     if ($pos !== false) {
                         $output = substr($output, 0, $pos);
                     }
                     break;
-                case ('/.' == substr($path, 0, 2) && (substr($path, 2, 1) === false || substr($path, 2, 1) === '/')):
+                case ('/.' == substr($path, 0, 2)
+                    && (substr($path, 2, 1) === false || substr($path, 2, 1) === '' || substr($path, 2, 1) === '/')):
                     $path = '/'.substr($path, 2);
                     break;
                 default:
