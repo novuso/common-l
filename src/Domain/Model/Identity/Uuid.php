@@ -344,20 +344,11 @@ final class Uuid extends ValueObject implements Comparable
     }
 
     /**
-     * Creates instance from a UUID string
-     *
-     * Alias for Uuid::parse() method.
-     *
-     * @param string $uuid The UUID string
-     *
-     * @return Uuid
-     *
-     * @throws TypeException When uuid is not a string
-     * @throws DomainException When the string is not a valid UUID
+     * {@inheritdoc}
      */
-    public static function fromString($uuid)
+    public static function fromString($state)
     {
-        return self::parse($uuid);
+        return self::parse($state);
     }
 
     /**

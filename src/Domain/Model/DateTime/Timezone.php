@@ -5,6 +5,7 @@ namespace Novuso\Common\Domain\Model\DateTime;
 use DateTimeZone;
 use Novuso\Common\Domain\Model\ValueObject;
 use Novuso\System\Exception\DomainException;
+use Novuso\System\Exception\TypeException;
 use Novuso\System\Type\Comparable;
 use Novuso\System\Utility\Test;
 use Novuso\System\Utility\VarPrinter;
@@ -61,6 +62,24 @@ final class Timezone extends ValueObject implements Comparable
     public static function create($value)
     {
         return new self($value);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function fromString($state)
+    {
+        if (!is_string($state)) {
+            $message = sprintf(
+                '%s expects $state to be a string; received (%s) %s',
+                __METHOD__,
+                gettype($state),
+                VarPrinter::toString($state)
+            );
+            throw TypeException::create($message);
+        }
+
+        return new self($state);
     }
 
     /**

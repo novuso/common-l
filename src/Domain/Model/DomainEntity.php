@@ -18,11 +18,6 @@ abstract class DomainEntity implements Entity
     /**
      * {@inheritdoc}
      */
-    abstract public function id();
-
-    /**
-     * {@inheritdoc}
-     */
     public function compareTo($object)
     {
         if ($this === $object) {

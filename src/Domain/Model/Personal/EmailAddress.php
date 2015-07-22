@@ -60,18 +60,11 @@ final class EmailAddress extends ValueObject implements Comparable
     }
 
     /**
-     * Creates instance from a string
-     *
-     * @param string $email The email address string
-     *
-     * @return EmailAddress
-     *
-     * @throws TypeException When email is not a string
-     * @throws DomainException When the email address is not valid
+     * {@inheritdoc}
      */
-    public static function fromString($email)
+    public static function fromString($state)
     {
-        return new self($email);
+        return new self($state);
     }
 
     /**

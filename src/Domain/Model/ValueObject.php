@@ -28,11 +28,6 @@ abstract class ValueObject implements Value
     /**
      * {@inheritdoc}
      */
-    abstract public function toString();
-
-    /**
-     * {@inheritdoc}
-     */
     public function __toString()
     {
         return $this->toString();

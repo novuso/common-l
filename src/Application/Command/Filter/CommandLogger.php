@@ -7,7 +7,6 @@ use Novuso\Common\Application\Command\Filter;
 use Novuso\Common\Application\Command\Exception\CommandException;
 use Novuso\Common\Application\Logging\Logger;
 use Novuso\System\Serialization\Serializer;
-use Novuso\System\Type\Type;
 use Novuso\System\Utility\ClassName;
 
 /**
@@ -52,20 +51,19 @@ class CommandLogger implements Filter
     public function process(Command $command, callable $next)
     {
         try {
-            $type = Type::create($command);
             $this->logger->info(
                 sprintf('Command (%s) received: %s', ClassName::short($command), date(DATE_ATOM)),
-                ['command' => $this->serializer->serialize($type, $command)]
+                ['command' => $this->serializer->serialize($command)]
             );
             $next($command);
             $this->logger->info(
                 sprintf('Command (%s) handled: %s', ClassName::short($command), date(DATE_ATOM)),
-                ['command' => $this->serializer->serialize($type, $command)]
+                ['command' => $this->serializer->serialize($command)]
             );
         } catch (Exception $exception) {
             $this->logger->error(
                 sprintf('Command (%s) failed: %s', ClassName::short($command), date(DATE_ATOM)),
-                ['command' => $this->serializer->serialize($type, $command), 'exception' => $exception]
+                ['command' => $this->serializer->serialize($command), 'exception' => $exception]
             );
             throw CommandException::create($exception->getMessage(), $exception);
         }

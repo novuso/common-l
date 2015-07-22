@@ -23,7 +23,6 @@
         "psr-4": {
             "Novuso\\Common\\": "src",
             "Novuso\\Test\\Common\\": "test"
-        },
-        "files": ["inc/random.php"]
+        }
     }
 }

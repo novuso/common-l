@@ -3,6 +3,7 @@
 namespace Novuso\Test\Common\Doubles;
 
 use Novuso\Common\Domain\Model\ValueObject;
+use Novuso\System\Exception\DomainException;
 
 final class FullName extends ValueObject
 {
@@ -15,6 +16,22 @@ final class FullName extends ValueObject
         $this->first = $first;
         $this->last = $last;
         $this->middle = $middle;
+    }
+
+    public static function fromString($state)
+    {
+        $parts = explode(' ', trim($state));
+
+        if (count($parts) < 2) {
+            $message = sprintf('%s expects at least first and last name', __METHOD__);
+            throw DomainException::create($message);
+        }
+
+        if (count($parts) === 2) {
+            return new self($parts[0], $parts[1]);
+        }
+
+        return new self($parts[0], $parts[1], $parts[2]);
     }
 
     public static function fromParts($first, $last, $middle = null)

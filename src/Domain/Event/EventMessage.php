@@ -5,6 +5,7 @@ namespace Novuso\Common\Domain\Event;
 use Novuso\Common\Domain\Event\Api\DomainEvent;
 use Novuso\Common\Domain\Model\Api\Identifier;
 use Novuso\Common\Domain\Model\DateTime\DateTime;
+use Novuso\Common\Domain\Model\ValueSerializer;
 use Novuso\System\Serialization\Serializable;
 use Novuso\System\Type\Comparable;
 use Novuso\System\Type\Equatable;
@@ -114,8 +115,7 @@ final class EventMessage implements Comparable, Equatable, Serializable
     {
         $sequence = $data['sequence'];
         $eventId = EventId::fromString($data['eventId']);
-        $idClass = Type::create($data['identifierType'])->toClassName();
-        $identifier = $idClass::fromString($data['identifier']);
+        $identifier = ValueSerializer::deserialize($data['identifier']);
         $objectType = Type::create($data['objectType']);
         $dateTime = DateTime::fromString($data['dateTime']);
         $metaData = MetaData::deserialize($data['metaData']);
@@ -130,18 +130,15 @@ final class EventMessage implements Comparable, Equatable, Serializable
      */
     public function serialize()
     {
-        $identifierType = Type::create($this->identifier);
-
         return [
-            'sequence'       => $this->sequenceNumber,
-            'eventId'        => $this->eventId->toString(),
-            'eventType'      => $this->eventType->toString(),
-            'identifier'     => $this->identifier->toString(),
-            'identifierType' => $identifierType->toString(),
-            'objectType'     => $this->objectType->toString(),
-            'dateTime'       => $this->dateTime->toString(),
-            'metaData'       => $this->metaData->serialize(),
-            'domainEvent'    => $this->domainEvent->serialize()
+            'sequence'    => $this->sequenceNumber,
+            'eventId'     => $this->eventId->toString(),
+            'eventType'   => $this->eventType->toString(),
+            'identifier'  => ValueSerializer::serialize($this->identifier),
+            'objectType'  => $this->objectType->toString(),
+            'dateTime'    => $this->dateTime->toString(),
+            'metaData'    => $this->metaData->serialize(),
+            'domainEvent' => $this->domainEvent->serialize()
         ];
     }
 
@@ -257,6 +254,10 @@ final class EventMessage implements Comparable, Equatable, Serializable
         assert(
             Test::areSameType($this, $object),
             sprintf('Comparison requires instance of %s', static::class)
+        );
+        assert(
+            Test::areEqual($this->objectType, $object->objectType),
+            'Comparison must be for a single object type'
         );
         assert(
             Test::areEqual($this->identifier, $object->identifier),

@@ -142,30 +142,23 @@ final class Date extends ValueObject implements Comparable
     }
 
     /**
-     * Creates instance from formatted date string
-     *
-     * @param string $date The date string
-     *
-     * @return Date
-     *
-     * @throws TypeException When date is not a string
-     * @throws DomainException When the date is not valid
+     * {@inheritdoc}
      */
-    public static function fromString($date)
+    public static function fromString($state)
     {
-        if (!is_string($date)) {
+        if (!is_string($state)) {
             $message = sprintf(
-                '%s expects $date to be a string; received (%s) %s',
+                '%s expects $state to be a string; received (%s) %s',
                 __METHOD__,
-                gettype($date),
-                VarPrinter::toString($date)
+                gettype($state),
+                VarPrinter::toString($state)
             );
             throw TypeException::create($message);
         }
 
         $pattern = '/\A(?P<year>[\d]{4})-(?P<month>[\d]{2})-(?P<day>[\d]{2})\z/';
-        if (!preg_match($pattern, $date, $matches)) {
-            $message = sprintf('%s expects $date in "Y-m-d" format', __METHOD__);
+        if (!preg_match($pattern, $state, $matches)) {
+            $message = sprintf('%s expects $state in "Y-m-d" format', __METHOD__);
             throw DomainException::create($message);
         }
 

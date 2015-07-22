@@ -37,11 +37,6 @@ abstract class AggregateRoot implements RootEntity
     /**
      * {@inheritdoc}
      */
-    abstract public function id();
-
-    /**
-     * {@inheritdoc}
-     */
     public function concurrencyVersion()
     {
         if ($this->concurrencyVersion === null) {

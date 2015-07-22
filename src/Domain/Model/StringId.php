@@ -55,9 +55,9 @@ abstract class StringId implements Identifier
     /**
      * {@inheritdoc}
      */
-    public static function fromString($id)
+    public static function fromString($state)
     {
-        return new static($id);
+        return new static($state);
     }
 
     /**

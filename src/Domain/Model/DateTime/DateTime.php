@@ -190,23 +190,16 @@ final class DateTime extends ValueObject implements Comparable
     }
 
     /**
-     * Creates instance from a formatted date/time string
-     *
-     * @param string $dateTime The date/time string
-     *
-     * @return DateTime
-     *
-     * @throws TypeException When dateTime is not a string
-     * @throws DomainException When the date/time is not valid
+     * {@inheritdoc}
      */
-    public static function fromString($dateTime)
+    public static function fromString($state)
     {
-        if (!is_string($dateTime)) {
+        if (!is_string($state)) {
             $message = sprintf(
-                '%s expects $dateTime to be a string; received (%s) %s',
+                '%s expects $state to be a string; received (%s) %s',
                 __METHOD__,
-                gettype($dateTime),
-                VarPrinter::toString($dateTime)
+                gettype($state),
+                VarPrinter::toString($state)
             );
             throw TypeException::create($message);
         }
@@ -222,8 +215,8 @@ final class DateTime extends ValueObject implements Comparable
             '(?P<micro>[\d]{6})',
             '(?P<timezone>.+)'
         );
-        if (!preg_match($pattern, $dateTime, $matches)) {
-            $message = sprintf('%s expects $dateTime in "Y-m-d\TH:i:s.u[timezone]" format', __METHOD__);
+        if (!preg_match($pattern, $state, $matches)) {
+            $message = sprintf('%s expects $state in "Y-m-d\TH:i:s.u[timezone]" format', __METHOD__);
             throw DomainException::create($message);
         }
 

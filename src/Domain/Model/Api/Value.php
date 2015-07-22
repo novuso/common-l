@@ -22,15 +22,8 @@ use Novuso\System\Type\Equatable;
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-interface Value extends Equatable
+interface Value extends Equatable, Parsable
 {
-    /**
-     * Retrieves a string representation
-     *
-     * @return string
-     */
-    public function toString();
-
     /**
      * Handles casting to a string
      *

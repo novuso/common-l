@@ -9,7 +9,7 @@ class ValueObjectTest extends PHPUnit_Framework_TestCase
 {
     public function test_that_static_constructor_returns_expected_instance()
     {
-        $fullName = FullName::fromParts('John', 'Nickell');
+        $fullName = FullName::fromString('John Nickell');
         $this->assertSame('John Nickell', $fullName->toString());
     }
 

@@ -82,25 +82,24 @@ final class Money extends ValueObject implements Comparable
     }
 
     /**
-     * Creates instance from string representation
-     *
-     * The expected format matches the format returned by toString(). The
-     * currency code followed by the integer amount.
-     *
-     * Example: $17.25 USD would be represented as: "USD:1725"
-     *
-     * @param string $money The string representation
-     *
-     * @return Money
-     *
-     * @throws DomainException When the format or value is invalid
+     * {@inheritdoc}
      */
-    public static function fromString($money)
+    public static function fromString($state)
     {
+        if (!is_string($state)) {
+            $message = sprintf(
+                '%s expects $state to be a string; received (%s) %s',
+                __METHOD__,
+                gettype($state),
+                VarPrinter::toString($state)
+            );
+            throw TypeException::create($message);
+        }
+
         $pattern = '/\A(?P<code>[A-Z]{3}):(?P<amount>-?[\d]+)\z/';
 
-        if (!preg_match($pattern, (string) $money, $matches)) {
-            $message = sprintf('Format must include currency and amount (eg. USD:1725); received "%s"', $money);
+        if (!preg_match($pattern, $state, $matches)) {
+            $message = sprintf('Format must include currency and amount (eg. USD:1725); received "%s"', $state);
             throw DomainException::create($message);
         }
 

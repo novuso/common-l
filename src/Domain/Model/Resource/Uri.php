@@ -212,6 +212,14 @@ class Uri extends ValueObject implements Comparable
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public static function fromString($state)
+    {
+        return static::parse($state);
+    }
+
+    /**
      * Creates instance from a base URI and relative reference
      *
      * @SuppressWarnings(PHPMD)
@@ -427,13 +435,9 @@ class Uri extends ValueObject implements Comparable
     }
 
     /**
-     * Retrieves a string representation with user info
-     *
-     * NOTE: This string is unsafe for public display.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function toRawString()
+    public function toString()
     {
         $output = sprintf('%s:', $this->scheme);
         if ($this->authority !== null) {
@@ -451,9 +455,11 @@ class Uri extends ValueObject implements Comparable
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieves string representation without user info
+     *
+     * @return string
      */
-    public function toString()
+    public function display()
     {
         $output = sprintf('%s:', $this->scheme);
         if ($this->authority !== null) {
@@ -487,7 +493,7 @@ class Uri extends ValueObject implements Comparable
             sprintf('Comparison requires instance of %s', static::class)
         );
 
-        $comp = strnatcmp($this->toRawString(), $object->toRawString());
+        $comp = strnatcmp($this->toString(), $object->toString());
 
         if ($comp > 0) {
             return 1;
@@ -512,7 +518,7 @@ class Uri extends ValueObject implements Comparable
             return false;
         }
 
-        return $this->toRawString() === $object->toRawString();
+        return $this->toString() === $object->toString();
     }
 
     /**
@@ -520,7 +526,7 @@ class Uri extends ValueObject implements Comparable
      */
     public function hashValue()
     {
-        return $this->toRawString();
+        return $this->toString();
     }
 
     /**

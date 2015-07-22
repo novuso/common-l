@@ -222,16 +222,16 @@ class UriTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, $uri->toArray());
     }
 
-    public function test_that_to_raw_string_returns_user_info()
+    public function test_that_to_string_returns_user_info()
     {
         $uri = Uri::parse('https://user:secret@myapp.com:8080/action?foo=bar#!wha');
-        $this->assertSame('https://user:secret@myapp.com:8080/action?foo=bar#!wha', $uri->toRawString());
+        $this->assertSame('https://user:secret@myapp.com:8080/action?foo=bar#!wha', $uri->toString());
     }
 
-    public function test_that_to_string_does_not_return_user_info()
+    public function test_that_display_does_not_return_user_info()
     {
         $uri = Uri::parse('https://user:secret@myapp.com:8080/action?foo=bar#!wha');
-        $this->assertSame('https://myapp.com:8080/action?foo=bar#!wha', $uri->toString());
+        $this->assertSame('https://myapp.com:8080/action?foo=bar#!wha', $uri->display());
     }
 
     public function test_that_compare_to_returns_zero_for_same_instance()

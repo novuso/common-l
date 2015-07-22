@@ -2,8 +2,6 @@
 
 namespace Novuso\Common\Domain\Model\Api;
 
-use Novuso\System\Exception\DomainException;
-use Novuso\System\Exception\TypeException;
 use Novuso\System\Type\Comparable;
 
 /**
@@ -16,15 +14,4 @@ use Novuso\System\Type\Comparable;
  */
 interface Identifier extends Comparable, Value
 {
-    /**
-     * Creates an instance from a string representation
-     *
-     * @param string $id The string representation
-     *
-     * @return Identifier
-     *
-     * @throws TypeException When id is not a string
-     * @throws DomainException When id is not valid
-     */
-    public static function fromString($id);
 }

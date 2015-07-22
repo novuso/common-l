@@ -49,19 +49,19 @@ abstract class UniqueId implements Identifier, IdGenerator
     /**
      * {@inheritdoc}
      */
-    public static function fromString($id)
+    public static function fromString($state)
     {
-        if (!is_string($id)) {
+        if (!is_string($state)) {
             $message = sprintf(
-                '%s expects $id to be a string; received (%s) %s',
+                '%s expects $state to be a string; received (%s) %s',
                 __METHOD__,
-                gettype($id),
-                VarPrinter::toString($id)
+                gettype($state),
+                VarPrinter::toString($state)
             );
             throw TypeException::create($message);
         }
 
-        return new static(Uuid::parse($id));
+        return new static(Uuid::parse($state));
     }
 
     /**

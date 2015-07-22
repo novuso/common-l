@@ -214,30 +214,23 @@ final class Time extends ValueObject implements Comparable
     }
 
     /**
-     * Creates instance from a formatted time string
-     *
-     * @param string $time The time string
-     *
-     * @return Time
-     *
-     * @throws TypeException When time is not a string
-     * @throws DomainException When the time is not valid
+     * {@inheritdoc}
      */
-    public static function fromString($time)
+    public static function fromString($state)
     {
-        if (!is_string($time)) {
+        if (!is_string($state)) {
             $message = sprintf(
-                '%s expects $time to be a string; received (%s) %s',
+                '%s expects $state to be a string; received (%s) %s',
                 __METHOD__,
-                gettype($time),
-                VarPrinter::toString($time)
+                gettype($state),
+                VarPrinter::toString($state)
             );
             throw TypeException::create($message);
         }
 
         $pattern = '/\A(?P<hour>[\d]{2}):(?P<minute>[\d]{2}):(?P<second>[\d]{2}).(?P<micro>[\d]{6})\z/';
-        if (!preg_match($pattern, $time, $matches)) {
-            $message = sprintf('%s expects $time in "H:i:s.u" format', __METHOD__);
+        if (!preg_match($pattern, $state, $matches)) {
+            $message = sprintf('%s expects $state in "H:i:s.u" format', __METHOD__);
             throw DomainException::create($message);
         }
 
