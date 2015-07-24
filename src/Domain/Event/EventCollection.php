@@ -3,9 +3,8 @@
 namespace Novuso\Common\Domain\Event;
 
 use Countable;
-use Novuso\Common\Domain\Event\Api\DomainEvent;
-use Novuso\Common\Domain\Model\Api\Identifier;
-use Novuso\Common\Domain\DateTime\DateTime;
+use Novuso\Common\Domain\Identifier\Identifier;
+use Novuso\Common\Domain\Value\DateTime\DateTime;
 use Novuso\System\Collection\ArrayList;
 use Novuso\System\Type\Type;
 use Novuso\System\Utility\Test;
@@ -113,7 +112,7 @@ final class EventCollection implements Countable
             $sequence
         );
 
-        $this->lastSequence = $eventMessage->sequenceNumber();
+        $this->lastSequence = $eventMessage->sequence();
         $this->eventMessages->add($eventMessage);
     }
 
@@ -122,9 +121,15 @@ final class EventCollection implements Countable
      *
      * @return EventStream
      */
-    public function eventStream()
+    public function stream()
     {
-        return new EventStream($this->id, $this->type, $this->eventMessages->toArray());
+        return new EventStream(
+            $this->id,
+            $this->type,
+            $this->committedSequence(),
+            $this->lastSequence(),
+            $this->eventMessages->toArray()
+        );
     }
 
     /**
@@ -159,9 +164,6 @@ final class EventCollection implements Countable
     {
         if ($this->eventMessages->isEmpty()) {
             return $this->committedSequence;
-        } elseif ($this->lastSequence === null) {
-            $last = $this->eventMessages->last();
-            $this->lastSequence = $last->sequenceNumber();
         }
 
         return $this->lastSequence;
@@ -172,7 +174,7 @@ final class EventCollection implements Countable
      *
      * @return void
      */
-    public function commitEvents()
+    public function commit()
     {
         $this->committedSequence = $this->lastSequence();
         $this->eventMessages = ArrayList::of(EventMessage::class);

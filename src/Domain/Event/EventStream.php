@@ -4,9 +4,9 @@ namespace Novuso\Common\Domain\Event;
 
 use Countable;
 use IteratorAggregate;
-use Novuso\Common\Domain\Model\Api\Identifier;
-use Novuso\Common\Domain\Model\DateTime\DateTime;
-use Novuso\Common\Domain\Model\ValueSerializer;
+use Novuso\Common\Domain\Identifier\Identifier;
+use Novuso\Common\Domain\Value\DateTime\DateTime;
+use Novuso\Common\Domain\Value\ValueSerializer;
 use Novuso\System\Collection\SortedSet;
 use Novuso\System\Serialization\Serializable;
 use Novuso\System\Type\Type;
@@ -142,46 +142,6 @@ final class EventStream implements Countable, IteratorAggregate, Serializable
     }
 
     /**
-     * Retrieves the associated ID
-     *
-     * @return Identifier
-     */
-    public function id()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Retrieves the associated type
-     *
-     * @return Type
-     */
-    public function type()
-    {
-        return $this->type;
-    }
-
-    /**
-     * Retrieves the committed version
-     *
-     * @return int|null
-     */
-    public function committed()
-    {
-        return $this->committed;
-    }
-
-    /**
-     * Retrieves the version number
-     *
-     * @return int|null
-     */
-    public function version()
-    {
-        return $this->version;
-    }
-
-    /**
      * Checks if empty
      *
      * @return bool
@@ -202,11 +162,31 @@ final class EventStream implements Countable, IteratorAggregate, Serializable
     }
 
     /**
-     * Retrieves an array representation
+     * Retrieves the associated ID
+     *
+     * @return Identifier
+     */
+    public function id()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Retrieves the associated type
+     *
+     * @return Type
+     */
+    public function type()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Retrieves an array copy of messages
      *
      * @return EventMessage[]
      */
-    public function toArray()
+    public function messages()
     {
         $array = [];
 
@@ -215,6 +195,26 @@ final class EventStream implements Countable, IteratorAggregate, Serializable
         }
 
         return $array;
+    }
+
+    /**
+     * Retrieves the committed version
+     *
+     * @return int|null
+     */
+    public function committed()
+    {
+        return $this->committed;
+    }
+
+    /**
+     * Retrieves the version number
+     *
+     * @return int|null
+     */
+    public function version()
+    {
+        return $this->version;
     }
 
     /**

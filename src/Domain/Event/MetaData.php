@@ -4,16 +4,17 @@ namespace Novuso\Common\Domain\Event;
 
 use Countable;
 use IteratorAggregate;
+use Novuso\Common\Domain\Value\Value;
+use Novuso\Common\Domain\Value\ValueSerializer;
 use Novuso\System\Collection\SortedTable;
 use Novuso\System\Exception\KeyException;
 use Novuso\System\Serialization\Serializable;
-use Novuso\System\Utility\VarPrinter;
 use Traversable;
 
 /**
  * MetaData is informational data for a domain event message
  *
- * Data is stored as a table with string keys and string values.
+ * Data is stored as value objects with string keys.
  *
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
@@ -36,10 +37,10 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
      */
     public function __construct(array $metaData)
     {
-        $this->data = SortedTable::string('string');
+        $this->data = SortedTable::string(Value::class);
 
         foreach ($metaData as $key => $value) {
-            $this->data->set((string) $key, VarPrinter::toString($value));
+            $this->data->set($key, $value);
         }
     }
 
@@ -48,7 +49,13 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
      */
     public static function deserialize(array $data)
     {
-        return new static($data);
+        $input = [];
+
+        foreach ($data as $key => $value) {
+            $input[$key] = ValueSerializer::deserialize($value);
+        }
+
+        return new static($input);
     }
 
     /**
@@ -59,7 +66,7 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
         $output = [];
 
         foreach ($this->data as $key => $value) {
-            $output[$key] = $value;
+            $output[$key] = ValueSerializer::serialize($value);
         }
 
         return $output;
@@ -90,7 +97,7 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
      *
      * @param string $key The key
      *
-     * @return string
+     * @return Value
      *
      * @throws KeyException When the key is not defined
      */
@@ -131,10 +138,10 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
         $output = [];
 
         foreach ($this->data as $key => $value) {
-            $output[$key] = $value;
+            $output[$key] = $value->toString();
         }
 
-        return json_encode($output, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        return json_encode($output, JSON_UNESCAPED_SLASHES);
     }
 
     /**

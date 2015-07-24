@@ -2,7 +2,7 @@
 
 namespace Novuso\Test\Common\Doubles;
 
-use Novuso\Common\Domain\Model\DomainEntity;
+use Novuso\Common\Domain\Entity\DomainEntity;
 
 final class User extends DomainEntity
 {

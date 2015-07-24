@@ -1,17 +1,18 @@
 <?php
 
-namespace Novuso\Common\Domain\Event;
+namespace Novuso\Common\Domain\Identifier;
 
-use Novuso\Common\Domain\Identifier\UniqueId;
+use Novuso\Common\Domain\Value\Value;
+use Novuso\System\Type\Comparable;
 
 /**
- * EventId is a unique identifier for a domain event
+ * Identifier is the interface for a domain identifier
  *
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-final class EventId extends UniqueId
+interface Identifier extends Comparable, Value
 {
 }

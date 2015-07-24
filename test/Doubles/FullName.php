@@ -2,7 +2,7 @@
 
 namespace Novuso\Test\Common\Doubles;
 
-use Novuso\Common\Domain\Model\ValueObject;
+use Novuso\Common\Domain\Value\ValueObject;
 use Novuso\System\Exception\DomainException;
 
 final class FullName extends ValueObject

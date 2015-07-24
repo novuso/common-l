@@ -2,10 +2,9 @@
 
 namespace Novuso\Common\Domain\Event;
 
-use Novuso\Common\Domain\Event\Api\DomainEvent;
-use Novuso\Common\Domain\Model\Api\Identifier;
-use Novuso\Common\Domain\Model\DateTime\DateTime;
-use Novuso\Common\Domain\Model\ValueSerializer;
+use Novuso\Common\Domain\Identifier\Identifier;
+use Novuso\Common\Domain\Value\DateTime\DateTime;
+use Novuso\Common\Domain\Value\ValueSerializer;
 use Novuso\System\Serialization\Serializable;
 use Novuso\System\Type\Comparable;
 use Novuso\System\Type\Equatable;
@@ -76,7 +75,7 @@ final class EventMessage implements Comparable, Equatable, Serializable
      *
      * @var int
      */
-    protected $sequenceNumber;
+    protected $sequence;
 
     /**
      * Constructs EventMessage
@@ -105,7 +104,7 @@ final class EventMessage implements Comparable, Equatable, Serializable
         $this->dateTime = $dateTime;
         $this->metaData = $metaData;
         $this->domainEvent = $domainEvent;
-        $this->sequenceNumber = (int) $sequence;
+        $this->sequence = (int) $sequence;
     }
 
     /**
@@ -131,7 +130,7 @@ final class EventMessage implements Comparable, Equatable, Serializable
     public function serialize()
     {
         return [
-            'sequence'    => $this->sequenceNumber,
+            'sequence'    => $this->sequence,
             'eventId'     => $this->eventId->toString(),
             'eventType'   => $this->eventType->toString(),
             'identifier'  => ValueSerializer::serialize($this->identifier),
@@ -150,16 +149,6 @@ final class EventMessage implements Comparable, Equatable, Serializable
     public function eventId()
     {
         return $this->eventId;
-    }
-
-    /**
-     * Retrieves the sequence number
-     *
-     * @return int
-     */
-    public function sequenceNumber()
-    {
-        return $this->sequenceNumber;
     }
 
     /**
@@ -223,6 +212,16 @@ final class EventMessage implements Comparable, Equatable, Serializable
     }
 
     /**
+     * Retrieves the sequence number
+     *
+     * @return int
+     */
+    public function sequence()
+    {
+        return $this->sequence;
+    }
+
+    /**
      * Retrieves a string representation
      *
      * @return string
@@ -264,8 +263,8 @@ final class EventMessage implements Comparable, Equatable, Serializable
             'Comparison must be for a single identifier'
         );
 
-        $thisSeq = $this->sequenceNumber;
-        $thatSeq = $object->sequenceNumber;
+        $thisSeq = $this->sequence;
+        $thatSeq = $object->sequence;
 
         if ($thisSeq > $thatSeq) {
             return 1;
