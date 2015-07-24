@@ -160,7 +160,7 @@ class EventStreamTest extends PHPUnit_Framework_TestCase
     {
         $eventId = EventId::fromString('014ec11e-4343-49cd-9b7a-cdd4ced5cedc');
         $dateTime = DateTime::fromString('2015-01-01T13:12:31.045234[America/Chicago]');
-        $domainEvent = new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins');
+        $eventData = new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins');
         $sequence = 4;
         $eventMessage1 = new EventMessage(
             $eventId,
@@ -168,13 +168,13 @@ class EventStreamTest extends PHPUnit_Framework_TestCase
             $this->userType,
             $dateTime,
             $this->metaData,
-            $domainEvent,
+            $eventData,
             $sequence
         );
 
         $eventId = EventId::fromString('014ec11f-317e-475a-9d5f-b8ae6c20aab1');
         $dateTime = DateTime::fromString('2015-01-02T10:34:12.672291[America/Chicago]');
-        $domainEvent = new UserRegisteredEvent('John Smith', 'jsmith');
+        $eventData = new UserRegisteredEvent('John Smith', 'jsmith');
         $sequence = 5;
         $eventMessage2 = new EventMessage(
             $eventId,
@@ -182,13 +182,13 @@ class EventStreamTest extends PHPUnit_Framework_TestCase
             $this->userType,
             $dateTime,
             $this->metaData,
-            $domainEvent,
+            $eventData,
             $sequence
         );
 
         $eventId = EventId::fromString('014ec170-e319-4875-937d-ead12b479682');
         $dateTime = DateTime::fromString('2015-01-05T14:03:31.245115[America/Chicago]');
-        $domainEvent = new UserRegisteredEvent('George Fox', 'gfox');
+        $eventData = new UserRegisteredEvent('George Fox', 'gfox');
         $sequence = 6;
         $eventMessage3 = new EventMessage(
             $eventId,
@@ -196,7 +196,7 @@ class EventStreamTest extends PHPUnit_Framework_TestCase
             $this->userType,
             $dateTime,
             $this->metaData,
-            $domainEvent,
+            $eventData,
             $sequence
         );
 

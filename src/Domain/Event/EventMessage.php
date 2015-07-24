@@ -68,7 +68,7 @@ final class EventMessage implements Comparable, Equatable, Serializable
      *
      * @var DomainEvent
      */
-    protected $domainEvent;
+    protected $eventData;
 
     /**
      * Sequence number
@@ -80,13 +80,13 @@ final class EventMessage implements Comparable, Equatable, Serializable
     /**
      * Constructs EventMessage
      *
-     * @param EventId     $eventId     The event ID
-     * @param Identifier  $identifier  The associated ID
-     * @param Type        $objectType  The associated type
-     * @param DateTime    $dateTime    The timestamp
-     * @param MetaData    $metaData    The meta data
-     * @param DomainEvent $domainEvent The domain event
-     * @param int         $sequence    The sequence number
+     * @param EventId     $eventId    The event ID
+     * @param Identifier  $identifier The associated ID
+     * @param Type        $objectType The associated type
+     * @param DateTime    $dateTime   The timestamp
+     * @param MetaData    $metaData   The meta data
+     * @param DomainEvent $eventData  The domain event
+     * @param int         $sequence   The sequence number
      */
     public function __construct(
         EventId $eventId,
@@ -94,16 +94,16 @@ final class EventMessage implements Comparable, Equatable, Serializable
         Type $objectType,
         DateTime $dateTime,
         MetaData $metaData,
-        DomainEvent $domainEvent,
+        DomainEvent $eventData,
         $sequence = 0
     ) {
         $this->eventId = $eventId;
-        $this->eventType = Type::create($domainEvent);
+        $this->eventType = Type::create($eventData);
         $this->identifier = $identifier;
         $this->objectType = $objectType;
         $this->dateTime = $dateTime;
         $this->metaData = $metaData;
-        $this->domainEvent = $domainEvent;
+        $this->eventData = $eventData;
         $this->sequence = (int) $sequence;
     }
 
@@ -119,9 +119,9 @@ final class EventMessage implements Comparable, Equatable, Serializable
         $dateTime = DateTime::fromString($data['dateTime']);
         $metaData = MetaData::deserialize($data['metaData']);
         $eventClass = Type::create($data['eventType'])->toClassName();
-        $domainEvent = $eventClass::deserialize($data['domainEvent']);
+        $eventData = $eventClass::deserialize($data['eventData']);
 
-        return new self($eventId, $identifier, $objectType, $dateTime, $metaData, $domainEvent, $sequence);
+        return new self($eventId, $identifier, $objectType, $dateTime, $metaData, $eventData, $sequence);
     }
 
     /**
@@ -130,14 +130,14 @@ final class EventMessage implements Comparable, Equatable, Serializable
     public function serialize()
     {
         return [
-            'sequence'    => $this->sequence,
-            'eventId'     => $this->eventId->toString(),
-            'eventType'   => $this->eventType->toString(),
-            'identifier'  => ValueSerializer::serialize($this->identifier),
-            'objectType'  => $this->objectType->toString(),
-            'dateTime'    => $this->dateTime->toString(),
-            'metaData'    => $this->metaData->serialize(),
-            'domainEvent' => $this->domainEvent->serialize()
+            'sequence'   => $this->sequence,
+            'eventId'    => $this->eventId->toString(),
+            'eventType'  => $this->eventType->toString(),
+            'identifier' => ValueSerializer::serialize($this->identifier),
+            'objectType' => $this->objectType->toString(),
+            'dateTime'   => $this->dateTime->toString(),
+            'metaData'   => $this->metaData->serialize(),
+            'eventData'  => $this->eventData->serialize()
         ];
     }
 
@@ -206,9 +206,9 @@ final class EventMessage implements Comparable, Equatable, Serializable
      *
      * @return DomainEvent
      */
-    public function domainEvent()
+    public function eventData()
     {
-        return $this->domainEvent;
+        return $this->eventData;
     }
 
     /**

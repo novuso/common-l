@@ -106,7 +106,7 @@ final class EventStream implements Countable, IteratorAggregate, Serializable
                 $type,
                 DateTime::fromString($mData['dateTime']),
                 MetaData::deserialize($mData['metaData']),
-                $eventClass::deserialize($mData['domainEvent']),
+                $eventClass::deserialize($mData['eventData']),
                 $mData['sequence']
             );
         }
@@ -123,12 +123,12 @@ final class EventStream implements Countable, IteratorAggregate, Serializable
 
         foreach ($this->messages as $message) {
             $messages[] = [
-                'sequence'    => $message->sequence(),
-                'eventId'     => $message->eventId()->toString(),
-                'eventType'   => $message->eventType()->toString(),
-                'dateTime'    => $message->dateTime()->toString(),
-                'metaData'    => $message->metaData()->serialize(),
-                'domainEvent' => $message->domainEvent()->serialize()
+                'sequence'  => $message->sequence(),
+                'eventId'   => $message->eventId()->toString(),
+                'eventType' => $message->eventType()->toString(),
+                'dateTime'  => $message->dateTime()->toString(),
+                'metaData'  => $message->metaData()->serialize(),
+                'eventData' => $message->eventData()->serialize()
             ];
         }
 

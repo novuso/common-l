@@ -28,7 +28,7 @@ class EventMessageTest extends PHPUnit_Framework_TestCase
         $userType = Type::create(User::class);
         $dateTime = DateTime::fromString('2015-01-01T13:12:31.045234[America/Chicago]');
         $metaData = new MetaData(['ipAddress' => IpAddress::fromString('127.0.0.1')]);
-        $domainEvent = new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins');
+        $eventData = new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins');
         $sequence = 0;
         $this->eventMessage = new EventMessage(
             $eventId,
@@ -36,7 +36,7 @@ class EventMessageTest extends PHPUnit_Framework_TestCase
             $userType,
             $dateTime,
             $metaData,
-            $domainEvent,
+            $eventData,
             $sequence
         );
     }
@@ -87,8 +87,8 @@ class EventMessageTest extends PHPUnit_Framework_TestCase
 
     public function test_that_domain_event_returns_expected_instance()
     {
-        $domainEvent = $this->eventMessage->domainEvent();
-        $this->assertSame('Leeroy Jenkins', $domainEvent->fullName());
+        $eventData = $this->eventMessage->eventData();
+        $this->assertSame('Leeroy Jenkins', $eventData->fullName());
     }
 
     public function test_that_sequence_returns_expected_value()
@@ -167,7 +167,7 @@ class EventMessageTest extends PHPUnit_Framework_TestCase
         $userType = Type::create(User::class);
         $dateTime = DateTime::fromString('2015-01-02T10:34:12.672291[America/Chicago]');
         $metaData = new MetaData(['ipAddress' => IpAddress::fromString('127.0.0.1')]);
-        $domainEvent = new UserRegisteredEvent('John Smith', 'jsmith');
+        $eventData = new UserRegisteredEvent('John Smith', 'jsmith');
         $sequence = 1;
 
         return new EventMessage(
@@ -176,7 +176,7 @@ class EventMessageTest extends PHPUnit_Framework_TestCase
             $userType,
             $dateTime,
             $metaData,
-            $domainEvent,
+            $eventData,
             $sequence
         );
     }
@@ -194,7 +194,7 @@ class EventMessageTest extends PHPUnit_Framework_TestCase
     "metaData": {
         "ipAddress": "[Novuso.Test.Common.Doubles.IpAddress]127.0.0.1"
     },
-    "domainEvent": {
+    "eventData": {
         "fullName": "Leeroy Jenkins",
         "username": "ljenkins"
     }

@@ -26,7 +26,7 @@ interface Subscriber
      * canonicalized version of the class name.
      *
      * Novuso\System\Utility\ClassName::canonical($className) will retrieve the
-     * event type, when passed in the fully-qualified class name of the event.
+     * event type, when passed the fully-qualified class name of the event.
      *
      * Array values can be:
      *
