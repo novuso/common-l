@@ -15,4 +15,15 @@ use Novuso\System\Type\Comparable;
  */
 interface Identifier extends Comparable, Value
 {
+    /**
+     * Creates instance from a string representation
+     *
+     * @param string $state The string representation
+     *
+     * @return Identifier
+     *
+     * @throws TypeException When state is not a string
+     * @throws DomainException When the string is invalid
+     */
+    public static function fromString($state);
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace Novuso\Test\Common\Domain\Value\Resource;
+namespace Novuso\Test\Common\Domain\Value\Identifier;
 
-use Novuso\Common\Domain\Value\Resource\Uri;
+use Novuso\Common\Domain\Value\Identifier\Uri;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @covers Novuso\Common\Domain\Value\Resource\Uri
+ * @covers Novuso\Common\Domain\Value\Identifier\Uri
  */
 class UriTest extends PHPUnit_Framework_TestCase
 {

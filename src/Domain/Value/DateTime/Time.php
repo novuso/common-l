@@ -189,7 +189,7 @@ final class Time extends ValueObject implements Comparable
     }
 
     /**
-     * Creates an instance from a timestamp and timezone
+     * Creates instance from a timestamp and timezone
      *
      * @param int         $timestamp The timestamp
      * @param int         $micro     The microsecond
@@ -214,7 +214,14 @@ final class Time extends ValueObject implements Comparable
     }
 
     /**
-     * {@inheritdoc}
+     * Creates instance from a string representation
+     *
+     * @param string $state The string representation
+     *
+     * @return Time
+     *
+     * @throws TypeException When state is not a string
+     * @throws DomainException When the string is invalid
      */
     public static function fromString($state)
     {

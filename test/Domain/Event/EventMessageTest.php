@@ -27,7 +27,7 @@ class EventMessageTest extends PHPUnit_Framework_TestCase
         $userId = UserId::fromString('014ec11d-2f21-4d33-a624-5df1196a4f85');
         $userType = Type::create(User::class);
         $dateTime = DateTime::fromString('2015-01-01T13:12:31.045234[America/Chicago]');
-        $metaData = new MetaData(['ipAddress' => IpAddress::fromString('127.0.0.1')]);
+        $metaData = new MetaData(['ipAddress' => '127.0.0.1']);
         $eventData = new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins');
         $sequence = 0;
         $this->eventMessage = new EventMessage(
@@ -61,10 +61,10 @@ class EventMessageTest extends PHPUnit_Framework_TestCase
         $this->assertSame('Novuso.Test.Common.Doubles.UserRegisteredEvent', $eventType->toString());
     }
 
-    public function test_that_identifier_returns_expected_instance()
+    public function test_that_object_id_returns_expected_instance()
     {
-        $identifier = $this->eventMessage->identifier();
-        $this->assertSame('014ec11d-2f21-4d33-a624-5df1196a4f85', $identifier->toString());
+        $objectId = $this->eventMessage->objectId();
+        $this->assertSame('014ec11d-2f21-4d33-a624-5df1196a4f85', $objectId->toString());
     }
 
     public function test_that_object_type_returns_expected_instance()
@@ -82,7 +82,7 @@ class EventMessageTest extends PHPUnit_Framework_TestCase
     public function test_that_meta_data_returns_expected_instance()
     {
         $metaData = $this->eventMessage->metaData();
-        $this->assertSame('127.0.0.1', $metaData->get('ipAddress')->toString());
+        $this->assertSame('127.0.0.1', $metaData->get('ipAddress'));
     }
 
     public function test_that_domain_event_returns_expected_instance()
@@ -166,7 +166,7 @@ class EventMessageTest extends PHPUnit_Framework_TestCase
         $userId = UserId::fromString('014ec11d-2f21-4d33-a624-5df1196a4f85');
         $userType = Type::create(User::class);
         $dateTime = DateTime::fromString('2015-01-02T10:34:12.672291[America/Chicago]');
-        $metaData = new MetaData(['ipAddress' => IpAddress::fromString('127.0.0.1')]);
+        $metaData = new MetaData(['ipAddress' => '127.0.0.1']);
         $eventData = new UserRegisteredEvent('John Smith', 'jsmith');
         $sequence = 1;
 
@@ -185,19 +185,24 @@ class EventMessageTest extends PHPUnit_Framework_TestCase
     {
         return <<<EOT
 {
-    "sequence": 0,
-    "eventId": "014ec11e-4343-49cd-9b7a-cdd4ced5cedc",
-    "eventType": "Novuso.Test.Common.Doubles.UserRegisteredEvent",
-    "identifier": "[Novuso.Test.Common.Doubles.UserId]014ec11d-2f21-4d33-a624-5df1196a4f85",
+    "objectId": {
+        "type": "Novuso.Test.Common.Doubles.UserId",
+        "identifier": "014ec11d-2f21-4d33-a624-5df1196a4f85"
+    },
     "objectType": "Novuso.Test.Common.Doubles.User",
+    "eventId": "014ec11e-4343-49cd-9b7a-cdd4ced5cedc",
     "dateTime": "2015-01-01T13:12:31.045234[America/Chicago]",
     "metaData": {
-        "ipAddress": "[Novuso.Test.Common.Doubles.IpAddress]127.0.0.1"
+        "ipAddress": "127.0.0.1"
     },
     "eventData": {
-        "fullName": "Leeroy Jenkins",
-        "username": "ljenkins"
-    }
+        "type": "Novuso.Test.Common.Doubles.UserRegisteredEvent",
+        "data": {
+            "fullName": "Leeroy Jenkins",
+            "username": "ljenkins"
+        }
+    },
+    "sequence": 0
 }
 EOT;
     }

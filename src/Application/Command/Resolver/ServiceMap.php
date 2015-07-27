@@ -38,15 +38,15 @@ class ServiceMap
     /**
      * Constructs ServiceMap
      *
-     * @param Container $container             The service container
-     * @param array     $commandToServiceIdMap A map of class names to service IDs
+     * @param Container $container         The service container
+     * @param array     $handlerServiceMap A map of handler services
      *
      * @throws InvalidCommandException When a command class is not valid
      */
-    public function __construct(Container $container, array $commandToServiceIdMap = [])
+    public function __construct(Container $container, array $handlerServiceMap = [])
     {
         $this->container = $container;
-        $this->addHandlers($commandToServiceIdMap);
+        $this->addHandlers($handlerServiceMap);
     }
 
     /**
@@ -54,33 +54,33 @@ class ServiceMap
      *
      * The command to service map must follow this format:
      * [
-     *     SomeCommand::class => "handler_service_id"
+     *     "handler_service_id" => SomeCommand::class
      * ]
      *
-     * @param array $commandToServiceMap A map of class names to service IDs
+     * @param array $handlerServiceMap A map of handler services
      *
      * @return void
      *
      * @throws InvalidCommandException When a command class is not valid
      */
-    public function addHandlers(array $commandToServiceIdMap)
+    public function addHandlers(array $handlerServiceMap)
     {
-        foreach ($commandToServiceIdMap as $commandClass => $serviceId) {
-            $this->setHandler($commandClass, $serviceId);
+        foreach ($handlerServiceMap as $serviceId => $commandClass) {
+            $this->setHandler($serviceId, $commandClass);
         }
     }
 
     /**
      * Registers a handler
      *
-     * @param string $commandClass The fully-qualified command class name
      * @param string $serviceId    The service ID for the handler
+     * @param string $commandClass The fully-qualified command class name
      *
      * @return void
      *
      * @throws InvalidCommandException When a command class is not valid
      */
-    public function setHandler($commandClass, $serviceId)
+    public function setHandler($serviceId, $commandClass)
     {
         if (!Test::implementsInterface($commandClass, Command::class)) {
             $message = sprintf('Invalid command class: %s', $commandClass);

@@ -25,18 +25,6 @@ use Novuso\System\Type\Equatable;
 interface Value extends Equatable
 {
     /**
-     * Creates an instance from a string representation
-     *
-     * @param string $state The string representation
-     *
-     * @return Value
-     *
-     * @throws TypeException When state is not a string
-     * @throws DomainException When the string is invalid
-     */
-    public static function fromString($state);
-
-    /**
      * Retrieves a string representation
      *
      * @return string

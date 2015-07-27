@@ -119,7 +119,7 @@ final class Date extends ValueObject implements Comparable
     }
 
     /**
-     * Creates an instance from a timestamp and timezone
+     * Creates instance from a timestamp and timezone
      *
      * @param int         $timestamp The timestamp
      * @param string|null $timezone  The timezone string or null for default
@@ -142,7 +142,14 @@ final class Date extends ValueObject implements Comparable
     }
 
     /**
-     * {@inheritdoc}
+     * Creates instance from a string representation
+     *
+     * @param string $state The string representation
+     *
+     * @return Date
+     *
+     * @throws TypeException When state is not a string
+     * @throws DomainException When the string is invalid
      */
     public static function fromString($state)
     {

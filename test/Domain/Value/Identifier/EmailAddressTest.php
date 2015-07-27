@@ -1,12 +1,12 @@
 <?php
 
-namespace Novuso\Test\Common\Domain\Value\Personal;
+namespace Novuso\Test\Common\Domain\Value\Identifier;
 
-use Novuso\Common\Domain\Value\Personal\EmailAddress;
+use Novuso\Common\Domain\Value\Identifier\EmailAddress;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @covers Novuso\Common\Domain\Value\Personal\EmailAddress
+ * @covers Novuso\Common\Domain\Value\Identifier\EmailAddress
  */
 class EmailAddressTest extends PHPUnit_Framework_TestCase
 {

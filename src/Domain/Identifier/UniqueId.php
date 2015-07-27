@@ -2,7 +2,7 @@
 
 namespace Novuso\Common\Domain\Identifier;
 
-use Novuso\Common\Domain\Value\Identity\Uuid;
+use Novuso\Common\Domain\Value\Identifier\Uuid;
 use Novuso\System\Exception\TypeException;
 use Novuso\System\Utility\Test;
 use Novuso\System\Utility\VarPrinter;
@@ -15,7 +15,7 @@ use Novuso\System\Utility\VarPrinter;
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-abstract class UniqueId implements Identifier, IdGenerator
+abstract class UniqueId implements Identifier, IdentifierFactory
 {
     /**
      * UUID

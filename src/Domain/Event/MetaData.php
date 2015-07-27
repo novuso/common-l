@@ -2,19 +2,19 @@
 
 namespace Novuso\Common\Domain\Event;
 
+use ArrayIterator;
 use Countable;
 use IteratorAggregate;
-use Novuso\Common\Domain\Value\Value;
-use Novuso\Common\Domain\Value\ValueSerializer;
-use Novuso\System\Collection\SortedTable;
 use Novuso\System\Exception\KeyException;
+use Novuso\System\Exception\TypeException;
 use Novuso\System\Serialization\Serializable;
+use Novuso\System\Utility\VarPrinter;
 use Traversable;
 
 /**
- * MetaData is informational data for a domain event message
+ * MetaData contains informational data for a domain event message
  *
- * Data is stored as value objects with string keys.
+ * Keys must be strings. Values may be scalar or an array of scalars.
  *
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
@@ -26,21 +26,19 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
     /**
      * Meta data
      *
-     * @var SortedTable
+     * @var array
      */
-    protected $data;
+    protected $data = [];
 
     /**
      * Constructs MetaData
      *
      * @param array $metaData An associated array of meta data
      */
-    public function __construct(array $metaData)
+    public function __construct(array $metaData = [])
     {
-        $this->data = SortedTable::string(Value::class);
-
         foreach ($metaData as $key => $value) {
-            $this->data->set($key, $value);
+            $this->set($key, $value);
         }
     }
 
@@ -49,13 +47,7 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
      */
     public static function deserialize(array $data)
     {
-        $input = [];
-
-        foreach ($data as $key => $value) {
-            $input[$key] = ValueSerializer::deserialize($value);
-        }
-
-        return new static($input);
+        return new self($data);
     }
 
     /**
@@ -63,11 +55,7 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
      */
     public function serialize()
     {
-        $output = [];
-
-        foreach ($this->data as $key => $value) {
-            $output[$key] = ValueSerializer::serialize($value);
-        }
+        $output = $this->data;
 
         return $output;
     }
@@ -79,7 +67,7 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
      */
     public function isEmpty()
     {
-        return $this->data->isEmpty();
+        return empty($this->data);
     }
 
     /**
@@ -89,7 +77,26 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
      */
     public function count()
     {
-        return $this->data->count();
+        return count($this->data);
+    }
+
+    /**
+     * Sets a key/value pair
+     *
+     * @param string $key   The key
+     * @param mixed  $value The value
+     *
+     * @return void
+     *
+     * @throws TypeException When value is an invalid type
+     */
+    public function set($key, $value)
+    {
+        $key = (string) $key;
+
+        $this->guardValue($value);
+
+        $this->data[$key] = $value;
     }
 
     /**
@@ -97,13 +104,18 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
      *
      * @param string $key The key
      *
-     * @return Value
+     * @return mixed
      *
      * @throws KeyException When the key is not defined
      */
     public function get($key)
     {
-        return $this->data->get($key);
+        if (!isset($this->data[$key])) {
+            $message = sprintf('Key not found: %s', VarPrinter::toString($key));
+            throw KeyException::create($message);
+        }
+
+        return $this->data[$key];
     }
 
     /**
@@ -115,17 +127,29 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
      */
     public function has($key)
     {
-        return $this->data->has($key);
+        return isset($this->data[$key]);
     }
 
     /**
-     * Retrieves an iterator for keys
+     * Removes a key/value pair
      *
-     * @return Traversable
+     * @param string $key The key
+     *
+     * @return void
+     */
+    public function remove($key)
+    {
+        unset($this->data[$key]);
+    }
+
+    /**
+     * Retrieves a list of keys
+     *
+     * @return string[]
      */
     public function keys()
     {
-        return $this->data->keys();
+        return array_keys($this->data);
     }
 
     /**
@@ -135,13 +159,7 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
      */
     public function toString()
     {
-        $output = [];
-
-        foreach ($this->data as $key => $value) {
-            $output[$key] = $value->toString();
-        }
-
-        return json_encode($output, JSON_UNESCAPED_SLASHES);
+        return json_encode($this->data, JSON_UNESCAPED_SLASHES);
     }
 
     /**
@@ -161,6 +179,55 @@ final class MetaData implements Countable, IteratorAggregate, Serializable
      */
     public function getIterator()
     {
-        return $this->data->getIterator();
+        return new ArrayIterator($this->data);
+    }
+
+    /**
+     * Validates value
+     *
+     * @param mixed $value The value
+     *
+     * @return void
+     *
+     * @throws TypeException When value is an invalid type
+     */
+    private function guardValue($value)
+    {
+        if (!$this->isValid($value)) {
+            throw TypeException::create('Value must be scalar or array of scalars');
+        }
+    }
+
+    /**
+     * Checks if value is valid
+     *
+     * @param mixed $value The value
+     *
+     * @return bool
+     */
+    private function isValid($value)
+    {
+        $type = gettype($value);
+        switch ($type) {
+            case 'string':
+            case 'integer':
+            case 'double':
+            case 'boolean':
+                return true;
+                break;
+            case 'array':
+                foreach ($value as $v) {
+                    if (!$this->isValid($v)) {
+                        return false;
+                    }
+                }
+
+                return true;
+                break;
+            default:
+                break;
+        }
+
+        return false;
     }
 }

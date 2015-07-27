@@ -4,13 +4,17 @@ namespace Novuso\Common\Adapter\Framework\Silex\Provider;
 
 use Novuso\Common\Adapter\Infrastructure\Logging\PsrLogger;
 use Novuso\Common\Adapter\Infrastructure\Service\PimpleContainer;
+use Novuso\Common\Adapter\Presentation\Resolver\ResponderServiceResolver;
+use Novuso\Common\Adapter\Presentation\Subscriber\ViewSubscriber;
 use Novuso\Common\Application\Command\Pipeline\ApplicationBus;
 use Novuso\Common\Application\Command\Pipeline\CommandPipeline;
 use Novuso\Common\Application\Command\Resolver\ServiceMap;
 use Novuso\Common\Application\Command\Resolver\ServiceResolver;
-use Novuso\Common\Application\DomainEvent\Dispatcher\ServiceAwareDispatcher;
+use Novuso\Common\Application\DomainEvent\ServiceAwareDispatcher;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
+use Silex\Api\EventListenerProviderInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * CommonServiceProvider provides common services for the application
@@ -25,12 +29,12 @@ use Pimple\ServiceProviderInterface;
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-class CommonServiceProvider implements ServiceProviderInterface
+class CommonServiceProvider implements EventListenerProviderInterface, ServiceProviderInterface
 {
     /**
      * Registers services on the given container
      *
-     * @param Container $app A Container instance
+     * @param Container $app The application instance
      *
      * @return void
      */
@@ -81,16 +85,44 @@ class CommonServiceProvider implements ServiceProviderInterface
             return new ServiceResolver($app['novuso_common.command_resolver.service_map']);
         };
 
-        // Register command filter services
-        // ['middleware_service_id']
+        $app['novuso_common.view_subscriber'] = function ($app) {
+            return new ViewSubscriber($app['novuso_common.responder_resolver']);
+        };
+
+        $app['novuso_common.responder_resolver'] = function ($app) {
+            return new ResponderServiceResolver(
+                $app['novuso_common.service_container'],
+                $app['novuso_common.view_responders']
+            );
+        };
+
+        // List of Novuso\Common\Application\Command\Filter instances
+        // [$commandFilter1, $commandFilter2]
         $app['novuso_common.command_filters'] = [];
 
         // Register command handler services
         // ['handler_service_id' => 'Command\\Class']
         $app['novuso_common.command_handlers'] = [];
 
+        // Register presentation view responders
+        // ['responder_service_id' => 'Action\\Class']
+        $app['novuso_common.view_responders'] = [];
+
         // Register domain event subscribers
         // ['subscriber_service_id' => 'Subscriber\\Class']
         $app['novuso_common.event_subscribers'] = [];
+    }
+
+    /**
+     * Registers event subscribers with the Silex dispatcher
+     *
+     * @param Container                $app        The application instance
+     * @param EventDispatcherInterface $dispatcher The event dispatcher
+     *
+     * @return void
+     */
+    public function subscribe(Container $app, EventDispatcherInterface $dispatcher)
+    {
+        $dispatcher->addSubscriber($app['novuso_common.view_subscriber']);
     }
 }

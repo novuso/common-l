@@ -3,7 +3,6 @@
 namespace Novuso\Common\Domain\Entity;
 
 use Novuso\Common\Domain\Event\DomainEvent;
-use Novuso\Common\Domain\Event\EventCollection;
 use Novuso\Common\Domain\Event\EventStream;
 use Novuso\System\Exception\OperationException;
 use Novuso\System\Type\Type;
@@ -52,7 +51,7 @@ abstract class AggregateRoot implements RootEntity
     {
         $collection = $this->eventCollection();
         $stream = $collection->stream();
-        $collection->commitEvents();
+        $collection->commit();
         $this->concurrencyVersion = $collection->committedSequence();
 
         return $stream;
@@ -110,17 +109,13 @@ abstract class AggregateRoot implements RootEntity
     /**
      * Records a domain event
      *
-     * Additional meta data may be added as an associated array. Both keys and
-     * values must be strings.
-     *
      * @param DomainEvent $domainEvent The domain event
-     * @param array       $metaData    The meta data
      *
      * @return void
      */
-    protected function recordThat(DomainEvent $domainEvent, array $metaData = [])
+    protected function recordThat(DomainEvent $domainEvent)
     {
-        $this->eventCollection()->add($domainEvent, $metaData);
+        $this->eventCollection()->add($domainEvent);
     }
 
     /**
@@ -132,7 +127,7 @@ abstract class AggregateRoot implements RootEntity
      *
      * @throws OperationException When called with recorded events
      */
-    protected function initConcurrencyVersion($concurrencyVersion)
+    protected function initializeConcurrencyVersion($concurrencyVersion)
     {
         $eventCollection = $this->eventCollection();
 

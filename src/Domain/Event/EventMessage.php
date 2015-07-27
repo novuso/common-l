@@ -4,7 +4,6 @@ namespace Novuso\Common\Domain\Event;
 
 use Novuso\Common\Domain\Identifier\Identifier;
 use Novuso\Common\Domain\Value\DateTime\DateTime;
-use Novuso\Common\Domain\Value\ValueSerializer;
 use Novuso\System\Serialization\Serializable;
 use Novuso\System\Type\Comparable;
 use Novuso\System\Type\Equatable;
@@ -22,6 +21,27 @@ use Novuso\System\Utility\Test;
 final class EventMessage implements Comparable, Equatable, Serializable
 {
     /**
+     * Object ID
+     *
+     * @var Identifier
+     */
+    protected $objectId;
+
+    /**
+     * Object ID type
+     *
+     * @var Type
+     */
+    protected $objectIdType;
+
+    /**
+     * Object Type
+     *
+     * @var Type
+     */
+    protected $objectType;
+
+    /**
      * Event ID
      *
      * @var EventId
@@ -34,20 +54,6 @@ final class EventMessage implements Comparable, Equatable, Serializable
      * @var Type
      */
     protected $eventType;
-
-    /**
-     * Associated ID
-     *
-     * @var Identifier
-     */
-    protected $identifier;
-
-    /**
-     * Associated Type
-     *
-     * @var Type
-     */
-    protected $objectType;
 
     /**
      * Timestamp
@@ -81,7 +87,7 @@ final class EventMessage implements Comparable, Equatable, Serializable
      * Constructs EventMessage
      *
      * @param EventId     $eventId    The event ID
-     * @param Identifier  $identifier The associated ID
+     * @param Identifier  $objectId   The associated ID
      * @param Type        $objectType The associated type
      * @param DateTime    $dateTime   The timestamp
      * @param MetaData    $metaData   The meta data
@@ -90,17 +96,18 @@ final class EventMessage implements Comparable, Equatable, Serializable
      */
     public function __construct(
         EventId $eventId,
-        Identifier $identifier,
+        Identifier $objectId,
         Type $objectType,
         DateTime $dateTime,
         MetaData $metaData,
         DomainEvent $eventData,
         $sequence = 0
     ) {
+        $this->objectId = $objectId;
+        $this->objectIdType = Type::create($objectId);
+        $this->objectType = $objectType;
         $this->eventId = $eventId;
         $this->eventType = Type::create($eventData);
-        $this->identifier = $identifier;
-        $this->objectType = $objectType;
         $this->dateTime = $dateTime;
         $this->metaData = $metaData;
         $this->eventData = $eventData;
@@ -112,16 +119,17 @@ final class EventMessage implements Comparable, Equatable, Serializable
      */
     public static function deserialize(array $data)
     {
-        $sequence = $data['sequence'];
-        $eventId = EventId::fromString($data['eventId']);
-        $identifier = ValueSerializer::deserialize($data['identifier']);
+        $objectIdClass = Type::create($data['objectId']['type'])->toClassName();
+        $objectId = $objectIdClass::fromString($data['objectId']['identifier']);
         $objectType = Type::create($data['objectType']);
+        $eventId = EventId::fromString($data['eventId']);
         $dateTime = DateTime::fromString($data['dateTime']);
         $metaData = MetaData::deserialize($data['metaData']);
-        $eventClass = Type::create($data['eventType'])->toClassName();
-        $eventData = $eventClass::deserialize($data['eventData']);
+        $eventClass = Type::create($data['eventData']['type'])->toClassName();
+        $eventData = $eventClass::deserialize($data['eventData']['data']);
+        $sequence = $data['sequence'];
 
-        return new self($eventId, $identifier, $objectType, $dateTime, $metaData, $eventData, $sequence);
+        return new self($eventId, $objectId, $objectType, $dateTime, $metaData, $eventData, $sequence);
     }
 
     /**
@@ -130,15 +138,50 @@ final class EventMessage implements Comparable, Equatable, Serializable
     public function serialize()
     {
         return [
-            'sequence'   => $this->sequence,
-            'eventId'    => $this->eventId->toString(),
-            'eventType'  => $this->eventType->toString(),
-            'identifier' => ValueSerializer::serialize($this->identifier),
+            'objectId'   => [
+                'type'       => $this->objectIdType->toString(),
+                'identifier' => $this->objectId->toString()
+            ],
             'objectType' => $this->objectType->toString(),
+            'eventId'    => $this->eventId->toString(),
             'dateTime'   => $this->dateTime->toString(),
             'metaData'   => $this->metaData->serialize(),
-            'eventData'  => $this->eventData->serialize()
+            'eventData'  => [
+                'type' => $this->eventType->toString(),
+                'data' => $this->eventData->serialize()
+            ],
+            'sequence'   => $this->sequence
         ];
+    }
+
+    /**
+     * Retrieves the object ID
+     *
+     * @return Identifier
+     */
+    public function objectId()
+    {
+        return $this->objectId;
+    }
+
+    /**
+     * Retrieves the object ID type
+     *
+     * @return Type
+     */
+    public function objectIdType()
+    {
+        return $this->objectIdType;
+    }
+
+    /**
+     * Retrieves the object type
+     *
+     * @return Type
+     */
+    public function objectType()
+    {
+        return $this->objectType;
     }
 
     /**
@@ -159,26 +202,6 @@ final class EventMessage implements Comparable, Equatable, Serializable
     public function eventType()
     {
         return $this->eventType;
-    }
-
-    /**
-     * Retrieves the associated ID
-     *
-     * @return Identifier
-     */
-    public function identifier()
-    {
-        return $this->identifier;
-    }
-
-    /**
-     * Retrieves the associated type
-     *
-     * @return Type
-     */
-    public function objectType()
-    {
-        return $this->objectType;
     }
 
     /**
@@ -259,8 +282,8 @@ final class EventMessage implements Comparable, Equatable, Serializable
             'Comparison must be for a single object type'
         );
         assert(
-            Test::areEqual($this->identifier, $object->identifier),
-            'Comparison must be for a single identifier'
+            Test::areEqual($this->objectId, $object->objectId),
+            'Comparison must be for a single object ID'
         );
 
         $thisSeq = $this->sequence;

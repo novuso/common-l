@@ -37,13 +37,13 @@ class ResponderServiceResolver implements ResponderResolver
     /**
      * Constructs ResponderServiceResolver
      *
-     * @param Container $container            The service container
-     * @param array     $actionToResponderMap A map of class names to service IDs
+     * @param Container $container    The service container
+     * @param array     $responderMap A map of responder services to actions
      */
-    public function __construct(Container $container, array $actionToResponderMap = [])
+    public function __construct(Container $container, array $responderMap = [])
     {
         $this->container = $container;
-        $this->addResponders($actionToResponderMap);
+        $this->addResponders($responderMap);
     }
 
     /**
@@ -74,33 +74,33 @@ class ResponderServiceResolver implements ResponderResolver
      *
      * The action to responder map must follow this format:
      * [
-     *     SomeAction::class => "responder_service_id"
+     *     "responder_service_id" => SomeAction::class
      * ]
      *
-     * @param array $actionToResponderMap A map of class names to service IDs
+     * @param array $responderMap A map of responder services to actions
      *
      * @return void
      *
      * @throws LogicException When an action class is not valid
      */
-    public function addResponders(array $actionToResponderMap)
+    public function addResponders(array $responderMap)
     {
-        foreach ($actionToResponderMap as $actionClass => $serviceId) {
-            $this->setResponder($actionClass, $serviceId);
+        foreach ($responderMap as $serviceId => $actionClass) {
+            $this->setResponder($serviceId, $actionClass);
         }
     }
 
     /**
      * Registers a responder
      *
-     * @param string $actionClass The fully-qualified action class name
      * @param string $serviceId   The service ID for the responder
+     * @param string $actionClass The fully-qualified action class name
      *
      * @return void
      *
      * @throws LogicException When an action class is not valid
      */
-    public function setResponder($actionClass, $serviceId)
+    public function setResponder($serviceId, $actionClass)
     {
         if (!Test::implementsInterface($actionClass, Action::class)) {
             $message = sprintf('Invalid action class: %s', $actionClass);

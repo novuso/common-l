@@ -2,12 +2,11 @@
 
 namespace Novuso\Common\Domain\Event;
 
+use ArrayIterator;
 use Countable;
 use IteratorAggregate;
 use Novuso\Common\Domain\Identifier\Identifier;
 use Novuso\Common\Domain\Value\DateTime\DateTime;
-use Novuso\Common\Domain\Value\ValueSerializer;
-use Novuso\System\Collection\SortedSet;
 use Novuso\System\Serialization\Serializable;
 use Novuso\System\Type\Type;
 use Novuso\System\Utility\Test;
@@ -25,23 +24,30 @@ use Traversable;
 final class EventStream implements Countable, IteratorAggregate, Serializable
 {
     /**
-     * Associated ID
+     * Object ID
      *
      * @var Identifier
      */
-    protected $id;
+    protected $objectId;
 
     /**
-     * Associated Type
+     * Object ID type
      *
      * @var Type
      */
-    protected $type;
+    protected $objectIdType;
+
+    /**
+     * Object Type
+     *
+     * @var Type
+     */
+    protected $objectType;
 
     /**
      * Event Messages
      *
-     * @var SortedSet
+     * @var EventMessage[]
      */
     protected $messages;
 
@@ -62,27 +68,28 @@ final class EventStream implements Countable, IteratorAggregate, Serializable
     /**
      * Constructs EventStream
      *
-     * @param Identifier     $id        The associated ID
-     * @param Type           $type      The associated type
-     * @param int|null       $committed The committed version
-     * @param int|null       $version   The version number
-     * @param EventMessage[] $messages  A list of event messages
+     * @param Identifier     $objectId   The object ID
+     * @param Type           $objectType The object type
+     * @param int|null       $committed  The committed version
+     * @param int|null       $version    The version number
+     * @param EventMessage[] $messages   A list of event messages
      */
-    public function __construct(Identifier $id, Type $type, $committed, $version, array $messages)
+    public function __construct(Identifier $objectId, Type $objectType, $committed, $version, array $messages)
     {
         assert(
             Test::isListOf($messages, EventMessage::class),
             sprintf('Invalid event messages: %s', VarPrinter::toString($messages))
         );
 
-        $this->id = $id;
-        $this->type = $type;
+        $this->objectId = $objectId;
+        $this->objectIdType = Type::create($objectId);
+        $this->objectType = $objectType;
         $this->committed = $committed;
         $this->version = $version;
-        $this->messages = SortedSet::comparable(EventMessage::class);
+        $this->messages = [];
 
         foreach ($messages as $message) {
-            $this->messages->add($message);
+            $this->addEventMessage($message);
         }
     }
 
@@ -91,27 +98,28 @@ final class EventStream implements Countable, IteratorAggregate, Serializable
      */
     public static function deserialize(array $data)
     {
-        $id = ValueSerializer::deserialize($data['id']);
-        $type = Type::create($data['type']);
+        $objectIdClass = Type::create($data['objectId']['type'])->toClassName();
+        $objectId = $objectIdClass::fromString($data['objectId']['identifier']);
+        $objectType = Type::create($data['objectType']);
         $committed = $data['committed'];
         $version = $data['version'];
 
         $messages = [];
 
         foreach ($data['messages'] as $mData) {
-            $eventClass = Type::create($mData['eventType'])->toClassName();
+            $eventClass = Type::create($mData['eventData']['type'])->toClassName();
             $messages[] = new EventMessage(
                 EventId::fromString($mData['eventId']),
-                $id,
-                $type,
+                $objectId,
+                $objectType,
                 DateTime::fromString($mData['dateTime']),
                 MetaData::deserialize($mData['metaData']),
-                $eventClass::deserialize($mData['eventData']),
+                $eventClass::deserialize($mData['eventData']['data']),
                 $mData['sequence']
             );
         }
 
-        return new self($id, $type, $committed, $version, $messages);
+        return new self($objectId, $objectType, $committed, $version, $messages);
     }
 
     /**
@@ -123,21 +131,26 @@ final class EventStream implements Countable, IteratorAggregate, Serializable
 
         foreach ($this->messages as $message) {
             $messages[] = [
-                'sequence'  => $message->sequence(),
                 'eventId'   => $message->eventId()->toString(),
-                'eventType' => $message->eventType()->toString(),
                 'dateTime'  => $message->dateTime()->toString(),
                 'metaData'  => $message->metaData()->serialize(),
-                'eventData' => $message->eventData()->serialize()
+                'eventData' => [
+                    'type' => $message->eventType()->toString(),
+                    'data' => $message->eventData()->serialize()
+                ],
+                'sequence'  => $message->sequence()
             ];
         }
 
         return [
-            'id'        => ValueSerializer::serialize($this->id),
-            'type'      => $this->type->toString(),
-            'committed' => $this->committed,
-            'version'   => $this->version,
-            'messages'  => $messages
+            'objectId'   => [
+                'type'       => $this->objectIdType->toString(),
+                'identifier' => $this->objectId->toString()
+            ],
+            'objectType' => $this->objectType->toString(),
+            'committed'  => $this->committed,
+            'version'    => $this->version,
+            'messages'   => $messages
         ];
     }
 
@@ -148,7 +161,7 @@ final class EventStream implements Countable, IteratorAggregate, Serializable
      */
     public function isEmpty()
     {
-        return $this->messages->isEmpty();
+        return empty($this->messages);
     }
 
     /**
@@ -158,27 +171,37 @@ final class EventStream implements Countable, IteratorAggregate, Serializable
      */
     public function count()
     {
-        return $this->messages->count();
+        return count($this->messages);
     }
 
     /**
-     * Retrieves the associated ID
+     * Retrieves the object ID
      *
      * @return Identifier
      */
-    public function id()
+    public function objectId()
     {
-        return $this->id;
+        return $this->objectId;
     }
 
     /**
-     * Retrieves the associated type
+     * Retrieves the object ID type
      *
      * @return Type
      */
-    public function type()
+    public function objectIdType()
     {
-        return $this->type;
+        return $this->objectIdType;
+    }
+
+    /**
+     * Retrieves the object type
+     *
+     * @return Type
+     */
+    public function objectType()
+    {
+        return $this->objectType;
     }
 
     /**
@@ -188,11 +211,7 @@ final class EventStream implements Countable, IteratorAggregate, Serializable
      */
     public function messages()
     {
-        $array = [];
-
-        foreach ($this->messages as $message) {
-            $array[] = $message;
-        }
+        $array = $this->messages;
 
         return $array;
     }
@@ -224,6 +243,18 @@ final class EventStream implements Countable, IteratorAggregate, Serializable
      */
     public function getIterator()
     {
-        return $this->messages->getIterator();
+        return new ArrayIterator($this->messages);
+    }
+
+    /**
+     * Adds an event message
+     *
+     * @param EventMessage $message The event message
+     *
+     * @return void
+     */
+    private function addEventMessage(EventMessage $message)
+    {
+        $this->messages[] = $message;
     }
 }

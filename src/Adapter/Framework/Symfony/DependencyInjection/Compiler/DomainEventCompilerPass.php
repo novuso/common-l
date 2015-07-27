@@ -4,7 +4,7 @@ namespace Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler;
 
 use InvalidArgumentException;
 use ReflectionClass;
-use Novuso\Common\Domain\Event\Api\Subscriber;
+use Novuso\Common\Domain\Event\Subscriber;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 

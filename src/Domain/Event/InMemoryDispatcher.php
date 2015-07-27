@@ -1,6 +1,8 @@
 <?php
 
-namespace Novuso\Common\Domain\Event\Dispatcher;
+namespace Novuso\Common\Domain\Event;
+
+use Novuso\System\Utility\ClassName;
 
 /**
  * InMemoryDispatcher dispatches domain events to registered handlers
@@ -57,7 +59,7 @@ class InMemoryDispatcher implements Dispatcher
      */
     public function dispatch(EventMessage $message)
     {
-        $eventType = (string) $message->eventType();
+        $eventType = ClassName::underscore((string) $message->eventType());
 
         if (!isset($this->handlers[$eventType])) {
             return;

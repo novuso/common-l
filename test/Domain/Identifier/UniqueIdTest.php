@@ -2,7 +2,7 @@
 
 namespace Novuso\Test\Common\Domain\Identifier;
 
-use Novuso\Common\Domain\Value\Identity\Uuid;
+use Novuso\Common\Domain\Value\Identifier\Uuid;
 use Novuso\Test\Common\Doubles\UserId;
 use PHPUnit_Framework_TestCase;
 

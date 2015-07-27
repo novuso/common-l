@@ -30,7 +30,7 @@ class EventStreamTest extends PHPUnit_Framework_TestCase
     {
         $this->userId = UserId::fromString('014ec11d-2f21-4d33-a624-5df1196a4f85');
         $this->userType = Type::create(User::class);
-        $this->metaData = new MetaData(['ipAddress' => IpAddress::fromString('127.0.0.1')]);
+        $this->metaData = new MetaData(['ipAddress' => '127.0.0.1']);
         $this->committed = 3;
         $this->version = 6;
     }
@@ -95,7 +95,7 @@ class EventStreamTest extends PHPUnit_Framework_TestCase
         $this->assertSame(3, count($eventStream));
     }
 
-    public function test_that_id_returns_expected_instance()
+    public function test_that_object_id_returns_expected_instance()
     {
         $eventStream = new EventStream(
             $this->userId,
@@ -104,10 +104,10 @@ class EventStreamTest extends PHPUnit_Framework_TestCase
             $this->version,
             $this->getEventMessages()
         );
-        $this->assertSame('014ec11d-2f21-4d33-a624-5df1196a4f85', $eventStream->id()->toString());
+        $this->assertSame('014ec11d-2f21-4d33-a624-5df1196a4f85', $eventStream->objectId()->toString());
     }
 
-    public function test_that_type_returns_expected_instance()
+    public function test_that_object_type_returns_expected_instance()
     {
         $eventStream = new EventStream(
             $this->userId,
@@ -116,7 +116,7 @@ class EventStreamTest extends PHPUnit_Framework_TestCase
             $this->version,
             $this->getEventMessages()
         );
-        $this->assertSame('Novuso.Test.Common.Doubles.User', $eventStream->type()->toString());
+        $this->assertSame('Novuso.Test.Common.Doubles.User', $eventStream->objectType()->toString());
     }
 
     public function test_that_messages_returns_expected_messages()

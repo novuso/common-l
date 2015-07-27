@@ -1,8 +1,13 @@
 <?php
 
-namespace Novuso\Common\Domain\Event;
+namespace Novuso\Common\Domain\Entity;
 
 use Countable;
+use Novuso\Common\Domain\Event\DomainEvent;
+use Novuso\Common\Domain\Event\EventId;
+use Novuso\Common\Domain\Event\EventMessage;
+use Novuso\Common\Domain\Event\EventStream;
+use Novuso\Common\Domain\Event\MetaData;
 use Novuso\Common\Domain\Identifier\Identifier;
 use Novuso\Common\Domain\Value\DateTime\DateTime;
 use Novuso\System\Collection\ArrayList;
@@ -20,18 +25,18 @@ use Novuso\System\Utility\Test;
 final class EventCollection implements Countable
 {
     /**
-     * Associated ID
+     * Aggregate ID
      *
      * @var Identifier
      */
-    protected $id;
+    protected $aggregateId;
 
     /**
-     * Associated type
+     * Aggregate type
      *
      * @var Type
      */
-    protected $type;
+    protected $aggregateType;
 
     /**
      * Committed sequence number
@@ -57,13 +62,13 @@ final class EventCollection implements Countable
     /**
      * Constructs EventCollection
      *
-     * @param Identifier $id   The associated ID
-     * @param Type       $type The associated type
+     * @param Identifier $aggregateId   The aggregate ID
+     * @param Type       $aggregateType The aggregate type
      */
-    public function __construct(Identifier $id, Type $type)
+    public function __construct(Identifier $aggregateId, Type $aggregateType)
     {
-        $this->id = $id;
-        $this->type = $type;
+        $this->aggregateId = $aggregateId;
+        $this->aggregateType = $aggregateType;
         $this->eventMessages = ArrayList::of(EventMessage::class);
     }
 
@@ -91,21 +96,20 @@ final class EventCollection implements Countable
      * Adds a domain event
      *
      * @param DomainEvent $domainEvent The domain event
-     * @param array       $metaData    An associated array of metadata
      *
      * @return void
      */
-    public function add(DomainEvent $domainEvent, array $metaData = [])
+    public function add(DomainEvent $domainEvent)
     {
         $dateTime = DateTime::now();
         $eventId = EventId::generate();
-        $metaData = new MetaData($metaData);
+        $metaData = new MetaData();
         $sequence = $this->nextSequence();
 
         $eventMessage = new EventMessage(
             $eventId,
-            $this->id,
-            $this->type,
+            $this->aggregateId,
+            $this->aggregateType,
             $dateTime,
             $metaData,
             $domainEvent,
@@ -124,8 +128,8 @@ final class EventCollection implements Countable
     public function stream()
     {
         return new EventStream(
-            $this->id,
-            $this->type,
+            $this->aggregateId,
+            $this->aggregateType,
             $this->committedSequence(),
             $this->lastSequence(),
             $this->eventMessages->toArray()

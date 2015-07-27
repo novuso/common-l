@@ -1,13 +1,13 @@
 <?php
 
-namespace Novuso\Test\Common\Domain\Value\Resource;
+namespace Novuso\Test\Common\Domain\Value\Identifier;
 
-use Novuso\Common\Domain\Value\Resource\Url;
+use Novuso\Common\Domain\Value\Identifier\Url;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @covers Novuso\Common\Domain\Value\Resource\Uri
- * @covers Novuso\Common\Domain\Value\Resource\Url
+ * @covers Novuso\Common\Domain\Value\Identifier\Uri
+ * @covers Novuso\Common\Domain\Value\Identifier\Url
  */
 class UrlTest extends PHPUnit_Framework_TestCase
 {

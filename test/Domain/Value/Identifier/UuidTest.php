@@ -1,12 +1,12 @@
 <?php
 
-namespace Novuso\Test\Common\Domain\Value\Identity;
+namespace Novuso\Test\Common\Domain\Value\Identifier;
 
-use Novuso\Common\Domain\Value\Identity\Uuid;
+use Novuso\Common\Domain\Value\Identifier\Uuid;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @covers Novuso\Common\Domain\Value\Identity\Uuid
+ * @covers Novuso\Common\Domain\Value\Identifier\Uuid
  */
 class UuidTest extends PHPUnit_Framework_TestCase
 {

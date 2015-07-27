@@ -1,17 +1,16 @@
 <?php
 
-namespace Novuso\Test\Common\Domain\Event;
+namespace Novuso\Test\Common\Domain\Entity;
 
-use Novuso\Common\Domain\Event\EventCollection;
+use Novuso\Common\Domain\Entity\EventCollection;
 use Novuso\System\Type\Type;
-use Novuso\Test\Common\Doubles\IpAddress;
 use Novuso\Test\Common\Doubles\User;
 use Novuso\Test\Common\Doubles\UserId;
 use Novuso\Test\Common\Doubles\UserRegisteredEvent;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @covers Novuso\Common\Domain\Event\EventCollection
+ * @covers Novuso\Common\Domain\Entity\EventCollection
  */
 class EventCollectionTest extends PHPUnit_Framework_TestCase
 {
@@ -32,7 +31,7 @@ class EventCollectionTest extends PHPUnit_Framework_TestCase
     public function test_that_adding_events_affects_count()
     {
         $domainEvent = new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins');
-        $this->eventCollection->add($domainEvent, ['ipAddress' => IpAddress::fromString('127.0.0.1')]);
+        $this->eventCollection->add($domainEvent);
         $this->assertSame(1, count($this->eventCollection));
     }
 
@@ -41,7 +40,7 @@ class EventCollectionTest extends PHPUnit_Framework_TestCase
         // assuming the last event committed had a sequence number of 12
         $this->eventCollection->initializeSequence(12);
         $domainEvent = new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins');
-        $this->eventCollection->add($domainEvent, ['ipAddress' => IpAddress::fromString('127.0.0.1')]);
+        $this->eventCollection->add($domainEvent);
         $this->assertSame(12, $this->eventCollection->committedSequence());
     }
 
@@ -50,7 +49,7 @@ class EventCollectionTest extends PHPUnit_Framework_TestCase
         // assuming the last event committed had a sequence number of 12
         $this->eventCollection->initializeSequence(12);
         $domainEvent = new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins');
-        $this->eventCollection->add($domainEvent, ['ipAddress' => IpAddress::fromString('127.0.0.1')]);
+        $this->eventCollection->add($domainEvent);
         $this->assertSame(13, $this->eventCollection->lastSequence());
     }
 
@@ -59,7 +58,7 @@ class EventCollectionTest extends PHPUnit_Framework_TestCase
         // assuming the last event committed had a sequence number of 12
         $this->eventCollection->initializeSequence(12);
         $domainEvent = new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins');
-        $this->eventCollection->add($domainEvent, ['ipAddress' => IpAddress::fromString('127.0.0.1')]);
+        $this->eventCollection->add($domainEvent);
         $this->eventCollection->commit();
         $this->assertSame(13, $this->eventCollection->committedSequence());
     }
@@ -67,7 +66,7 @@ class EventCollectionTest extends PHPUnit_Framework_TestCase
     public function test_that_commit_clears_event_messages()
     {
         $domainEvent = new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins');
-        $this->eventCollection->add($domainEvent, ['ipAddress' => IpAddress::fromString('127.0.0.1')]);
+        $this->eventCollection->add($domainEvent);
         $this->eventCollection->commit();
         $this->assertTrue($this->eventCollection->isEmpty());
     }
@@ -76,14 +75,8 @@ class EventCollectionTest extends PHPUnit_Framework_TestCase
     {
         // assuming the last event committed had a sequence number of 3
         $this->eventCollection->initializeSequence(3);
-        $this->eventCollection->add(
-            new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins'),
-            ['ipAddress' => IpAddress::fromString('127.0.0.1')]
-        );
-        $this->eventCollection->add(
-            new UserRegisteredEvent('John Smith', 'jsmith'),
-            ['ipAddress' => IpAddress::fromString('127.0.0.1')]
-        );
+        $this->eventCollection->add(new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins'));
+        $this->eventCollection->add(new UserRegisteredEvent('John Smith', 'jsmith'));
         $stream = $this->eventCollection->stream();
         // commit after retrieving stream
         $this->eventCollection->commit();

@@ -3,14 +3,14 @@
 namespace Novuso\Common\Domain\Identifier;
 
 /**
- * IdGenerator is the interface for an ID generator
+ * IdentifierFactory is the interface for an ID factory
  *
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-interface IdGenerator
+interface IdentifierFactory
 {
     /**
      * Generates a new identifier

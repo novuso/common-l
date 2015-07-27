@@ -1,6 +1,6 @@
 <?php
 
-namespace Novuso\Common\Domain\Value\Identity;
+namespace Novuso\Common\Domain\Value\Identifier;
 
 use Novuso\Common\Domain\Value\ValueObject;
 use Novuso\System\Exception\DomainException;
@@ -344,7 +344,14 @@ final class Uuid extends ValueObject implements Comparable
     }
 
     /**
-     * {@inheritdoc}
+     * Creates instance from a UUID string
+     *
+     * @param string $state The string representation
+     *
+     * @return Uuid
+     *
+     * @throws TypeException When state is not a string
+     * @throws DomainException When the string is not a valid UUID
      */
     public static function fromString($state)
     {

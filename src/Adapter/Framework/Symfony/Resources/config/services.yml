@@ -16,11 +16,20 @@
 # tags:
 #     - { name: novuso_common.event_subscriber }
 #==============================================================================
+# Use the following to tag view responder services:
+#
+# tags:
+#     -
+#         name: novuso_common.view_responder
+#         action: My\Example\App\IndexAction
+#==============================================================================
 parameters:
     # List of Novuso\Common\Application\Command\Filter instances
     novuso_common.command_filters: []
     # Map of ['handler_service_id' => 'Command\\Class']
     novuso_common.command_handlers: []
+    # Map of ['responder_service_id' => 'Action\\Class']
+    novuso_common.view_responders: []
 services:
     # Novuso\Common\Application\Service\Container
     novuso_common.service_container:
@@ -36,7 +45,7 @@ services:
 
     # Novuso\Common\Domain\Event\Dispatcher
     novuso_common.event_dispatcher:
-        class: Novuso\Common\Application\DomainEvent\Dispatcher\ServiceAwareDispatcher
+        class: Novuso\Common\Application\DomainEvent\ServiceAwareDispatcher
         arguments:
             - @novuso_common.service_container
 
@@ -65,3 +74,16 @@ services:
         arguments:
             - @novuso_common.command_resolver.service_map
         public: false
+
+    novuso_common.view_subscriber:
+        class: Novuso\Common\Adapter\Presentation\Subscriber\ViewSubscriber
+        arguments:
+            - @novuso_common.responder_resolver
+        tags:
+            - { name: kernel.event_subscriber }
+
+    novuso_common.responder_resolver:
+        class: Novuso\Common\Adapter\Presentation\Resolver\ResponderServiceResolver
+        arguments:
+            - @novuso_common.service_container
+            - %novuso_common.view_responders%

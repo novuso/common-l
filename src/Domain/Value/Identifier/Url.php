@@ -1,6 +1,6 @@
 <?php
 
-namespace Novuso\Common\Domain\Value\Resource;
+namespace Novuso\Common\Domain\Value\Identifier;
 
 use Novuso\System\Exception\DomainException;
 

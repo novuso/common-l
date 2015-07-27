@@ -65,7 +65,14 @@ final class Timezone extends ValueObject implements Comparable
     }
 
     /**
-     * {@inheritdoc}
+     * Creates instance from a string representation
+     *
+     * @param string $state The string representation
+     *
+     * @return Timezone
+     *
+     * @throws TypeException When state is not a string
+     * @throws DomainException When the string is invalid
      */
     public static function fromString($state)
     {

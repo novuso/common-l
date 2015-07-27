@@ -1,6 +1,6 @@
 <?php
 
-namespace Novuso\Common\Domain\Value\Resource;
+namespace Novuso\Common\Domain\Value\Identifier;
 
 use Novuso\Common\Domain\Value\ValueObject;
 use Novuso\System\Exception\DomainException;
@@ -212,7 +212,14 @@ class Uri extends ValueObject implements Comparable
     }
 
     /**
-     * {@inheritdoc}
+     * Creates instance from a URI string
+     *
+     * @param string $state The string representation
+     *
+     * @return Uri
+     *
+     * @throws TypeException When state is not a string
+     * @throws DomainException When the string is invalid
      */
     public static function fromString($state)
     {

@@ -17,16 +17,16 @@ interface Subscriber
      *
      * @var string
      */
-    const ALL_EVENTS = '__ALL_EVENTS__';
+    const ALL_EVENTS = 'ALL_EVENTS';
 
     /**
      * Retrieves event registration
      *
      * The returned array keys are event types. The event type string is the
-     * canonicalized version of the class name.
+     * underscored version of the class name.
      *
-     * Novuso\System\Utility\ClassName::canonical($className) will retrieve the
-     * event type, when passed the fully-qualified class name of the event.
+     * Novuso\System\Utility\ClassName::underscore($className) will retrieve
+     * the event type, when passed the fully-qualified class name of the event.
      *
      * Array values can be:
      *
@@ -37,9 +37,9 @@ interface Subscriber
      *
      * Example:
      *
-     * * ['Event.Type' => 'methodName']
-     * * ['Event.Type' => ['methodName', 10]]
-     * * ['Event.Type' => [['methodOne', 10], ['methodTwo']]]
+     * * ['domain_event.type' => 'methodName']
+     * * ['domain_event.type' => ['methodName', 10]]
+     * * ['domain_event.type' => [['methodOne', 10], ['methodTwo']]]
      *
      * Event handler signature: function (EventMessage $message): void {}
      *

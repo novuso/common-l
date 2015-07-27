@@ -1,10 +1,11 @@
 <?php
 
-namespace Novuso\Common\Application\DomainEvent\Dispatcher;
+namespace Novuso\Common\Application\DomainEvent;
 
 use Novuso\Common\Application\Service\Container;
 use Novuso\Common\Domain\Event\EventMessage;
-use Novuso\Common\Domain\Event\Dispatcher\InMemoryDispatcher;
+use Novuso\Common\Domain\Event\InMemoryDispatcher;
+use Novuso\System\Utility\ClassName;
 
 /**
  * ServiceAwareDispatcher lazy loads event subscribers from a container
@@ -126,7 +127,7 @@ class ServiceAwareDispatcher extends InMemoryDispatcher
      */
     public function dispatch(EventMessage $message)
     {
-        $this->lazyLoad((string) $message->eventType());
+        $this->lazyLoad(ClassName::underscore((string) $message->eventType()));
 
         return parent::dispatch($message);
     }
