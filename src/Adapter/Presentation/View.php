@@ -12,28 +12,81 @@ use Novuso\System\Type\Type;
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-interface View
+class View
 {
     /**
-     * Retrieves the domain payload
+     * Action type
      *
-     * @return mixed|null
+     * @var Type
      */
-    public function data();
+    protected $action;
 
     /**
-     * Retrieves the request format
+     * Domain payload
      *
-     * @return string|null
+     * @var mixed|null
      */
-    public function format();
+    protected $data;
+
+    /**
+     * Request format
+     *
+     * @var string|null
+     */
+    protected $format;
+
+    /**
+     * Template parameters
+     *
+     * @var array
+     */
+    protected $parameters;
+
+    /**
+     * Constructs View
+     *
+     * @param Type        $action     The action type
+     * @param mixed|null  $data       The domain payload
+     * @param string|null $format     The request format
+     * @param array       $parameters Template parameters
+     */
+    public function __construct(Type $action, $data, $format, array $parameters = [])
+    {
+        $this->action = $action;
+        $this->data = $data;
+        $this->format = $format;
+        $this->parameters = $parameters;
+    }
 
     /**
      * Retrieves the action type
      *
      * @return Type
      */
-    public function action();
+    public function action()
+    {
+        return $this->action;
+    }
+
+    /**
+     * Retrieves the domain payload
+     *
+     * @return mixed|null
+     */
+    public function data()
+    {
+        return $this->data;
+    }
+
+    /**
+     * Retrieves the request format
+     *
+     * @return string|null
+     */
+    public function format()
+    {
+        return $this->format;
+    }
 
     /**
      * Retrieves parameters for templates
@@ -43,5 +96,8 @@ interface View
      *
      * @return array
      */
-    public function parameters();
+    public function parameters()
+    {
+        return $this->parameters;
+    }
 }
