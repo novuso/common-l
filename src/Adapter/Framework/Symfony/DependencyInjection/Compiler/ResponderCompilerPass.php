@@ -26,7 +26,7 @@ class ResponderCompilerPass implements CompilerPassInterface
 
         foreach ($taggedServices as $id => $tags) {
             foreach ($tags as $attributes) {
-                $definition->addMethodCall('setResponder', [$attributes['action'], $id]);
+                $definition->addMethodCall('setResponder', [$id, $attributes['action']]);
             }
         }
     }

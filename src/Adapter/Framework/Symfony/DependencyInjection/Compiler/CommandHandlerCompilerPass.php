@@ -26,7 +26,7 @@ class CommandHandlerCompilerPass implements CompilerPassInterface
 
         foreach ($taggedServices as $id => $tags) {
             foreach ($tags as $attributes) {
-                $definition->addMethodCall('setHandler', [$attributes['command'], $id]);
+                $definition->addMethodCall('setHandler', [$id, $attributes['command']]);
             }
         }
     }

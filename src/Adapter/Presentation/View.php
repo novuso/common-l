@@ -5,7 +5,7 @@ namespace Novuso\Common\Adapter\Presentation;
 use Novuso\System\Type\Type;
 
 /**
- * View represents a domain payload that may also contain metadata
+ * View represents a domain payload that may contain additional data
  *
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
