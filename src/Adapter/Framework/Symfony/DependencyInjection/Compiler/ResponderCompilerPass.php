@@ -22,7 +22,7 @@ class ResponderCompilerPass implements CompilerPassInterface
         }
 
         $definition = $container->findDefinition('novuso_common.responder_resolver');
-        $taggedServices = $container->findTaggedServiceIds('novuso_common.view_resolver');
+        $taggedServices = $container->findTaggedServiceIds('novuso_common.view_responder');
 
         foreach ($taggedServices as $id => $tags) {
             foreach ($tags as $attributes) {
