@@ -45,6 +45,20 @@ abstract class Responder
     }
 
     /**
+     * Creates a standard response
+     *
+     * @param mixed  $content The response content
+     * @param int    $status  The status code
+     * @param array  $headers An array of response headers
+     *
+     * @return Response
+     */
+    public function httpResponse($content, $status = Response::HTTP_OK, array $headers = [])
+    {
+        return new Response($content, $status, $headers);
+    }
+
+    /**
      * Creates a JSON response
      *
      * @param mixed  $data    The response data

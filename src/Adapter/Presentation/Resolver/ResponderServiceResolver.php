@@ -102,7 +102,7 @@ class ResponderServiceResolver implements ResponderResolver
      */
     public function setResponder($serviceId, $actionClass)
     {
-        if (!Test::implementsInterface($actionClass, Action::class)) {
+        if (!Test::isSubclassOf($actionClass, Action::class)) {
             $message = sprintf('Invalid action class: %s', $actionClass);
             throw new LogicException($message);
         }
