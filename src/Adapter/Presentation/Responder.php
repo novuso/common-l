@@ -64,10 +64,10 @@ abstract class Responder
      * Options and defaults:
      *
      *     $options = [
-     *         'public'             => true,
-     *         'contentDisposition' => null,
-     *         'autoEtag'           => false,
-     *         'autoLastModified'   => true
+     *         'public'              => true,
+     *         'content_disposition' => null,
+     *         'auto_etag'           => false,
+     *         'auto_last_modified'  => true
      *     ];
      *
      * @param SplFileInfo|string $file    The file to stream
@@ -80,10 +80,10 @@ abstract class Responder
     public function fileResponse($file, $status = Response::HTTP_OK, array $headers = [], array $options = [])
     {
         $options = array_merge([
-            'public'             => true,
-            'contentDisposition' => null,
-            'autoEtag'           => false,
-            'autoLastModified'   => true
+            'public'              => true,
+            'content_disposition' => null,
+            'auto_etag'           => false,
+            'auto_last_modified'  => true
         ], $options);
 
         return new BinaryFileResponse(
@@ -91,9 +91,9 @@ abstract class Responder
             $status,
             $headers,
             $options['public'],
-            $options['contentDisposition'],
-            $options['autoEtag'],
-            $options['autoLastModified']
+            $options['content_disposition'],
+            $options['auto_etag'],
+            $options['auto_last_modified']
         );
     }
 
