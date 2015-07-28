@@ -17,7 +17,7 @@ final class TaskDescriptionChangedEvent implements DomainEvent
 
     public static function deserialize(array $data)
     {
-        $taskId = TaskId::fromString($data['taskId']);
+        $taskId = TaskId::fromString($data['task_id']);
         $description = $data['description'];
 
         return new self($taskId, $description);
@@ -26,7 +26,7 @@ final class TaskDescriptionChangedEvent implements DomainEvent
     public function serialize()
     {
         return [
-            'taskId'      => $this->taskId->toString(),
+            'task_id'     => $this->taskId->toString(),
             'description' => $this->description
         ];
     }

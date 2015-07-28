@@ -61,10 +61,6 @@ class InMemoryDispatcher implements Dispatcher
     {
         $eventType = ClassName::underscore((string) $message->eventType());
 
-        if (!isset($this->handlers[$eventType])) {
-            return;
-        }
-
         foreach ($this->getHandlers($eventType) as $handler) {
             call_user_func($handler, $message);
         }
@@ -144,6 +140,10 @@ class InMemoryDispatcher implements Dispatcher
     {
         if ($eventType !== null) {
             $eventType = (string) $eventType;
+
+            if (!isset($this->handlers[$eventType])) {
+                return [];
+            }
 
             if (!isset($this->sorted[$eventType])) {
                 $this->sortHandlers($eventType);

@@ -98,23 +98,23 @@ final class EventStream implements Countable, IteratorAggregate, Serializable
      */
     public static function deserialize(array $data)
     {
-        $objectIdClass = Type::create($data['objectId']['type'])->toClassName();
-        $objectId = $objectIdClass::fromString($data['objectId']['identifier']);
-        $objectType = Type::create($data['objectType']);
+        $objectIdClass = Type::create($data['object_id']['type'])->toClassName();
+        $objectId = $objectIdClass::fromString($data['object_id']['identifier']);
+        $objectType = Type::create($data['object_type']);
         $committed = $data['committed'];
         $version = $data['version'];
 
         $messages = [];
 
         foreach ($data['messages'] as $mData) {
-            $eventClass = Type::create($mData['eventData']['type'])->toClassName();
+            $eventClass = Type::create($mData['event_data']['type'])->toClassName();
             $messages[] = new EventMessage(
-                EventId::fromString($mData['eventId']),
+                EventId::fromString($mData['event_id']),
                 $objectId,
                 $objectType,
-                DateTime::fromString($mData['dateTime']),
-                MetaData::deserialize($mData['metaData']),
-                $eventClass::deserialize($mData['eventData']['data']),
+                DateTime::fromString($mData['date_time']),
+                MetaData::deserialize($mData['meta_data']),
+                $eventClass::deserialize($mData['event_data']['data']),
                 $mData['sequence']
             );
         }
@@ -131,26 +131,26 @@ final class EventStream implements Countable, IteratorAggregate, Serializable
 
         foreach ($this->messages as $message) {
             $messages[] = [
-                'eventId'   => $message->eventId()->toString(),
-                'dateTime'  => $message->dateTime()->toString(),
-                'metaData'  => $message->metaData()->serialize(),
-                'eventData' => [
+                'event_id'   => $message->eventId()->toString(),
+                'date_time'  => $message->dateTime()->toString(),
+                'meta_data'  => $message->metaData()->serialize(),
+                'event_data' => [
                     'type' => $message->eventType()->toString(),
                     'data' => $message->eventData()->serialize()
                 ],
-                'sequence'  => $message->sequence()
+                'sequence'   => $message->sequence()
             ];
         }
 
         return [
-            'objectId'   => [
+            'object_id'   => [
                 'type'       => $this->objectIdType->toString(),
                 'identifier' => $this->objectId->toString()
             ],
-            'objectType' => $this->objectType->toString(),
-            'committed'  => $this->committed,
-            'version'    => $this->version,
-            'messages'   => $messages
+            'object_type' => $this->objectType->toString(),
+            'committed'   => $this->committed,
+            'version'     => $this->version,
+            'messages'    => $messages
         ];
     }
 

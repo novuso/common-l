@@ -99,7 +99,7 @@ class StoredEvent
         $this->objectIdType = $message->objectIdType()->toString();
         $this->objectType = $message->objectType()->toString();
         $this->eventId = $message->eventId()->toString();
-        $this->dateTime = $message->dateTime->toString();
+        $this->dateTime = $message->dateTime()->toString();
         $this->metaData = $this->serializer->serialize($message->metaData());
         $this->eventData = $this->serializer->serialize($message->eventData());
         $sequence = $message->sequence();

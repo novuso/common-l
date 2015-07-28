@@ -9,7 +9,6 @@ use Novuso\Common\Domain\Event\MetaData;
 use Novuso\Common\Domain\Value\DateTime\DateTime;
 use Novuso\System\Serialization\JsonSerializer;
 use Novuso\System\Type\Type;
-use Novuso\Test\Common\Doubles\IpAddress;
 use Novuso\Test\Common\Doubles\User;
 use Novuso\Test\Common\Doubles\UserId;
 use Novuso\Test\Common\Doubles\UserRegisteredEvent;
@@ -30,7 +29,7 @@ class EventStreamTest extends PHPUnit_Framework_TestCase
     {
         $this->userId = UserId::fromString('014ec11d-2f21-4d33-a624-5df1196a4f85');
         $this->userType = Type::create(User::class);
-        $this->metaData = new MetaData(['ipAddress' => '127.0.0.1']);
+        $this->metaData = new MetaData(['ip_address' => '127.0.0.1']);
         $this->committed = 3;
         $this->version = 6;
     }
@@ -105,6 +104,18 @@ class EventStreamTest extends PHPUnit_Framework_TestCase
             $this->getEventMessages()
         );
         $this->assertSame('014ec11d-2f21-4d33-a624-5df1196a4f85', $eventStream->objectId()->toString());
+    }
+
+    public function test_that_object_id_type_returns_expected_instance()
+    {
+        $eventStream = new EventStream(
+            $this->userId,
+            $this->userType,
+            $this->committed,
+            $this->version,
+            $this->getEventMessages()
+        );
+        $this->assertSame('Novuso.Test.Common.Doubles.UserId', $eventStream->objectIdType()->toString());
     }
 
     public function test_that_object_type_returns_expected_instance()

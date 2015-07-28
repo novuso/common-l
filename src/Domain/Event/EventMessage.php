@@ -119,14 +119,14 @@ final class EventMessage implements Comparable, Equatable, Serializable
      */
     public static function deserialize(array $data)
     {
-        $objectIdClass = Type::create($data['objectId']['type'])->toClassName();
-        $objectId = $objectIdClass::fromString($data['objectId']['identifier']);
-        $objectType = Type::create($data['objectType']);
-        $eventId = EventId::fromString($data['eventId']);
-        $dateTime = DateTime::fromString($data['dateTime']);
-        $metaData = MetaData::deserialize($data['metaData']);
-        $eventClass = Type::create($data['eventData']['type'])->toClassName();
-        $eventData = $eventClass::deserialize($data['eventData']['data']);
+        $objectIdClass = Type::create($data['object_id']['type'])->toClassName();
+        $objectId = $objectIdClass::fromString($data['object_id']['identifier']);
+        $objectType = Type::create($data['object_type']);
+        $eventId = EventId::fromString($data['event_id']);
+        $dateTime = DateTime::fromString($data['date_time']);
+        $metaData = MetaData::deserialize($data['meta_data']);
+        $eventClass = Type::create($data['event_data']['type'])->toClassName();
+        $eventData = $eventClass::deserialize($data['event_data']['data']);
         $sequence = $data['sequence'];
 
         return new self($eventId, $objectId, $objectType, $dateTime, $metaData, $eventData, $sequence);
@@ -138,19 +138,19 @@ final class EventMessage implements Comparable, Equatable, Serializable
     public function serialize()
     {
         return [
-            'objectId'   => [
+            'object_id'   => [
                 'type'       => $this->objectIdType->toString(),
                 'identifier' => $this->objectId->toString()
             ],
-            'objectType' => $this->objectType->toString(),
-            'eventId'    => $this->eventId->toString(),
-            'dateTime'   => $this->dateTime->toString(),
-            'metaData'   => $this->metaData->serialize(),
-            'eventData'  => [
+            'object_type' => $this->objectType->toString(),
+            'event_id'    => $this->eventId->toString(),
+            'date_time'   => $this->dateTime->toString(),
+            'meta_data'   => $this->metaData->serialize(),
+            'event_data'  => [
                 'type' => $this->eventType->toString(),
                 'data' => $this->eventData->serialize()
             ],
-            'sequence'   => $this->sequence
+            'sequence'    => $this->sequence
         ];
     }
 

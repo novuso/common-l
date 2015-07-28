@@ -88,35 +88,35 @@ class AggregateRootTest extends PHPUnit_Framework_TestCase
     protected function createEventStream()
     {
         return EventStream::deserialize([
-            'objectId'   => [
+            'object_id'   => [
                 'type'       => 'Novuso.Test.Common.Doubles.TaskId',
                 'identifier' => '014ed18b-75e0-4f27-8fed-e4d83fc00bed'
             ],
-            'objectType' => 'Novuso.Test.Common.Doubles.Task',
-            'committed'  => null,
-            'version'    => 1,
-            'messages'   => [
+            'object_type' => 'Novuso.Test.Common.Doubles.Task',
+            'committed'   => null,
+            'version'     => 1,
+            'messages'    => [
                 [
-                    'eventId'   => '014ed18b-761f-458f-9f57-6747a71b0016',
-                    'dateTime'  => '2015-07-27T22:04:14.719303[UTC]',
-                    'metaData'  => [],
-                    'eventData' => [
+                    'event_id'   => '014ed18b-761f-458f-9f57-6747a71b0016',
+                    'date_time'  => '2015-07-27T22:04:14.719303[UTC]',
+                    'meta_data'  => [],
+                    'event_data' => [
                         'type' => 'Novuso.Test.Common.Doubles.TaskCreatedEvent',
                         'data' => [
-                            'taskId'      => '014ed18b-75e0-4f27-8fed-e4d83fc00bed',
+                            'task_id'     => '014ed18b-75e0-4f27-8fed-e4d83fc00bed',
                             'description' => 'Develop an application with event sourcing'
                         ]
                     ],
                     'sequence'  => 0
                 ],
                 [
-                    'eventId'   => '014ed18b-7631-4fb4-8162-a0341418a1c6',
-                    'dateTime'  => '2015-07-27T22:04:14.766566[UTC]',
-                    'metaData'  => [],
-                    'eventData' => [
+                    'event_id'   => '014ed18b-7631-4fb4-8162-a0341418a1c6',
+                    'date_time'  => '2015-07-27T22:04:14.766566[UTC]',
+                    'meta_data'  => [],
+                    'event_data' => [
                         'type' => 'Novuso.Test.Common.Doubles.TaskDescriptionChangedEvent',
                         'data' => [
-                            'taskId'      => '014ed18b-75e0-4f27-8fed-e4d83fc00bed',
+                            'task_id'     => '014ed18b-75e0-4f27-8fed-e4d83fc00bed',
                             'description' => 'Develop a library to help with event sourcing'
                         ]
                     ],

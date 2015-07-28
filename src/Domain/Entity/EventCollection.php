@@ -104,7 +104,6 @@ final class EventCollection implements Countable
         $dateTime = DateTime::now();
         $eventId = EventId::generate();
         $metaData = new MetaData();
-        $sequence = $this->nextSequence();
 
         $eventMessage = new EventMessage(
             $eventId,
@@ -113,7 +112,7 @@ final class EventCollection implements Countable
             $dateTime,
             $metaData,
             $domainEvent,
-            $sequence
+            $this->nextSequence()
         );
 
         $this->lastSequence = $eventMessage->sequence();
@@ -127,13 +126,15 @@ final class EventCollection implements Countable
      */
     public function stream()
     {
-        return new EventStream(
+        $stream = new EventStream(
             $this->aggregateId,
             $this->aggregateType,
             $this->committedSequence(),
             $this->lastSequence(),
             $this->eventMessages->toArray()
         );
+
+        return $stream;
     }
 
     /**

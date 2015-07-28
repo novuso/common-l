@@ -19,7 +19,7 @@ final class UserRegisteredEvent implements DomainEvent
 
     public static function deserialize(array $data)
     {
-        $keys = ['fullName', 'username'];
+        $keys = ['full_name', 'username'];
         foreach ($keys as $key) {
             if (!isset($data[$key])) {
                 $message = sprintf(
@@ -32,14 +32,14 @@ final class UserRegisteredEvent implements DomainEvent
             }
         }
 
-        return new self($data['fullName'], $data['username']);
+        return new self($data['full_name'], $data['username']);
     }
 
     public function serialize()
     {
         return [
-            'fullName' => $this->fullName,
-            'username' => $this->username
+            'full_name' => $this->fullName,
+            'username'  => $this->username
         ];
     }
 
