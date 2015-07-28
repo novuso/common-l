@@ -36,7 +36,7 @@ abstract class Action
      *
      * @return View
      */
-    public function view(Request $request, $data, array $parameters = [])
+    public function view(Request $request, $data = null, array $parameters = [])
     {
         $action = Type::create($this);
         $format = $request->attributes->get('_format');
