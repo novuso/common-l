@@ -55,7 +55,7 @@ final class Money extends ValueObject implements Comparable
      *
      * Maps static method `Money::USD(1725)` where `USD` is a class constant of
      * `Currency` and `1725` is the number of minor-units (eg. cents) in the
-     * given curreny. The monetary value for this example would be $17.25 USD.
+     * given currency. The monetary value for this example would be $17.25 USD.
      *
      * @param string $method The name of the method
      * @param array  $args   A list of arguments
