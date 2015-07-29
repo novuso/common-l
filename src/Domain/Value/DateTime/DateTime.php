@@ -7,7 +7,6 @@ use DateTimeInterface;
 use DateTimeZone;
 use Novuso\Common\Domain\Value\ValueObject;
 use Novuso\System\Exception\DomainException;
-use Novuso\System\Exception\TypeException;
 use Novuso\System\Type\Comparable;
 use Novuso\System\Utility\Test;
 use Novuso\System\Utility\VarPrinter;
@@ -87,7 +86,6 @@ final class DateTime extends ValueObject implements Comparable
      *
      * @return DateTime
      *
-     * @throws TypeException When argument types are invalid
      * @throws DomainException When the date/time is not valid
      */
     public static function create($year, $month, $day, $hour, $minute, $second, $micro, $timezone = null)
@@ -190,26 +188,22 @@ final class DateTime extends ValueObject implements Comparable
     }
 
     /**
-     * Creates instance from a string representation
+     * Creates instance from a date/time string
      *
-     * @param string $state The string representation
+     * @param string $dateTime The date/time string
      *
      * @return DateTime
      *
-     * @throws TypeException When state is not a string
      * @throws DomainException When the string is invalid
      */
-    public static function fromString($state)
+    public static function fromString($dateTime)
     {
-        if (!is_string($state)) {
-            $message = sprintf(
-                '%s expects $state to be a string; received (%s) %s',
-                __METHOD__,
-                gettype($state),
-                VarPrinter::toString($state)
-            );
-            throw TypeException::create($message);
-        }
+        assert(Test::isString($dateTime), sprintf(
+            '%s expects $dateTime to be a string; received (%s) %s',
+            __METHOD__,
+            gettype($dateTime),
+            VarPrinter::toString($dateTime)
+        ));
 
         $pattern = sprintf(
             '/\A%s-%s-%sT%s:%s:%s\.%s\[%s\]\z/',
@@ -222,8 +216,8 @@ final class DateTime extends ValueObject implements Comparable
             '(?P<micro>[\d]{6})',
             '(?P<timezone>.+)'
         );
-        if (!preg_match($pattern, $state, $matches)) {
-            $message = sprintf('%s expects $state in "Y-m-d\TH:i:s.u[timezone]" format', __METHOD__);
+        if (!preg_match($pattern, $dateTime, $matches)) {
+            $message = sprintf('%s expects $dateTime in "Y-m-d\TH:i:s.u[timezone]" format', __METHOD__);
             throw DomainException::create($message);
         }
 

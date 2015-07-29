@@ -5,7 +5,6 @@ namespace Novuso\Common\Domain\Value\DateTime;
 use DateTimeZone;
 use Novuso\Common\Domain\Value\ValueObject;
 use Novuso\System\Exception\DomainException;
-use Novuso\System\Exception\TypeException;
 use Novuso\System\Type\Comparable;
 use Novuso\System\Utility\Test;
 use Novuso\System\Utility\VarPrinter;
@@ -65,28 +64,24 @@ final class Timezone extends ValueObject implements Comparable
     }
 
     /**
-     * Creates instance from a string representation
+     * Creates instance from a timezone string
      *
-     * @param string $state The string representation
+     * @param string $timezone The timezone string
      *
      * @return Timezone
      *
-     * @throws TypeException When state is not a string
      * @throws DomainException When the string is invalid
      */
-    public static function fromString($state)
+    public static function fromString($timezone)
     {
-        if (!is_string($state)) {
-            $message = sprintf(
-                '%s expects $state to be a string; received (%s) %s',
-                __METHOD__,
-                gettype($state),
-                VarPrinter::toString($state)
-            );
-            throw TypeException::create($message);
-        }
+        assert(Test::isString($timezone), sprintf(
+            '%s expects $timezone to be a string; received (%s) %s',
+            __METHOD__,
+            gettype($timezone),
+            VarPrinter::toString($timezone)
+        ));
 
-        return new self($state);
+        return new self($timezone);
     }
 
     /**

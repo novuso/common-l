@@ -7,7 +7,6 @@ use DateTimeInterface;
 use DateTimeZone;
 use Novuso\Common\Domain\Value\ValueObject;
 use Novuso\System\Exception\DomainException;
-use Novuso\System\Exception\TypeException;
 use Novuso\System\Type\Comparable;
 use Novuso\System\Utility\Test;
 use Novuso\System\Utility\VarPrinter;
@@ -52,12 +51,29 @@ final class Date extends ValueObject implements Comparable
      * @param int $month The month
      * @param int $day   The day
      *
-     * @throws TypeException When argument types are invalid
      * @throws DomainException When the date is not valid
      */
     private function __construct($year, $month, $day)
     {
-        $this->guardTypes($year, $month, $day);
+        assert(Test::isInt($year), sprintf(
+            '%s expects $year to be an integer; received (%s) %s',
+            __METHOD__,
+            gettype($year),
+            VarPrinter::toString($year)
+        ));
+        assert(Test::isInt($month), sprintf(
+            '%s expects $month to be an integer; received (%s) %s',
+            __METHOD__,
+            gettype($month),
+            VarPrinter::toString($month)
+        ));
+        assert(Test::isInt($day), sprintf(
+            '%s expects $day to be an integer; received (%s) %s',
+            __METHOD__,
+            gettype($day),
+            VarPrinter::toString($day)
+        ));
+
         $this->guardDate($year, $month, $day);
 
         $this->year = $year;
@@ -74,7 +90,6 @@ final class Date extends ValueObject implements Comparable
      *
      * @return Date
      *
-     * @throws TypeException When argument types are invalid
      * @throws DomainException When the date is not valid
      */
     public static function create($year, $month, $day)
@@ -142,30 +157,26 @@ final class Date extends ValueObject implements Comparable
     }
 
     /**
-     * Creates instance from a string representation
+     * Creates instance from a date string
      *
-     * @param string $state The string representation
+     * @param string $date The date string
      *
      * @return Date
      *
-     * @throws TypeException When state is not a string
      * @throws DomainException When the string is invalid
      */
-    public static function fromString($state)
+    public static function fromString($date)
     {
-        if (!is_string($state)) {
-            $message = sprintf(
-                '%s expects $state to be a string; received (%s) %s',
-                __METHOD__,
-                gettype($state),
-                VarPrinter::toString($state)
-            );
-            throw TypeException::create($message);
-        }
+        assert(Test::isString($date), sprintf(
+            '%s expects $date to be a string; received (%s) %s',
+            __METHOD__,
+            gettype($date),
+            VarPrinter::toString($date)
+        ));
 
         $pattern = '/\A(?P<year>[\d]{4})-(?P<month>[\d]{2})-(?P<day>[\d]{2})\z/';
-        if (!preg_match($pattern, $state, $matches)) {
-            $message = sprintf('%s expects $state in "Y-m-d" format', __METHOD__);
+        if (!preg_match($pattern, $date, $matches)) {
+            $message = sprintf('%s expects $date in "Y-m-d" format', __METHOD__);
             throw DomainException::create($message);
         }
 
@@ -238,50 +249,6 @@ final class Date extends ValueObject implements Comparable
         }
 
         return 0;
-    }
-
-    /**
-     * Validates argument types
-     *
-     * @param int $year  The year
-     * @param int $month The month
-     * @param int $day   The day
-     *
-     * @return void
-     *
-     * @throws TypeException When argument types are invalid
-     */
-    private function guardTypes($year, $month, $day)
-    {
-        if (!is_int($year)) {
-            $message = sprintf(
-                '%s::__construct expects $year to be an integer; received (%s) %s',
-                static::class,
-                gettype($year),
-                VarPrinter::toString($year)
-            );
-            throw TypeException::create($message);
-        }
-
-        if (!is_int($month)) {
-            $message = sprintf(
-                '%s::__construct expects $month to be an integer; received (%s) %s',
-                static::class,
-                gettype($month),
-                VarPrinter::toString($month)
-            );
-            throw TypeException::create($message);
-        }
-
-        if (!is_int($day)) {
-            $message = sprintf(
-                '%s::__construct expects $day to be an integer; received (%s) %s',
-                static::class,
-                gettype($day),
-                VarPrinter::toString($day)
-            );
-            throw TypeException::create($message);
-        }
     }
 
     /**

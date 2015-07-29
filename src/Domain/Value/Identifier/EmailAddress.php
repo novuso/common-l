@@ -4,7 +4,6 @@ namespace Novuso\Common\Domain\Value\Identifier;
 
 use Novuso\Common\Domain\Value\ValueObject;
 use Novuso\System\Exception\DomainException;
-use Novuso\System\Exception\TypeException;
 use Novuso\System\Type\Comparable;
 use Novuso\System\Utility\Test;
 use Novuso\System\Utility\VarPrinter;
@@ -33,20 +32,16 @@ final class EmailAddress extends ValueObject implements Comparable
      *
      * @param string $email The email address value
      *
-     * @throws TypeException When email is not a string
      * @throws DomainException When the email address is not valid
      */
     private function __construct($email)
     {
-        if (!is_string($email)) {
-            $message = sprintf(
-                '%s expects $email to be a string; received (%s) %s',
-                __METHOD__,
-                gettype($email),
-                VarPrinter::toString($email)
-            );
-            throw TypeException::create($message);
-        }
+        assert(Test::isString($email), sprintf(
+            '%s expects $email to be a string; received (%s) %s',
+            __METHOD__,
+            gettype($email),
+            VarPrinter::toString($email)
+        ));
 
         if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             $message = sprintf(
@@ -60,18 +55,17 @@ final class EmailAddress extends ValueObject implements Comparable
     }
 
     /**
-     * Creates instance from a string representation
+     * Creates instance from an email string
      *
-     * @param string $state The string representation
+     * @param string $email The email string
      *
      * @return EmailAddress
      *
-     * @throws TypeException When state is not a string
      * @throws DomainException When the string is invalid
      */
-    public static function fromString($state)
+    public static function fromString($email)
     {
-        return new self($state);
+        return new self($email);
     }
 
     /**

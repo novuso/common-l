@@ -4,7 +4,6 @@ namespace Novuso\Common\Domain\Value\Identifier;
 
 use Novuso\Common\Domain\Value\ValueObject;
 use Novuso\System\Exception\DomainException;
-use Novuso\System\Exception\TypeException;
 use Novuso\System\Type\Comparable;
 use Novuso\System\Utility\Test;
 use Novuso\System\Utility\VarPrinter;
@@ -311,20 +310,16 @@ final class Uuid extends ValueObject implements Comparable
      *
      * @return Uuid
      *
-     * @throws TypeException When uuid is not a string
      * @throws DomainException When the string is not a valid UUID
      */
     public static function parse($uuid)
     {
-        if (!is_string($uuid)) {
-            $message = sprintf(
-                '%s expects $uuid to be a string; received (%s) %s',
-                __METHOD__,
-                gettype($uuid),
-                VarPrinter::toString($uuid)
-            );
-            throw TypeException::create($message);
-        }
+        assert(Test::isString($uuid), sprintf(
+            '%s expects $uuid to be a string; received (%s) %s',
+            __METHOD__,
+            gettype($uuid),
+            VarPrinter::toString($uuid)
+        ));
 
         $uuid = strtolower(str_replace(['urn:', 'uuid:', '{', '}'], '', $uuid));
 
@@ -346,16 +341,15 @@ final class Uuid extends ValueObject implements Comparable
     /**
      * Creates instance from a UUID string
      *
-     * @param string $state The string representation
+     * @param string $uuid The uuid string
      *
      * @return Uuid
      *
-     * @throws TypeException When state is not a string
      * @throws DomainException When the string is not a valid UUID
      */
-    public static function fromString($state)
+    public static function fromString($uuid)
     {
-        return self::parse($state);
+        return self::parse($uuid);
     }
 
     /**
@@ -369,7 +363,14 @@ final class Uuid extends ValueObject implements Comparable
      */
     public static function fromHex($hex)
     {
-        $hex = strtolower((string) $hex);
+        assert(Test::isString($hex), sprintf(
+            '%s expects $hex to be a string; received (%s) %s',
+            __METHOD__,
+            gettype($hex),
+            VarPrinter::toString($hex)
+        ));
+
+        $hex = strtolower($hex);
 
         if (!preg_match(self::UUID_HEX, $hex, $matches)) {
             $message = sprintf('Invalid UUID hex: %s', $hex);
@@ -397,7 +398,12 @@ final class Uuid extends ValueObject implements Comparable
      */
     public static function fromBytes($bytes)
     {
-        $bytes = (string) $bytes;
+        assert(Test::isString($bytes), sprintf(
+            '%s expects $bytes to be a string; received (%s) %s',
+            __METHOD__,
+            gettype($bytes),
+            VarPrinter::toString($bytes)
+        ));
 
         if (strlen($bytes) !== 16) {
             $message = sprintf('%s expects $bytes to be a 16-byte string', __METHOD__);

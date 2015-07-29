@@ -300,14 +300,6 @@ class UriTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Novuso\System\Exception\TypeException
-     */
-    public function test_that_parse_throws_exception_for_invalid_type()
-    {
-        Uri::parse(null);
-    }
-
-    /**
      * @expectedException Novuso\System\Exception\DomainException
      */
     public function test_that_parse_throws_exception_for_missing_scheme()
@@ -361,14 +353,6 @@ class UriTest extends PHPUnit_Framework_TestCase
     public function test_that_parse_throws_exception_for_invalid_ip_literal_brackets()
     {
         $uri = Uri::parse('http://[3210]123/path');
-    }
-
-    /**
-     * @expectedException Novuso\System\Exception\TypeException
-     */
-    public function test_that_resolve_throws_exception_for_invalid_type()
-    {
-        Uri::resolve('http://app.dev', null);
     }
 
     /**

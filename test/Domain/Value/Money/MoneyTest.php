@@ -234,28 +234,11 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Novuso\System\Exception\TypeException
-     */
-    public function test_that_from_string_throws_exception_for_invalid_type()
-    {
-        Money::fromString(null);
-    }
-
-    /**
      * @expectedException Novuso\System\Exception\DomainException
      */
     public function test_that_from_string_throws_exception_for_invalid_formatting()
     {
         Money::fromString('$17.25');
-    }
-
-    /**
-     * @expectedException Novuso\System\Exception\TypeException
-     */
-    public function test_that_with_amount_throws_exception_for_invalid_type()
-    {
-        $money = Money::USD(100);
-        $money->withAmount('1500');
     }
 
     /**

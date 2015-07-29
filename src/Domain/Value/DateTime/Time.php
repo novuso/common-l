@@ -7,7 +7,6 @@ use DateTimeInterface;
 use DateTimeZone;
 use Novuso\Common\Domain\Value\ValueObject;
 use Novuso\System\Exception\DomainException;
-use Novuso\System\Exception\TypeException;
 use Novuso\System\Type\Comparable;
 use Novuso\System\Utility\Test;
 use Novuso\System\Utility\VarPrinter;
@@ -116,12 +115,35 @@ final class Time extends ValueObject implements Comparable
      * @param int $second The second
      * @param int $micro  The microsecond
      *
-     * @throws TypeException When argument types are invalid
      * @throws DomainException When the time is not valid
      */
     private function __construct($hour, $minute, $second, $micro)
     {
-        $this->guardTypes($hour, $minute, $second, $micro);
+        assert(Test::isInt($hour), sprintf(
+            '%s expects $hour to be an integer; received (%s) %s',
+            __METHOD__,
+            gettype($hour),
+            VarPrinter::toString($hour)
+        ));
+        assert(Test::isInt($minute), sprintf(
+            '%s expects $minute to be an integer; received (%s) %s',
+            __METHOD__,
+            gettype($minute),
+            VarPrinter::toString($minute)
+        ));
+        assert(Test::isInt($second), sprintf(
+            '%s expects $second to be an integer; received (%s) %s',
+            __METHOD__,
+            gettype($second),
+            VarPrinter::toString($second)
+        ));
+        assert(Test::isInt($micro), sprintf(
+            '%s expects $micro to be an integer; received (%s) %s',
+            __METHOD__,
+            gettype($micro),
+            VarPrinter::toString($micro)
+        ));
+
         $this->guardTime($hour, $minute, $second, $micro);
 
         $this->hour = $hour;
@@ -140,7 +162,6 @@ final class Time extends ValueObject implements Comparable
      *
      * @return Time
      *
-     * @throws TypeException When argument types are invalid
      * @throws DomainException When the time is not valid
      */
     public static function create($hour, $minute, $second, $micro)
@@ -214,30 +235,26 @@ final class Time extends ValueObject implements Comparable
     }
 
     /**
-     * Creates instance from a string representation
+     * Creates instance from a time string
      *
-     * @param string $state The string representation
+     * @param string $time The time string
      *
      * @return Time
      *
-     * @throws TypeException When state is not a string
      * @throws DomainException When the string is invalid
      */
-    public static function fromString($state)
+    public static function fromString($time)
     {
-        if (!is_string($state)) {
-            $message = sprintf(
-                '%s expects $state to be a string; received (%s) %s',
-                __METHOD__,
-                gettype($state),
-                VarPrinter::toString($state)
-            );
-            throw TypeException::create($message);
-        }
+        assert(Test::isString($time), sprintf(
+            '%s expects $time to be a string; received (%s) %s',
+            __METHOD__,
+            gettype($time),
+            VarPrinter::toString($time)
+        ));
 
         $pattern = '/\A(?P<hour>[\d]{2}):(?P<minute>[\d]{2}):(?P<second>[\d]{2}).(?P<micro>[\d]{6})\z/';
-        if (!preg_match($pattern, $state, $matches)) {
-            $message = sprintf('%s expects $state in "H:i:s.u" format', __METHOD__);
+        if (!preg_match($pattern, $time, $matches)) {
+            $message = sprintf('%s expects $time in "H:i:s.u" format', __METHOD__);
             throw DomainException::create($message);
         }
 
@@ -321,61 +338,6 @@ final class Time extends ValueObject implements Comparable
         }
 
         return 0;
-    }
-
-    /**
-     * Validates argument types
-     *
-     * @param int $hour   The hour
-     * @param int $minute The minute
-     * @param int $second The second
-     * @param int $micro  The microsecond
-     *
-     * @return void
-     *
-     * @throws TypeException When argument types are invalid
-     */
-    private function guardTypes($hour, $minute, $second, $micro)
-    {
-        if (!is_int($hour)) {
-            $message = sprintf(
-                '%s::__construct expects $hour to be an integer; received (%s) %s',
-                static::class,
-                gettype($hour),
-                VarPrinter::toString($hour)
-            );
-            throw TypeException::create($message);
-        }
-
-        if (!is_int($minute)) {
-            $message = sprintf(
-                '%s::__construct expects $minute to be an integer; received (%s) %s',
-                static::class,
-                gettype($minute),
-                VarPrinter::toString($minute)
-            );
-            throw TypeException::create($message);
-        }
-
-        if (!is_int($second)) {
-            $message = sprintf(
-                '%s::__construct expects $second to be an integer; received (%s) %s',
-                static::class,
-                gettype($second),
-                VarPrinter::toString($second)
-            );
-            throw TypeException::create($message);
-        }
-
-        if (!is_int($micro)) {
-            $message = sprintf(
-                '%s::__construct expects $micro to be an integer; received (%s) %s',
-                static::class,
-                gettype($micro),
-                VarPrinter::toString($micro)
-            );
-            throw TypeException::create($message);
-        }
     }
 
     /**

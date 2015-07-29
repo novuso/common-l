@@ -119,43 +119,11 @@ class DateTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Novuso\System\Exception\TypeException
-     */
-    public function test_that_create_throws_exception_for_invalid_year_type()
-    {
-        Date::create('2015', 6, 20);
-    }
-
-    /**
-     * @expectedException Novuso\System\Exception\TypeException
-     */
-    public function test_that_create_throws_exception_for_invalid_month_type()
-    {
-        Date::create(2015, '6', 20);
-    }
-
-    /**
-     * @expectedException Novuso\System\Exception\TypeException
-     */
-    public function test_that_create_throws_exception_for_invalid_day_type()
-    {
-        Date::create(2015, 6, '20');
-    }
-
-    /**
      * @expectedException Novuso\System\Exception\DomainException
      */
     public function test_that_create_throws_exception_for_invalid_date()
     {
         Date::create(2015, 2, 30);
-    }
-
-    /**
-     * @expectedException Novuso\System\Exception\TypeException
-     */
-    public function test_that_from_string_throws_exception_for_invalid_type()
-    {
-        Date::fromString(new NativeDateTime());
     }
 
     /**

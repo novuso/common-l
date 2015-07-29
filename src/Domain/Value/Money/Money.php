@@ -82,31 +82,27 @@ final class Money extends ValueObject implements Comparable
     }
 
     /**
-     * Creates instance from a string representation
+     * Creates instance from a money string
      *
-     * @param string $state The string representation
+     * @param string $money The money string
      *
      * @return Money
      *
-     * @throws TypeException When state is not a string
      * @throws DomainException When the string is invalid
      */
-    public static function fromString($state)
+    public static function fromString($money)
     {
-        if (!is_string($state)) {
-            $message = sprintf(
-                '%s expects $state to be a string; received (%s) %s',
-                __METHOD__,
-                gettype($state),
-                VarPrinter::toString($state)
-            );
-            throw TypeException::create($message);
-        }
+        assert(Test::isString($money), sprintf(
+            '%s expects $money to be a string; received (%s) %s',
+            __METHOD__,
+            gettype($money),
+            VarPrinter::toString($money)
+        ));
 
         $pattern = '/\A(?P<code>[A-Z]{3}):(?P<amount>-?[\d]+)\z/';
 
-        if (!preg_match($pattern, $state, $matches)) {
-            $message = sprintf('Format must include currency and amount (eg. USD:1725); received "%s"', $state);
+        if (!preg_match($pattern, $money, $matches)) {
+            $message = sprintf('Format must include currency and amount (eg. USD:1725); received "%s"', $money);
             throw DomainException::create($message);
         }
 
@@ -172,20 +168,15 @@ final class Money extends ValueObject implements Comparable
      * @param int $amount The amount
      *
      * @return Money
-     *
-     * @throws TypeException When amount is not an integer
      */
     public function withAmount($amount)
     {
-        if (!is_int($amount)) {
-            $message = sprintf(
-                '%s expects $amount to be an integer; received (%s) %s',
-                __METHOD__,
-                gettype($amount),
-                VarPrinter::toString($amount)
-            );
-            throw TypeException::create($message);
-        }
+        assert(Test::isInt($amount), sprintf(
+            '%s expects $amount to be an integer; received (%s) %s',
+            __METHOD__,
+            gettype($amount),
+            VarPrinter::toString($amount)
+        ));
 
         return new self($amount, $this->currency);
     }
@@ -349,7 +340,7 @@ final class Money extends ValueObject implements Comparable
      */
     public function format($locale = 'en_US')
     {
-        return LocaleFormatter::fromLocale((string) $locale)->format($this);
+        return LocaleFormatter::fromLocale($locale)->format($this);
     }
 
     /**

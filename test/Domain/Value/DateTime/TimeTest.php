@@ -141,38 +141,6 @@ class TimeTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Novuso\System\Exception\TypeException
-     */
-    public function test_that_create_throws_exception_for_invalid_hour_type()
-    {
-        Time::create('16', 30, 6, 32401);
-    }
-
-    /**
-     * @expectedException Novuso\System\Exception\TypeException
-     */
-    public function test_that_create_throws_exception_for_invalid_minute_type()
-    {
-        Time::create(16, '30', 6, 32401);
-    }
-
-    /**
-     * @expectedException Novuso\System\Exception\TypeException
-     */
-    public function test_that_create_throws_exception_for_invalid_second_type()
-    {
-        Time::create(16, 30, '6', 32401);
-    }
-
-    /**
-     * @expectedException Novuso\System\Exception\TypeException
-     */
-    public function test_that_create_throws_exception_for_invalid_micro_type()
-    {
-        Time::create(16, 30, 6, '32401');
-    }
-
-    /**
      * @expectedException Novuso\System\Exception\DomainException
      */
     public function test_that_create_throws_exception_for_hour_out_of_range()
@@ -202,14 +170,6 @@ class TimeTest extends PHPUnit_Framework_TestCase
     public function test_that_create_throws_exception_for_micro_out_of_range()
     {
         Time::create(16, 30, 6, 3240124);
-    }
-
-    /**
-     * @expectedException Novuso\System\Exception\TypeException
-     */
-    public function test_that_from_string_throws_exception_for_invalid_type()
-    {
-        Time::fromString(new NativeDateTime());
     }
 
     /**

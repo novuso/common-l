@@ -2,6 +2,8 @@
 
 namespace Novuso\Common\Domain\Value\Money;
 
+use Novuso\System\Utility\Test;
+use Novuso\System\Utility\VarPrinter;
 use NumberFormatter;
 
 /**
@@ -42,7 +44,14 @@ final class LocaleFormatter implements Formatter
      */
     public static function fromLocale($locale)
     {
-        $formatter = new NumberFormatter((string) $locale, NumberFormatter::CURRENCY);
+        assert(Test::isString($locale), sprintf(
+            '%s expects $locale to be a string; received (%s) %s',
+            __METHOD__,
+            gettype($locale),
+            VarPrinter::toString($locale)
+        ));
+
+        $formatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
 
         return new self($formatter);
     }

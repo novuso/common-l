@@ -93,6 +93,22 @@ final class EventCollection implements Countable
     }
 
     /**
+     * Retrieves an event stream of uncommitted event messages
+     *
+     * @return EventStream
+     */
+    public function stream()
+    {
+        return new EventStream(
+            $this->aggregateId,
+            $this->aggregateType,
+            $this->committedSequence(),
+            $this->lastSequence(),
+            $this->eventMessages->toArray()
+        );
+    }
+
+    /**
      * Records a domain event
      *
      * @param DomainEvent $domainEvent The domain event
@@ -117,24 +133,6 @@ final class EventCollection implements Countable
 
         $this->lastSequence = $eventMessage->sequence();
         $this->eventMessages->add($eventMessage);
-    }
-
-    /**
-     * Retrieves an event stream of uncommitted event messages
-     *
-     * @return EventStream
-     */
-    public function stream()
-    {
-        $stream = new EventStream(
-            $this->aggregateId,
-            $this->aggregateType,
-            $this->committedSequence(),
-            $this->lastSequence(),
-            $this->eventMessages->toArray()
-        );
-
-        return $stream;
     }
 
     /**

@@ -128,12 +128,4 @@ class TimezoneTest extends PHPUnit_Framework_TestCase
     {
         Timezone::create('Universal');
     }
-
-    /**
-     * @expectedException Novuso\System\Exception\TypeException
-     */
-    public function test_that_from_string_throws_exception_for_invalid_type()
-    {
-        Timezone::fromString(null);
-    }
 }

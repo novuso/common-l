@@ -326,14 +326,6 @@ class UuidTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Novuso\System\Exception\TypeException
-     */
-    public function test_that_parse_throws_exception_with_invalid_type()
-    {
-        Uuid::parse(Uuid::random());
-    }
-
-    /**
      * @expectedException Novuso\System\Exception\DomainException
      */
     public function test_that_parse_throws_exception_with_invalid_string()

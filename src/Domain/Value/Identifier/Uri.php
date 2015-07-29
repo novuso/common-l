@@ -4,7 +4,6 @@ namespace Novuso\Common\Domain\Value\Identifier;
 
 use Novuso\Common\Domain\Value\ValueObject;
 use Novuso\System\Exception\DomainException;
-use Novuso\System\Exception\TypeException;
 use Novuso\System\Type\Comparable;
 use Novuso\System\Utility\Test;
 use Novuso\System\Utility\VarPrinter;
@@ -184,20 +183,16 @@ class Uri extends ValueObject implements Comparable
      *
      * @return Uri
      *
-     * @throws TypeException When uri is not a string
      * @throws DomainException When the URI string is invalid
      */
     public static function parse($uri)
     {
-        if (!is_string($uri)) {
-            $message = sprintf(
-                '%s expects $uri to be a string; received (%s) %s',
-                __METHOD__,
-                gettype($uri),
-                VarPrinter::toString($uri)
-            );
-            throw TypeException::create($message);
-        }
+        assert(Test::isString($uri), sprintf(
+            '%s expects $uri to be a string; received (%s) %s',
+            __METHOD__,
+            gettype($uri),
+            VarPrinter::toString($uri)
+        ));
 
         preg_match(self::URI_PATTERN, $uri, $matches);
 
@@ -214,16 +209,15 @@ class Uri extends ValueObject implements Comparable
     /**
      * Creates instance from a URI string
      *
-     * @param string $state The string representation
+     * @param string $uri The URI string
      *
      * @return Uri
      *
-     * @throws TypeException When state is not a string
      * @throws DomainException When the string is invalid
      */
-    public static function fromString($state)
+    public static function fromString($uri)
     {
-        return static::parse($state);
+        return static::parse($uri);
     }
 
     /**
@@ -239,7 +233,6 @@ class Uri extends ValueObject implements Comparable
      *
      * @return Uri
      *
-     * @throws TypeException When base or reference are invalid types
      * @throws DomainException When the base or reference are invalid
      */
     public static function resolve($base, $reference, $strict = true)
@@ -248,15 +241,12 @@ class Uri extends ValueObject implements Comparable
             $base = static::parse($base);
         }
 
-        if (!is_string($reference)) {
-            $message = sprintf(
-                '%s expects $reference to be a string; received (%s) %s',
-                __METHOD__,
-                gettype($reference),
-                VarPrinter::toString($reference)
-            );
-            throw TypeException::create($message);
-        }
+        assert(Test::isString($reference), sprintf(
+            '%s expects $reference to be a string; received (%s) %s',
+            __METHOD__,
+            gettype($reference),
+            VarPrinter::toString($reference)
+        ));
 
         preg_match(self::URI_PATTERN, $reference, $matches);
         $ref = static::componentsFromMatches($matches);
