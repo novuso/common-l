@@ -65,13 +65,7 @@ class InMemoryDispatcher implements Dispatcher
             call_user_func($handler, $message);
         }
 
-        $allEvents = Subscriber::ALL_EVENTS;
-
-        if (!isset($this->handlers[$allEvents])) {
-            return;
-        }
-
-        foreach ($this->getHandlers($allEvents) as $handler) {
+        foreach ($this->getHandlers(Subscriber::ALL_EVENTS) as $handler) {
             call_user_func($handler, $message);
         }
     }

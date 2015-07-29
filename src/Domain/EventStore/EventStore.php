@@ -2,6 +2,7 @@
 
 namespace Novuso\Common\Domain\EventStore;
 
+use Novuso\Common\Domain\Event\EventMessage;
 use Novuso\Common\Domain\Event\EventStream;
 use Novuso\Common\Domain\EventStore\Exception\EventStoreException;
 use Novuso\Common\Domain\EventStore\Exception\StreamNotFoundException;
@@ -27,7 +28,18 @@ interface EventStore
      *
      * @throws EventStoreException When an error occurs during processing
      */
-    public function append(EventStream $eventStream);
+    public function appendStream(EventStream $eventStream);
+
+    /**
+     * Appends an event message
+     *
+     * @param EventMessage $eventMessage The event message
+     *
+     * @return void
+     *
+     * @throws EventStoreException When an error occurs during processing
+     */
+    public function append(EventMessage $eventMessage);
 
     /**
      * Loads an event stream

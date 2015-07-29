@@ -26,35 +26,32 @@ abstract class AggregateRoot implements RootEntity
     protected $eventCollection;
 
     /**
-     * Concurrency version
+     * Committed version
      *
      * @var int|null
      */
-    protected $concurrencyVersion;
+    protected $committedVersion;
 
     /**
      * {@inheritdoc}
      */
-    public function concurrencyVersion()
+    public function committedVersion()
     {
-        if ($this->concurrencyVersion === null) {
-            $this->concurrencyVersion = $this->eventCollection()->committedSequence();
+        if ($this->committedVersion === null) {
+            $this->committedVersion = $this->eventCollection()->committedSequence();
         }
 
-        return $this->concurrencyVersion;
+        return $this->committedVersion;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function extractRecordedEvents()
+    public function getRecordedEvents()
     {
         $collection = $this->eventCollection();
-        $stream = $collection->stream();
-        $collection->commit();
-        $this->concurrencyVersion = $collection->committedSequence();
 
-        return $stream;
+        return $collection->stream();
     }
 
     /**
@@ -63,6 +60,16 @@ abstract class AggregateRoot implements RootEntity
     public function hasRecordedEvents()
     {
         return !($this->eventCollection()->isEmpty());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function commitRecordedEvents()
+    {
+        $collection = $this->eventCollection();
+        $collection->commit();
+        $this->committedVersion = $collection->committedSequence();
     }
 
     /**
@@ -113,21 +120,21 @@ abstract class AggregateRoot implements RootEntity
      *
      * @return void
      */
-    protected function recordThat(DomainEvent $domainEvent)
+    protected function recordEvent(DomainEvent $domainEvent)
     {
-        $this->eventCollection()->add($domainEvent);
+        $this->eventCollection()->record($domainEvent);
     }
 
     /**
-     * Initializes the concurrency version
+     * Initializes the committed version
      *
-     * @param int $concurrencyVersion The initial version
+     * @param int $committedVersion The initial version
      *
      * @return void
      *
      * @throws OperationException When called with recorded events
      */
-    protected function initializeConcurrencyVersion($concurrencyVersion)
+    protected function initializeCommittedVersion($committedVersion)
     {
         $eventCollection = $this->eventCollection();
 
@@ -136,7 +143,7 @@ abstract class AggregateRoot implements RootEntity
             throw OperationException::create($message);
         }
 
-        $eventCollection->initializeSequence($concurrencyVersion);
+        $eventCollection->initializeSequence($committedVersion);
     }
 
     /**

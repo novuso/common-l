@@ -30,9 +30,11 @@ abstract class EventSourcedDomainEntity extends DomainEntity implements EventSou
      */
     public function registerAggregateRoot(EventSourcedAggregateRoot $aggregateRoot)
     {
+        // @codeCoverageIgnoreStart
         if ($this->aggregateRoot !== null && $this->aggregateRoot !== $aggregateRoot) {
-            throw RegisterAggregateException::create('Different aggregate root already registered');
+            throw RegisterAggregateException::create('Aggregate root already registered');
         }
+        // @codeCoverageIgnoreEnd
 
         $this->aggregateRoot = $aggregateRoot;
     }
@@ -45,12 +47,14 @@ abstract class EventSourcedDomainEntity extends DomainEntity implements EventSou
         $this->handle($domainEvent);
 
         $childEntities = $this->childEntities();
+        // @codeCoverageIgnoreStart
         if ($childEntities !== null) {
             foreach ($childEntities as $entity) {
                 $entity->registerAggregateRoot($this->aggregateRoot);
                 $entity->handleRecursively($domainEvent);
             }
         }
+        // @codeCoverageIgnoreEnd
     }
 
     /**

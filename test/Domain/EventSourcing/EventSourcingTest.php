@@ -1,17 +1,28 @@
 <?php
 
-namespace Novuso\Test\Common\Domain\Entity;
+namespace Novuso\Test\Common\Domain\EventSourcing;
 
 use Novuso\Common\Domain\Event\EventStream;
+use Novuso\Test\Common\Doubles\Person;
 use Novuso\Test\Common\Doubles\Task;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @covers Novuso\Common\Domain\Entity\AggregateRoot
+ * @covers Novuso\Common\Domain\EventSourcing\EventSourcedAggregateRoot
+ * @covers Novuso\Common\Domain\EventSourcing\EventSourcedDomainEntity
  */
-class AggregateRootTest extends PHPUnit_Framework_TestCase
+class EventSourcingTest extends PHPUnit_Framework_TestCase
 {
-    public function test_that_it_records_events_as_expected()
+    public function test_that_aggregate_root_reconsitutes_as_expected()
+    {
+        $aggregate = Person::register('Joe Smith');
+        $stream = $aggregate->getRecordedEvents();
+        $aggregate->commitRecordedEvents();
+        $person = Person::reconstitute($stream);
+        $this->assertSame('Joe Smith', $person->name());
+    }
+
+    public function test_that_aggregate_root_records_events_as_expected()
     {
         $task = Task::create('Develop an application with event sourcing');
         $desc = 'Develop a library to help with event sourcing';
@@ -20,6 +31,18 @@ class AggregateRootTest extends PHPUnit_Framework_TestCase
         $stream = $task->getRecordedEvents();
         $this->assertTrue(count($stream) === 2 && $task->description() === $desc && $commit === null);
         $task->commitRecordedEvents();
+    }
+
+    public function test_that_child_entities_are_called_to_apply_events()
+    {
+        $aggregate = Task::create('Develop an application with event sourcing');
+        $aggregate->attachNote('store', 'Do not forget the event store');
+        $aggregate->changeNote('store', 'Do not forget an in memory event store');
+        $stream = $aggregate->getRecordedEvents();
+        $aggregate->commitRecordedEvents();
+        $task = Task::reconstitute($stream);
+        $expected = 'Do not forget an in memory event store';
+        $this->assertSame($expected, $task->readNote('store'));
     }
 
     public function test_that_methods_return_expected_when_event_sourced()

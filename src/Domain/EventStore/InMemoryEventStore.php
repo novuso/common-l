@@ -48,7 +48,7 @@ class InMemoryEventStore implements EventStore
     /**
      * {@inheritdoc}
      */
-    public function append(EventStream $eventStream)
+    public function appendStream(EventStream $eventStream)
     {
         $id = $eventStream->objectId()->toString();
         $type = $eventStream->objectType()->toString();
@@ -62,13 +62,9 @@ class InMemoryEventStore implements EventStore
         }
 
         if ($this->streamData[$type][$id]->getVersion() !== $eventStream->committed()) {
-            $message = sprintf(
-                'Concurrency violation [%s]{%s}; committed (%s); stored (%s)',
-                $type,
-                $id,
-                $eventStream->committed(),
-                $this->streamData[$type][$id]->getVersion()
-            );
+            $expected = $eventStream->committed();
+            $found = $this->streamData[$type][$id]->getVersion();
+            $message = sprintf('Expected v%s; found v%s in stream [%s]{%s}', $expected, $found, $type, $id);
             throw ConcurrencyException::create($message);
         }
 
@@ -79,6 +75,42 @@ class InMemoryEventStore implements EventStore
 
         $this->streamData[$type][$id]->addEvents($events);
         $this->streamData[$type][$id]->setVersion($eventStream->version());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function append(EventMessage $eventMessage)
+    {
+        $id = $eventMessage->objectId()->toString();
+        $type = $eventMessage->objectType()->toString();
+
+        if (!isset($this->streamData[$type])) {
+            $this->streamData[$type] = [];
+        }
+
+        if (!isset($this->streamData[$type][$id])) {
+            $this->streamData[$type][$id] = new StreamData($id, $type);
+        }
+
+        $version = $eventMessage->sequence();
+
+        if ($version === 0) {
+            $expected = null;
+        } else {
+            $expected = $version - 1;
+        }
+
+        if ($this->streamData[$type][$id]->getVersion() !== $expected) {
+            $found = $this->streamData[$type][$id]->getVersion();
+            $message = sprintf('Expected v%s; found v%s in stream [%s]{%s}', $expected, $found, $type, $id);
+            throw ConcurrencyException::create($message);
+        }
+
+        $event = new StoredEvent($eventMessage, $this->serializer);
+
+        $this->streamData[$type][$id]->addEvent($event);
+        $this->streamData[$type][$id]->setVersion($version);
     }
 
     /**

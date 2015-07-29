@@ -8,6 +8,7 @@ final class Task extends EventSourcedAggregateRoot
 {
     protected $id;
     protected $description;
+    protected $notes = [];
 
     protected function __construct(TaskId $taskId, $description)
     {
@@ -20,14 +21,32 @@ final class Task extends EventSourcedAggregateRoot
         $taskId = TaskId::generate();
         $task = new self($taskId, $description);
 
-        $task->recordThat(new TaskCreatedEvent($taskId, $description));
+        $task->recordEvent(new TaskCreatedEvent($taskId, $description));
 
         return $task;
     }
 
     public function changeDescription($description)
     {
-        $this->recordThat(new TaskDescriptionChangedEvent($this->id, $description));
+        $this->recordEvent(new TaskDescriptionChangedEvent($this->id, $description));
+    }
+
+    public function attachNote($name, $text)
+    {
+        $note = Note::create($this, $name, $text);
+
+        $this->recordEvent(new TaskNoteAttachedEvent($this->id, $note->id(), $text));
+    }
+
+    public function changeNote($name, $text)
+    {
+        if (!isset($this->notes[$name])) {
+            throw \InvalidArgumentException('Invalid note name');
+        }
+
+        $note = $this->notes[$name];
+
+        $this->recordEvent(new TaskNoteTextChangedEvent($this->id, $note->id(), $text));
     }
 
     public function id()
@@ -40,12 +59,21 @@ final class Task extends EventSourcedAggregateRoot
         return $this->description;
     }
 
+    public function readNote($name)
+    {
+        if (!isset($this->notes[$name])) {
+            throw \InvalidArgumentException('Invalid note name');
+        }
+
+        return $this->notes[$name]->text();
+    }
+
     /**
      * Made public to allow triggering exception
      */
-    public function initializeConcurrencyVersion($concurrencyVersion)
+    public function initializeCommittedVersion($committedVersion)
     {
-        parent::initializeConcurrencyVersion($concurrencyVersion);
+        parent::initializeCommittedVersion($committedVersion);
     }
 
     protected function applyTaskCreatedEvent(TaskCreatedEvent $event)
@@ -57,5 +85,19 @@ final class Task extends EventSourcedAggregateRoot
     protected function applyTaskDescriptionChangedEvent(TaskDescriptionChangedEvent $event)
     {
         $this->description = $event->description();
+    }
+
+    protected function applyTaskNoteAttachedEvent(TaskNoteAttachedEvent $event)
+    {
+        $name = $event->noteId()->toString();
+        $text = $event->text();
+        $note = Note::create($this, $name, $text);
+
+        $this->notes[$name] = $note;
+    }
+
+    protected function childEntities()
+    {
+        return $this->notes;
     }
 }

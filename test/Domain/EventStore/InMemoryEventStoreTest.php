@@ -22,14 +22,43 @@ class InMemoryEventStoreTest extends PHPUnit_Framework_TestCase
     public function test_that_store_keeps_events_over_multiple_operations()
     {
         $task = Task::create('First task description');
-        $stream = $task->extractRecordedEvents();
-        $this->store->append($stream);
+        $stream = $task->getRecordedEvents();
+        $this->store->appendStream($stream);
+        $task->commitRecordedEvents();
         $task->changeDescription('Updating the description');
-        $stream = $task->extractRecordedEvents();
-        $this->store->append($stream);
+        $stream = $task->getRecordedEvents();
+        $this->store->appendStream($stream);
+        $task->commitRecordedEvents();
         $task->changeDescription('Testing the event store');
-        $stream = $task->extractRecordedEvents();
-        $this->store->append($stream);
+        $stream = $task->getRecordedEvents();
+        $this->store->appendStream($stream);
+        $task->commitRecordedEvents();
+        // load event history and build new aggregate
+        $history = $this->store->load($task->id(), Type::create($task));
+        $object = Task::reconstitute($history);
+        $this->assertSame('Testing the event store', $object->description());
+    }
+
+    public function test_that_store_allows_adding_individual_events()
+    {
+        $task = Task::create('First task description');
+        $stream = $task->getRecordedEvents();
+        foreach ($stream as $event) {
+            $this->store->append($event);
+        }
+        $task->commitRecordedEvents();
+        $task->changeDescription('Updating the description');
+        $stream = $task->getRecordedEvents();
+        foreach ($stream as $event) {
+            $this->store->append($event);
+        }
+        $task->commitRecordedEvents();
+        $task->changeDescription('Testing the event store');
+        $stream = $task->getRecordedEvents();
+        foreach ($stream as $event) {
+            $this->store->append($event);
+        }
+        $task->commitRecordedEvents();
         // load event history and build new aggregate
         $history = $this->store->load($task->id(), Type::create($task));
         $object = Task::reconstitute($history);
@@ -39,18 +68,45 @@ class InMemoryEventStoreTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException Novuso\Common\Domain\EventStore\Exception\ConcurrencyException
      */
+    public function test_that_append_stream_throws_exception_when_committed_version_does_not_match()
+    {
+        $task = Task::create('First task description');
+        $stream = $task->getRecordedEvents();
+        $this->store->appendStream($stream);
+        $task->commitRecordedEvents();
+        $task->changeDescription('Updating the description');
+        $stream = $task->getRecordedEvents();
+        // simulating updates out of sync
+        // $this->store->appendStream($stream);
+        $task->commitRecordedEvents();
+        $task->changeDescription('Testing the event store');
+        $stream = $task->getRecordedEvents();
+        $this->store->appendStream($stream);
+    }
+
+    /**
+     * @expectedException Novuso\Common\Domain\EventStore\Exception\ConcurrencyException
+     */
     public function test_that_append_throws_exception_when_committed_version_does_not_match()
     {
         $task = Task::create('First task description');
-        $stream = $task->extractRecordedEvents();
-        $this->store->append($stream);
+        $stream = $task->getRecordedEvents();
+        foreach ($stream as $event) {
+            $this->store->append($event);
+        }
+        $task->commitRecordedEvents();
         $task->changeDescription('Updating the description');
-        $stream = $task->extractRecordedEvents();
+        $stream = $task->getRecordedEvents();
         // simulating updates out of sync
-        // $this->store->append($stream);
+        // foreach ($stream as $event) {
+        //     $this->store->append($event);
+        // }
+        $task->commitRecordedEvents();
         $task->changeDescription('Testing the event store');
-        $stream = $task->extractRecordedEvents();
-        $this->store->append($stream);
+        $stream = $task->getRecordedEvents();
+        foreach ($stream as $event) {
+            $this->store->append($event);
+        }
     }
 
     /**
@@ -68,8 +124,9 @@ class InMemoryEventStoreTest extends PHPUnit_Framework_TestCase
     public function test_that_load_throws_exception_when_id_does_not_have_a_stream()
     {
         $task = Task::create('First task description');
-        $stream = $task->extractRecordedEvents();
-        $this->store->append($stream);
+        $stream = $task->getRecordedEvents();
+        $this->store->appendStream($stream);
+        $task->commitRecordedEvents();
         $other = Task::create('Another task');
         $this->store->load($other->id(), Type::create($other));
     }

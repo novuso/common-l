@@ -28,28 +28,28 @@ class EventCollectionTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->eventCollection->isEmpty());
     }
 
-    public function test_that_adding_events_affects_count()
+    public function test_that_recording_events_affects_count()
     {
         $domainEvent = new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins');
-        $this->eventCollection->add($domainEvent);
+        $this->eventCollection->record($domainEvent);
         $this->assertSame(1, count($this->eventCollection));
     }
 
-    public function test_that_adding_events_does_not_affect_committed_sequence()
+    public function test_that_recording_events_does_not_affect_committed_sequence()
     {
         // assuming the last event committed had a sequence number of 12
         $this->eventCollection->initializeSequence(12);
         $domainEvent = new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins');
-        $this->eventCollection->add($domainEvent);
+        $this->eventCollection->record($domainEvent);
         $this->assertSame(12, $this->eventCollection->committedSequence());
     }
 
-    public function test_that_adding_events_affects_last_sequence()
+    public function test_that_recording_events_affects_last_sequence()
     {
         // assuming the last event committed had a sequence number of 12
         $this->eventCollection->initializeSequence(12);
         $domainEvent = new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins');
-        $this->eventCollection->add($domainEvent);
+        $this->eventCollection->record($domainEvent);
         $this->assertSame(13, $this->eventCollection->lastSequence());
     }
 
@@ -58,7 +58,7 @@ class EventCollectionTest extends PHPUnit_Framework_TestCase
         // assuming the last event committed had a sequence number of 12
         $this->eventCollection->initializeSequence(12);
         $domainEvent = new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins');
-        $this->eventCollection->add($domainEvent);
+        $this->eventCollection->record($domainEvent);
         $this->eventCollection->commit();
         $this->assertSame(13, $this->eventCollection->committedSequence());
     }
@@ -66,7 +66,7 @@ class EventCollectionTest extends PHPUnit_Framework_TestCase
     public function test_that_commit_clears_event_messages()
     {
         $domainEvent = new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins');
-        $this->eventCollection->add($domainEvent);
+        $this->eventCollection->record($domainEvent);
         $this->eventCollection->commit();
         $this->assertTrue($this->eventCollection->isEmpty());
     }
@@ -75,8 +75,8 @@ class EventCollectionTest extends PHPUnit_Framework_TestCase
     {
         // assuming the last event committed had a sequence number of 3
         $this->eventCollection->initializeSequence(3);
-        $this->eventCollection->add(new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins'));
-        $this->eventCollection->add(new UserRegisteredEvent('John Smith', 'jsmith'));
+        $this->eventCollection->record(new UserRegisteredEvent('Leeroy Jenkins', 'ljenkins'));
+        $this->eventCollection->record(new UserRegisteredEvent('John Smith', 'jsmith'));
         $stream = $this->eventCollection->stream();
         // commit after retrieving stream
         $this->eventCollection->commit();

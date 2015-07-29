@@ -17,7 +17,7 @@ use Novuso\System\Type\Equatable;
 interface Entity extends Comparable, Equatable
 {
     /**
-     * Retrieves a unique identifier
+     * Retrieves the ID
      *
      * @return Identifier
      */

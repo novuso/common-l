@@ -15,18 +15,18 @@ use Novuso\Common\Domain\Event\EventStream;
 interface RootEntity extends Entity
 {
     /**
-     * Retrieves the concurrency version
+     * Retrieves the committed version
      *
      * @return int
      */
-    public function concurrencyVersion();
+    public function committedVersion();
 
     /**
-     * Removes and returns recorded event messages
+     * Retrieves recorded event messages
      *
      * @return EventStream
      */
-    public function extractRecordedEvents();
+    public function getRecordedEvents();
 
     /**
      * Checks if there are recorded event messages
@@ -34,4 +34,11 @@ interface RootEntity extends Entity
      * @return bool
      */
     public function hasRecordedEvents();
+
+    /**
+     * Clears recorded events and updates committed version
+     *
+     * @return void
+     */
+    public function commitRecordedEvents();
 }

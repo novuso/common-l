@@ -93,13 +93,13 @@ final class EventCollection implements Countable
     }
 
     /**
-     * Adds a domain event
+     * Records a domain event
      *
      * @param DomainEvent $domainEvent The domain event
      *
      * @return void
      */
-    public function add(DomainEvent $domainEvent)
+    public function record(DomainEvent $domainEvent)
     {
         $dateTime = DateTime::now();
         $eventId = EventId::generate();

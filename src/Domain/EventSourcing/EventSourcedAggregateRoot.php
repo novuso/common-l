@@ -39,7 +39,7 @@ abstract class EventSourcedAggregateRoot extends AggregateRoot
             $aggregate->handleRecursively($eventMessage->eventData());
         }
 
-        $aggregate->initializeConcurrencyVersion($lastSequence);
+        $aggregate->initializeCommittedVersion($lastSequence);
 
         return $aggregate;
     }
@@ -47,9 +47,9 @@ abstract class EventSourcedAggregateRoot extends AggregateRoot
     /**
      * {@inheritdoc}
      */
-    protected function recordThat(DomainEvent $domainEvent)
+    protected function recordEvent(DomainEvent $domainEvent)
     {
-        parent::recordThat($domainEvent);
+        parent::recordEvent($domainEvent);
         $this->handleRecursively($domainEvent);
     }
 
