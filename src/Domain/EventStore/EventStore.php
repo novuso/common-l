@@ -20,6 +20,17 @@ use Novuso\System\Type\Type;
 interface EventStore
 {
     /**
+     * Appends an event message
+     *
+     * @param EventMessage $eventMessage The event message
+     *
+     * @return void
+     *
+     * @throws EventStoreException When an error occurs during processing
+     */
+    public function appendEvent(EventMessage $eventMessage);
+
+    /**
      * Appends events from a given event stream
      *
      * @param EventStream $eventStream The event stream
@@ -31,17 +42,6 @@ interface EventStore
     public function appendStream(EventStream $eventStream);
 
     /**
-     * Appends an event message
-     *
-     * @param EventMessage $eventMessage The event message
-     *
-     * @return void
-     *
-     * @throws EventStoreException When an error occurs during processing
-     */
-    public function append(EventMessage $eventMessage);
-
-    /**
      * Loads an event stream
      *
      * @param Identifier $objectId   The object ID
@@ -51,5 +51,15 @@ interface EventStore
      *
      * @throws StreamNotFoundException When the event stream is not found
      */
-    public function load(Identifier $objectId, Type $objectType);
+    public function loadStream(Identifier $objectId, Type $objectType);
+
+    /**
+     * Checks if an event stream exists
+     *
+     * @param Identifier $objectId   The object ID
+     * @param Type       $objectType The object type
+     *
+     * @return bool
+     */
+    public function hasStream(Identifier $objectId, Type $objectType);
 }

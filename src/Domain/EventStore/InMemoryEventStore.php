@@ -48,39 +48,7 @@ class InMemoryEventStore implements EventStore
     /**
      * {@inheritdoc}
      */
-    public function appendStream(EventStream $eventStream)
-    {
-        $id = $eventStream->objectId()->toString();
-        $type = $eventStream->objectType()->toString();
-
-        if (!isset($this->streamData[$type])) {
-            $this->streamData[$type] = [];
-        }
-
-        if (!isset($this->streamData[$type][$id])) {
-            $this->streamData[$type][$id] = new StreamData($id, $type);
-        }
-
-        if ($this->streamData[$type][$id]->getVersion() !== $eventStream->committed()) {
-            $expected = $eventStream->committed();
-            $found = $this->streamData[$type][$id]->getVersion();
-            $message = sprintf('Expected v%s; found v%s in stream [%s]{%s}', $expected, $found, $type, $id);
-            throw ConcurrencyException::create($message);
-        }
-
-        $events = [];
-        foreach ($eventStream as $eventMessage) {
-            $events[] = new StoredEvent($eventMessage, $this->serializer);
-        }
-
-        $this->streamData[$type][$id]->addEvents($events);
-        $this->streamData[$type][$id]->setVersion($eventStream->version());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function append(EventMessage $eventMessage)
+    public function appendEvent(EventMessage $eventMessage)
     {
         $id = $eventMessage->objectId()->toString();
         $type = $eventMessage->objectType()->toString();
@@ -116,7 +84,39 @@ class InMemoryEventStore implements EventStore
     /**
      * {@inheritdoc}
      */
-    public function load(Identifier $objectId, Type $objectType)
+    public function appendStream(EventStream $eventStream)
+    {
+        $id = $eventStream->objectId()->toString();
+        $type = $eventStream->objectType()->toString();
+
+        if (!isset($this->streamData[$type])) {
+            $this->streamData[$type] = [];
+        }
+
+        if (!isset($this->streamData[$type][$id])) {
+            $this->streamData[$type][$id] = new StreamData($id, $type);
+        }
+
+        if ($this->streamData[$type][$id]->getVersion() !== $eventStream->committed()) {
+            $expected = $eventStream->committed();
+            $found = $this->streamData[$type][$id]->getVersion();
+            $message = sprintf('Expected v%s; found v%s in stream [%s]{%s}', $expected, $found, $type, $id);
+            throw ConcurrencyException::create($message);
+        }
+
+        $events = [];
+        foreach ($eventStream as $eventMessage) {
+            $events[] = new StoredEvent($eventMessage, $this->serializer);
+        }
+
+        $this->streamData[$type][$id]->addEvents($events);
+        $this->streamData[$type][$id]->setVersion($eventStream->version());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function loadStream(Identifier $objectId, Type $objectType)
     {
         $id = $objectId->toString();
         $type = $objectType->toString();
@@ -139,5 +139,24 @@ class InMemoryEventStore implements EventStore
         }
 
         return new EventStream($objectId, $objectType, $version, $version, $messages);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasStream(Identifier $objectId, Type $objectType)
+    {
+        $id = $objectId->toString();
+        $type = $objectType->toString();
+
+        if (!isset($this->streamData[$type])) {
+            return false;
+        }
+
+        if (!isset($this->streamData[$type][$id])) {
+            return false;
+        }
+
+        return true;
     }
 }
