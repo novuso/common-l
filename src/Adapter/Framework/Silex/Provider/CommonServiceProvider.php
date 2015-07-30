@@ -3,14 +3,14 @@
 namespace Novuso\Common\Adapter\Framework\Silex\Provider;
 
 use Novuso\Common\Adapter\Infrastructure\Logging\PsrLogger;
-use Novuso\Common\Adapter\Infrastructure\Service\PimpleContainer;
+use Novuso\Common\Adapter\Infrastructure\Container\PimpleContainer;
 use Novuso\Common\Adapter\Presentation\Resolver\ResponderServiceResolver;
 use Novuso\Common\Adapter\Presentation\Subscriber\ViewSubscriber;
 use Novuso\Common\Application\Command\Pipeline\ApplicationBus;
 use Novuso\Common\Application\Command\Pipeline\CommandPipeline;
 use Novuso\Common\Application\Command\Resolver\ServiceMap;
 use Novuso\Common\Application\Command\Resolver\ServiceResolver;
-use Novuso\Common\Application\DomainEvent\ServiceAwareDispatcher;
+use Novuso\Common\Application\Event\ServiceAwareDispatcher;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Silex\Api\EventListenerProviderInterface;
@@ -40,7 +40,7 @@ class CommonServiceProvider implements EventListenerProviderInterface, ServicePr
      */
     public function register(Container $app)
     {
-        // Novuso\Common\Application\Service\Container
+        // Novuso\Common\Application\Container\Container
         $app['novuso_common.service_container'] = function ($app) {
             return new PimpleContainer($app);
         };

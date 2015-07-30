@@ -6,8 +6,8 @@ use Novuso\Common\Application\Command\Command;
 use Novuso\Common\Application\Command\Exception\HandlerNotFoundException;
 use Novuso\Common\Application\Command\Exception\InvalidCommandException;
 use Novuso\Common\Application\Command\Handler;
-use Novuso\Common\Application\Service\Container;
-use Novuso\Common\Application\Service\Exception\ServiceException;
+use Novuso\Common\Application\Container\Container;
+use Novuso\Common\Application\Container\Exception\ServiceContainerException;
 use Novuso\System\Type\Type;
 use Novuso\System\Utility\Test;
 
@@ -114,7 +114,7 @@ class ServiceMap
 
         try {
             $handler = $this->container->get($serviceId);
-        } catch (ServiceException $exception) {
+        } catch (ServiceContainerException $exception) {
             throw HandlerNotFoundException::create($exception->getMessage(), $exception);
         }
 

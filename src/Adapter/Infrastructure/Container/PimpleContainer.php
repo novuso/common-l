@@ -1,37 +1,37 @@
 <?php
 
-namespace Novuso\Common\Adapter\Infrastructure\Service;
+namespace Novuso\Common\Adapter\Infrastructure\Container;
 
 use Exception;
-use Novuso\Common\Application\Service\Container;
-use Novuso\Common\Application\Service\Exception\EntryNotFoundException;
-use Novuso\Common\Application\Service\Exception\ServiceException;
+use Novuso\Common\Application\Container\Container;
+use Novuso\Common\Application\Container\Exception\EntryNotFoundException;
+use Novuso\Common\Application\Container\Exception\ServiceContainerException;
 use Novuso\System\Utility\VarPrinter;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Pimple\Container as ServiceContainer;
 
 /**
- * SymfonyContainer is a Symfony container adapter
+ * PimpleContainer is a Pimple container adapter
  *
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-class SymfonyContainer implements Container
+class PimpleContainer implements Container
 {
     /**
      * Service container
      *
-     * @var ContainerInterface
+     * @var ServiceContainer
      */
     protected $container;
 
     /**
-     * Constructs SymfonyContainer
+     * Constructs PimpleContainer
      *
-     * @param ContainerInterface $container A ContainerInterface instance
+     * @param ServiceContainer $container A Pimple Container instance
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ServiceContainer $container)
     {
         $this->container = $container;
     }
@@ -41,16 +41,16 @@ class SymfonyContainer implements Container
      */
     public function get($id)
     {
-        if (!$this->container->has($id)) {
+        if (!isset($this->container[$id])) {
             $message = sprintf('Identifier (%s) is not defined', VarPrinter::toString($id));
             throw EntryNotFoundException::create($message);
         }
 
         // @codeCoverageIgnoreStart
         try {
-            return $this->container->get($id);
+            return $this->container[$id];
         } catch (Exception $exception) {
-            throw ServiceException::create($exception->getMessage(), $exception);
+            throw ServiceContainerException::create($exception->getMessage(), $exception);
         }
         // @codeCoverageIgnoreEnd
     }
@@ -60,6 +60,6 @@ class SymfonyContainer implements Container
      */
     public function has($id)
     {
-        return $this->container->has($id);
+        return isset($this->container[$id]);
     }
 }

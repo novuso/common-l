@@ -1,8 +1,8 @@
 <?php
 
-namespace Novuso\Common\Application\DomainEvent;
+namespace Novuso\Common\Application\Event;
 
-use Novuso\Common\Application\Service\Container;
+use Novuso\Common\Application\Container\Container;
 use Novuso\Common\Domain\Event\EventMessage;
 use Novuso\Common\Domain\Event\InMemoryDispatcher;
 use Novuso\System\Utility\ClassName;

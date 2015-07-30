@@ -65,6 +65,31 @@ class InMemoryEventStoreTest extends PHPUnit_Framework_TestCase
         $this->assertSame('Testing the event store', $object->description());
     }
 
+    public function test_that_has_stream_returns_false_when_stream_not_present_for_type()
+    {
+        $task = Task::create('First task description');
+        $this->assertFalse($this->store->hasStream($task->id(), Type::create($task)));
+    }
+
+    public function test_that_has_stream_returns_false_when_stream_not_present_for_id()
+    {
+        $task = Task::create('First task description');
+        $stream = $task->getRecordedEvents();
+        $this->store->appendStream($stream);
+        $task->commitRecordedEvents();
+        $other = Task::create('Another task');
+        $this->assertFalse($this->store->hasStream($other->id(), Type::create($other)));
+    }
+
+    public function test_that_has_stream_returns_true_when_stream_present()
+    {
+        $task = Task::create('First task description');
+        $stream = $task->getRecordedEvents();
+        $this->store->appendStream($stream);
+        $task->commitRecordedEvents();
+        $this->assertTrue($this->store->hasStream($task->id(), Type::create($task)));
+    }
+
     /**
      * @expectedException Novuso\Common\Domain\EventStore\Exception\ConcurrencyException
      */

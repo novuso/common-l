@@ -31,9 +31,9 @@ parameters:
     # Map of ['responder_service_id' => 'Action\\Class']
     novuso_common.view_responders: []
 services:
-    # Novuso\Common\Application\Service\Container
+    # Novuso\Common\Application\Container\Container
     novuso_common.service_container:
-        class: Novuso\Common\Adapter\Infrastructure\Service\SymfonyContainer
+        class: Novuso\Common\Adapter\Infrastructure\Container\SymfonyContainer
         arguments:
             - @service_container
 
@@ -45,7 +45,7 @@ services:
 
     # Novuso\Common\Domain\Event\Dispatcher
     novuso_common.event_dispatcher:
-        class: Novuso\Common\Application\DomainEvent\ServiceAwareDispatcher
+        class: Novuso\Common\Application\Event\ServiceAwareDispatcher
         arguments:
             - @novuso_common.service_container
 

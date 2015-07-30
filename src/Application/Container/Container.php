@@ -1,9 +1,9 @@
 <?php
 
-namespace Novuso\Common\Application\Service;
+namespace Novuso\Common\Application\Container;
 
-use Novuso\Common\Application\Service\Exception\EntryNotFoundException;
-use Novuso\Common\Application\Service\Exception\ServiceException;
+use Novuso\Common\Application\Container\Exception\EntryNotFoundException;
+use Novuso\Common\Application\Container\Exception\ServiceContainerException;
 
 /**
  * Container is the interface for an application service container
@@ -23,7 +23,7 @@ interface Container
      * @return mixed
      *
      * @throws EntryNotFoundException When the entry is not found
-     * @throws ServiceException When an error occurs during processing
+     * @throws ServiceContainerException When an unexpected error occurs
      */
     public function get($id);
 
