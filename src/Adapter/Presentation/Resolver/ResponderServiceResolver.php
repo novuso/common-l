@@ -5,8 +5,8 @@ namespace Novuso\Common\Adapter\Presentation\Resolver;
 use LogicException;
 use Novuso\Common\Adapter\Presentation\Action;
 use Novuso\Common\Adapter\Presentation\Responder;
-use Novuso\Common\Application\Service\Container;
-use Novuso\Common\Application\Service\Exception\ServiceException;
+use Novuso\Common\Application\Container\Container;
+use Novuso\Common\Application\Container\Exception\ServiceContainerException;
 use Novuso\System\Type\Type;
 use Novuso\System\Utility\Test;
 
@@ -62,7 +62,7 @@ class ResponderServiceResolver implements ResponderResolver
 
         try {
             $responder = $this->container->get($serviceId);
-        } catch (ServiceException $exception) {
+        } catch (ServiceContainerException $exception) {
             throw new LogicException($exception->getMessage(), $exception);
         }
 
