@@ -18,7 +18,7 @@ use Symfony\Component\HttpKernel\TerminableInterface;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.0
+ * @version   0.0.1
  */
 class ContentNegotiation
 {
