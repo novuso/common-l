@@ -3,7 +3,7 @@
 namespace Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler;
 
 use InvalidArgumentException;
-use Novuso\Common\Adapter\Presentation\Http\Responder;
+use Novuso\Common\Adapter\Presentation\Symfony\Http\Responder;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
