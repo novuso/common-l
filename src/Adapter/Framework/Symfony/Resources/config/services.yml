@@ -85,17 +85,17 @@ services:
         arguments:
             - @novuso_common.service_container
     novuso_common.responder_subscriber:
-        class: Novuso\Common\Adapter\Presentation\Http\Subscriber\ResponderSubscriber
+        class: Novuso\Common\Adapter\Presentation\Symfony\Http\Subscriber\ResponderSubscriber
         arguments:
             - @novuso_common.responder_service_resolver
         tags:
             - { name: kernel.event_subscriber }
     novuso_common.responder_service_resolver:
-        class: Novuso\Common\Adapter\Presentation\Http\Resolver\ResponderServiceResolver
+        class: Novuso\Common\Adapter\Presentation\Symfony\Http\Resolver\ResponderServiceResolver
         arguments:
             - @novuso_common.responder_service_map
         public: false
     novuso_common.responder_service_map:
-        class: Novuso\Common\Adapter\Presentation\Http\Resolver\ResponderServiceMap
+        class: Novuso\Common\Adapter\Presentation\Symfony\Http\Resolver\ResponderServiceMap
         arguments:
             - @novuso_common.service_container
