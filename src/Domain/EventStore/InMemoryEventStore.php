@@ -2,13 +2,11 @@
 
 namespace Novuso\Common\Domain\EventStore;
 
-use Novuso\Common\Domain\Event\EventMessage;
-use Novuso\Common\Domain\Event\EventStream;
 use Novuso\Common\Domain\EventStore\Exception\ConcurrencyException;
 use Novuso\Common\Domain\EventStore\Exception\StreamNotFoundException;
-use Novuso\Common\Domain\Identifier\Identifier;
-use Novuso\System\Serialization\JsonSerializer;
-use Novuso\System\Serialization\Serializer;
+use Novuso\Common\Domain\Messaging\Event\EventMessage;
+use Novuso\Common\Domain\Messaging\Event\EventStream;
+use Novuso\Common\Domain\Model\Identifier;
 use Novuso\System\Type\Type;
 
 /**
@@ -29,36 +27,19 @@ class InMemoryEventStore implements EventStore
     protected $streamData = [];
 
     /**
-     * Serializer
-     *
-     * @var Serializer
-     */
-    protected $serializer;
-
-    /**
-     * Constructs InMemoryEventStore
-     *
-     * @param Serializer|null $serializer The serializer
-     */
-    public function __construct(Serializer $serializer = null)
-    {
-        $this->serializer = $serializer ?: new JsonSerializer();
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function appendEvent(EventMessage $eventMessage)
     {
-        $id = $eventMessage->objectId()->toString();
-        $type = $eventMessage->objectType()->toString();
+        $id = $eventMessage->aggregateId()->toString();
+        $type = $eventMessage->aggregateType()->toString();
 
         if (!isset($this->streamData[$type])) {
             $this->streamData[$type] = [];
         }
 
         if (!isset($this->streamData[$type][$id])) {
-            $this->streamData[$type][$id] = new StreamData($id, $type);
+            $this->streamData[$type][$id] = new StreamData();
         }
 
         $version = $eventMessage->sequence();
@@ -75,7 +56,7 @@ class InMemoryEventStore implements EventStore
             throw ConcurrencyException::create($message);
         }
 
-        $event = new StoredEvent($eventMessage, $this->serializer);
+        $event = new StoredEvent($eventMessage);
 
         $this->streamData[$type][$id]->addEvent($event);
         $this->streamData[$type][$id]->setVersion($version);
@@ -86,8 +67,8 @@ class InMemoryEventStore implements EventStore
      */
     public function appendStream(EventStream $eventStream)
     {
-        $id = $eventStream->objectId()->toString();
-        $type = $eventStream->objectType()->toString();
+        $id = $eventStream->aggregateId()->toString();
+        $type = $eventStream->aggregateType()->toString();
 
         if (!isset($this->streamData[$type])) {
             $this->streamData[$type] = [];
@@ -106,7 +87,7 @@ class InMemoryEventStore implements EventStore
 
         $events = [];
         foreach ($eventStream as $eventMessage) {
-            $events[] = new StoredEvent($eventMessage, $this->serializer);
+            $events[] = new StoredEvent($eventMessage);
         }
 
         $this->streamData[$type][$id]->addEvents($events);
@@ -116,38 +97,40 @@ class InMemoryEventStore implements EventStore
     /**
      * {@inheritdoc}
      */
-    public function loadStream(Identifier $objectId, Type $objectType)
+    public function loadStream(Identifier $aggregateId, Type $aggregateType, $first = null, $last = null)
     {
-        $id = $objectId->toString();
-        $type = $objectType->toString();
+        $id = $aggregateId->toString();
+        $type = $aggregateType->toString();
 
-        if (!isset($this->streamData[$type])) {
-            $message = sprintf('Stream not found for type: %s', $type);
-            throw StreamNotFoundException::create($message);
-        }
-        if (!isset($this->streamData[$type][$id])) {
-            $message = sprintf('Stream not found for ID: %s [%s]', $id, $type);
+        if (!$this->hasStream($aggregateId, $aggregateType)) {
+            $message = sprintf('Stream not found for [%s]{%s}', $type, $id);
             throw StreamNotFoundException::create($message);
         }
 
         $streamData = $this->streamData[$type][$id];
+        $count = count($streamData);
+        $first = $this->normalizeFirst($first);
+        $last = $this->normalizeLast($last, $count);
         $version = $streamData->getVersion();
 
         $messages = [];
         foreach ($streamData->getEvents() as $storedEvent) {
-            $messages[] = $storedEvent->toEventMessage();
+            $sequence = $storedEvent->getSequence();
+            if ($sequence >= $first && $sequence <= $last) {
+                $messages[] = $storedEvent->toEventMessage();
+            }
         }
 
-        return new EventStream($objectId, $objectType, $version, $version, $messages);
+        return new EventStream($aggregateId, $aggregateType, $version, $version, $messages);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function hasStream(Identifier $objectId, Type $objectType)
+    public function hasStream(Identifier $aggregateId, Type $aggregateType)
     {
-        $id = $objectId->toString();
-        $type = $objectType->toString();
+        $id = $aggregateId->toString();
+        $type = $aggregateType->toString();
 
         if (!isset($this->streamData[$type])) {
             return false;
@@ -158,5 +141,38 @@ class InMemoryEventStore implements EventStore
         }
 
         return true;
+    }
+
+    /**
+     * Retrieves the normalized first version
+     *
+     * @param int|null $first The first version or null for beginning
+     *
+     * @return int
+     */
+    protected function normalizeFirst($first)
+    {
+        if ($first === null) {
+            return 0;
+        }
+
+        return (int) $first;
+    }
+
+    /**
+     * Retrieves the normalized last version
+     *
+     * @param int|null $last  The last version or null for remaining
+     * @param int      $count The total event count
+     *
+     * @return int
+     */
+    protected function normalizeLast($last, $count)
+    {
+        if ($last === null) {
+            return $count - 1;
+        }
+
+        return (int) $last;
     }
 }

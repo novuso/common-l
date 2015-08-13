@@ -2,9 +2,9 @@
 
 namespace Novuso\Common\Domain\EventSourcing;
 
-use Novuso\Common\Domain\Entity\DomainEntity;
-use Novuso\Common\Domain\Event\DomainEvent;
 use Novuso\Common\Domain\EventSourcing\Exception\RegisterAggregateException;
+use Novuso\Common\Domain\Messaging\Event\DomainEvent;
+use Novuso\Common\Domain\Model\DomainEntity;
 use Novuso\System\Utility\ClassName;
 use Traversable;
 
@@ -55,6 +55,24 @@ abstract class EventSourcedDomainEntity extends DomainEntity implements EventSou
             }
         }
         // @codeCoverageIgnoreEnd
+    }
+
+    /**
+     * Retrieves the aggregate root
+     *
+     * @return EventSourcedAggregateRoot
+     *
+     * @throws RegisterAggregateException When aggregate root is not registered
+     */
+    protected function getAggregateRoot()
+    {
+        // @codeCoverageIgnoreStart
+        if ($this->aggregateRoot === null) {
+            throw RegisterAggregateException::create('Aggregate root is not registered');
+        }
+        // @codeCoverageIgnoreEnd
+
+        return $this->aggregateRoot;
     }
 
     /**

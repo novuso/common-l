@@ -2,16 +2,11 @@
 
 namespace Novuso\Common\Domain\EventStore;
 
-use Novuso\Common\Domain\Event\DomainEvent;
-use Novuso\Common\Domain\Event\EventId;
-use Novuso\Common\Domain\Event\EventMessage;
-use Novuso\Common\Domain\Event\MetaData;
-use Novuso\Common\Domain\Identifier\Identifier;
-use Novuso\Common\Domain\Value\DateTime\DateTime;
-use Novuso\System\Serialization\JsonSerializer;
-use Novuso\System\Serialization\Serializer;
+use Novuso\Common\Domain\Messaging\Event\EventMessage;
+use Novuso\Common\Domain\Messaging\MessageId;
+use Novuso\Common\Domain\Messaging\MetaData;
+use Novuso\Common\Domain\Model\DateTime\DateTime;
 use Novuso\System\Type\Type;
-use Novuso\System\Utility\Test;
 
 /**
  * StoredEvent represents a persisted domain event message
@@ -24,39 +19,53 @@ use Novuso\System\Utility\Test;
 class StoredEvent
 {
     /**
-     * Object ID
+     * Aggregate ID
      *
      * @var string
      */
-    protected $objectId;
+    protected $aggregateId;
 
     /**
-     * Object ID type
+     * Aggregate ID type
      *
      * @var string
      */
-    protected $objectIdType;
+    protected $aggregateIdType;
 
     /**
-     * Object type
+     * Aggregate type
      *
      * @var string
      */
-    protected $objectType;
+    protected $aggregateType;
 
     /**
-     * Event ID
+     * Message ID
      *
      * @var string
      */
-    protected $eventId;
+    protected $messageId;
 
     /**
      * Timestamp
      *
      * @var string
      */
-    protected $dateTime;
+    protected $timestamp;
+
+    /**
+     * Payload
+     *
+     * @var string
+     */
+    protected $payload;
+
+    /**
+     * Payload type
+     *
+     * @var string
+     */
+    protected $payloadType;
 
     /**
      * Meta data
@@ -66,99 +75,102 @@ class StoredEvent
     protected $metaData;
 
     /**
-     * Event data
-     *
-     * @var string
-     */
-    protected $eventData;
-
-    /**
-     * Sequence number
+     * Sequence
      *
      * @var int
      */
     protected $sequence;
 
     /**
-     * Serializer
-     *
-     * @var Serializer
-     */
-    protected $serializer;
-
-    /**
      * Constructs StoredEvent
      *
-     * @param EventMessage    $message    The event message
-     * @param Serializer|null $serializer The serializer
+     * @param EventMessage $message The event message
      */
-    public function __construct(EventMessage $message, Serializer $serializer = null)
+    public function __construct(EventMessage $message)
     {
-        $this->serializer = $serializer ?: new JsonSerializer();
-        $this->objectId = $message->objectId()->toString();
-        $this->objectIdType = $message->objectIdType()->toString();
-        $this->objectType = $message->objectType()->toString();
-        $this->eventId = $message->eventId()->toString();
-        $this->dateTime = $message->dateTime()->toString();
-        $this->metaData = $this->serializer->serialize($message->metaData());
-        $this->eventData = $this->serializer->serialize($message->eventData());
-        $sequence = $message->sequence();
-        assert(Test::isInt($sequence), 'Sequence must be an integer');
-        $this->sequence = $sequence;
+        $this->aggregateId = $message->aggregateId()->toString();
+        $this->aggregateIdType = Type::create($message->aggregateId())->toString();
+        $this->aggregateType = $message->aggregateType()->toString();
+        $this->messageId = $message->messageId()->toString();
+        $this->timestamp = $message->timestamp()->toString();
+        $this->payload = json_encode($message->payload()->serialize());
+        $this->payloadType = $message->payloadType()->toString();
+        $this->metaData = json_encode($message->metaData()->serialize());
+        $this->sequence = $message->sequence();
     }
 
     /**
-     * Retrieves the object ID
+     * Retrieves the aggregate ID
      *
      * @return string
      */
-    public function getObjectId()
+    public function getAggregateId()
     {
-        return $this->objectId;
+        return $this->aggregateId;
     }
 
     /**
-     * Retrieves the object ID type
+     * Retrieves the aggregate ID type
      *
      * @return string
      */
-    public function getObjectIdType()
+    public function getAggregateIdType()
     {
-        return $this->objectIdType;
+        return $this->aggregateIdType;
     }
 
     /**
-     * Retrieves the object type
+     * Retrieves the aggregate type
      *
      * @return string
      */
-    public function getObjectType()
+    public function getAggregateType()
     {
-        return $this->objectType;
+        return $this->aggregateType;
     }
 
     /**
-     * Retrieves the event ID
+     * Retrieves the message ID
      *
      * @return string
      */
-    public function getEventId()
+    public function getMessageId()
     {
-        return $this->eventId;
+        return $this->messageId;
     }
 
     /**
-     * Retrieves the date/time
+     * Retrieves the timestamp
      *
      * @return string
      */
-    public function getDateTime()
+    public function getTimestamp()
     {
-        return $this->dateTime;
+        return $this->timestamp;
     }
 
     /**
-     * Retrieves the serialized meta data
+     * Retrieves the payload
+     *
+     * @return string
+     */
+    public function getPayload()
+    {
+        return $this->payload;
+    }
+
+    /**
+     * Retrieves the payload type
+     *
+     * @return string
+     */
+    public function getPayloadType()
+    {
+        return $this->payloadType;
+    }
+
+    /**
+     * Retrieves the meta data
      *
      * @return string
      */
@@ -168,17 +180,7 @@ class StoredEvent
     }
 
     /**
-     * Retrieves the serialized event data
-     *
-     * @return string
-     */
-    public function getEventData()
-    {
-        return $this->eventData;
-    }
-
-    /**
-     * Retrieves the sequence number
+     * Retrieves the sequence
      *
      * @return int
      */
@@ -188,21 +190,34 @@ class StoredEvent
     }
 
     /**
-     * Creates an event message
+     * Converts data to an event message
      *
      * @return EventMessage
      */
     public function toEventMessage()
     {
-        $idClass = Type::create($this->objectIdType)->toClassName();
-        $objectId = $idClass::fromString($this->objectId);
-        $objectType = Type::create($this->objectType);
-        $eventId = EventId::fromString($this->eventId);
-        $dateTime = DateTime::fromString($this->dateTime);
-        $metaData = $this->serializer->deserialize($this->metaData);
-        $eventData = $this->serializer->deserialize($this->eventData);
+        $aggregateIdClass = Type::create($this->aggregateIdType)->toClassName();
+        $aggregateId = $aggregateIdClass::fromString($this->aggregateId);
+        $aggregateType = Type::create($this->aggregateType);
+        $messageId = MessageId::fromString($this->messageId);
+        $timestamp = DateTime::fromString($this->timestamp);
+        $payloadClass = Type::create($this->payloadType)->toClassName();
+        $payloadArray = json_decode($this->payload, true);
+        $payload = $payloadClass::deserialize($payloadArray);
+        $metaDataArray = json_decode($this->metaData, true);
+        $metaData = MetaData::deserialize($metaDataArray);
         $sequence = $this->sequence;
 
-        return new EventMessage($eventId, $objectId, $objectType, $dateTime, $metaData, $eventData, $sequence);
+        $message = new EventMessage(
+            $aggregateId,
+            $aggregateType,
+            $messageId,
+            $timestamp,
+            $payload,
+            $metaData,
+            $sequence
+        );
+
+        return $message;
     }
 }

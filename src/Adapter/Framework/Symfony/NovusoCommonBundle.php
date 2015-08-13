@@ -4,7 +4,9 @@ namespace Novuso\Common\Adapter\Framework\Symfony;
 
 use Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler\CommandFilterCompilerPass;
 use Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler\CommandHandlerCompilerPass;
-use Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler\DomainEventCompilerPass;
+use Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler\EventSubscriberCompilerPass;
+use Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler\QueryFilterCompilerPass;
+use Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler\QueryHandlerCompilerPass;
 use Novuso\Common\Adapter\Framework\Symfony\DependencyInjection\Compiler\ResponderCompilerPass;
 use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -32,7 +34,9 @@ class NovusoCommonBundle extends Bundle
         parent::build($container);
         $container->addCompilerPass(new CommandFilterCompilerPass());
         $container->addCompilerPass(new CommandHandlerCompilerPass());
-        $container->addCompilerPass(new DomainEventCompilerPass());
+        $container->addCompilerPass(new EventSubscriberCompilerPass());
+        $container->addCompilerPass(new QueryFilterCompilerPass());
+        $container->addCompilerPass(new QueryHandlerCompilerPass());
         $container->addCompilerPass(new ResponderCompilerPass());
     }
 

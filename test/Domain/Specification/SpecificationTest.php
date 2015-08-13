@@ -2,9 +2,9 @@
 
 namespace Novuso\Test\Common\Domain\Specification;
 
-use Novuso\Test\Common\Doubles\Username;
-use Novuso\Test\Common\Doubles\UsernameIsAlphaOnly;
-use Novuso\Test\Common\Doubles\UsernameIsUnique;
+use Novuso\Test\Common\Doubles\Domain\Specification\Username;
+use Novuso\Test\Common\Doubles\Domain\Specification\UsernameIsAlphaOnly;
+use Novuso\Test\Common\Doubles\Domain\Specification\UsernameIsUnique;
 use PHPUnit_Framework_TestCase;
 
 /**

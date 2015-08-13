@@ -2,11 +2,11 @@
 
 namespace Novuso\Common\Domain\EventStore;
 
-use Novuso\Common\Domain\Event\EventMessage;
-use Novuso\Common\Domain\Event\EventStream;
 use Novuso\Common\Domain\EventStore\Exception\EventStoreException;
 use Novuso\Common\Domain\EventStore\Exception\StreamNotFoundException;
-use Novuso\Common\Domain\Identifier\Identifier;
+use Novuso\Common\Domain\Messaging\Event\EventMessage;
+use Novuso\Common\Domain\Messaging\Event\EventStream;
+use Novuso\Common\Domain\Model\Identifier;
 use Novuso\System\Type\Type;
 
 /**
@@ -44,22 +44,22 @@ interface EventStore
     /**
      * Loads an event stream
      *
-     * @param Identifier $objectId   The object ID
-     * @param Type       $objectType The object type
+     * @param Identifier $aggregateId   The aggregate ID
+     * @param Type       $aggregateType The aggregate type
+     * @param int|null   $first         The first version or null for beginning
+     * @param int|null   $last          The last version or null for remaining
      *
      * @return EventStream
-     *
-     * @throws StreamNotFoundException When the event stream is not found
      */
-    public function loadStream(Identifier $objectId, Type $objectType);
+    public function loadStream(Identifier $aggregateId, Type $aggregateType, $first = null, $last = null);
 
     /**
      * Checks if an event stream exists
      *
-     * @param Identifier $objectId   The object ID
-     * @param Type       $objectType The object type
+     * @param Identifier $aggregateId   The aggregate ID
+     * @param Type       $aggregateType The aggregate type
      *
      * @return bool
      */
-    public function hasStream(Identifier $objectId, Type $objectType);
+    public function hasStream(Identifier $aggregateId, Type $aggregateType);
 }

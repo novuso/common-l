@@ -2,9 +2,9 @@
 
 namespace Novuso\Common\Domain\EventSourcing;
 
-use Novuso\Common\Domain\Entity\AggregateRoot;
-use Novuso\Common\Domain\Event\DomainEvent;
-use Novuso\Common\Domain\Event\EventStream;
+use Novuso\Common\Domain\Messaging\Event\DomainEvent;
+use Novuso\Common\Domain\Messaging\Event\EventStream;
+use Novuso\Common\Domain\Model\AggregateRoot;
 use Novuso\System\Utility\ClassName;
 use ReflectionClass;
 use Traversable;
@@ -22,7 +22,7 @@ abstract class EventSourcedAggregateRoot extends AggregateRoot
     /**
      * Creates instance from an event stream history
      *
-     * Override to customize instantiation without needing reflection.
+     * Override to customize instantiation without using reflection.
      *
      * @param EventStream $eventStream The event stream
      *
@@ -36,7 +36,7 @@ abstract class EventSourcedAggregateRoot extends AggregateRoot
         $lastSequence = null;
         foreach ($eventStream as $eventMessage) {
             $lastSequence = $eventMessage->sequence();
-            $aggregate->handleRecursively($eventMessage->eventData());
+            $aggregate->handleRecursively($eventMessage->payload());
         }
 
         $aggregate->initializeCommittedVersion($lastSequence);
@@ -47,9 +47,9 @@ abstract class EventSourcedAggregateRoot extends AggregateRoot
     /**
      * {@inheritdoc}
      */
-    protected function recordEvent(DomainEvent $domainEvent)
+    public function recordThat(DomainEvent $domainEvent)
     {
-        parent::recordEvent($domainEvent);
+        parent::recordThat($domainEvent);
         $this->handleRecursively($domainEvent);
     }
 

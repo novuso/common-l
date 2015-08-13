@@ -2,9 +2,9 @@
 
 namespace Novuso\Common\Domain\EventSourcing;
 
-use Novuso\Common\Domain\Entity\Entity;
-use Novuso\Common\Domain\Event\DomainEvent;
 use Novuso\Common\Domain\EventSourcing\Exception\RegisterAggregateException;
+use Novuso\Common\Domain\Messaging\Event\DomainEvent;
+use Novuso\Common\Domain\Model\Entity;
 
 /**
  * EventSourcedEntity is the interface for an event sourced entity

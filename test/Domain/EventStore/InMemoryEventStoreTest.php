@@ -4,7 +4,8 @@ namespace Novuso\Test\Common\Domain\EventStore;
 
 use Novuso\Common\Domain\EventStore\InMemoryEventStore;
 use Novuso\System\Type\Type;
-use Novuso\Test\Common\Doubles\Task;
+use Novuso\Test\Common\Doubles\Domain\Model\Task;
+use Novuso\Test\Common\Doubles\Domain\Model\TaskId;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -24,19 +25,35 @@ class InMemoryEventStoreTest extends PHPUnit_Framework_TestCase
         $task = Task::create('First task description');
         $stream = $task->getRecordedEvents();
         $this->store->appendStream($stream);
-        $task->commitRecordedEvents();
+        $task->clearRecordedEvents();
+
         $task->changeDescription('Updating the description');
         $stream = $task->getRecordedEvents();
         $this->store->appendStream($stream);
-        $task->commitRecordedEvents();
+        $task->clearRecordedEvents();
+
         $task->changeDescription('Testing the event store');
         $stream = $task->getRecordedEvents();
         $this->store->appendStream($stream);
-        $task->commitRecordedEvents();
-        // load event history and build new aggregate
-        $history = $this->store->loadStream($task->id(), Type::create($task));
-        $object = Task::reconstitute($history);
-        $this->assertSame('Testing the event store', $object->description());
+        $task->clearRecordedEvents();
+
+        $idString = $task->id()->toString();
+
+        $eventStream = $this->store->loadStream(
+            TaskId::fromString($idString),
+            Type::create(Task::class)
+        );
+        $eventMessages = [];
+        foreach ($eventStream as $eventMessage) {
+            $eventMessages[] = $eventMessage;
+        }
+        $taskCreated = 'Novuso.Test.Common.Doubles.Domain.Model.TaskCreatedEvent';
+        $descChanged = 'Novuso.Test.Common.Doubles.Domain.Model.DescriptionChangedEvent';
+        $this->assertTrue(
+            $taskCreated === (string) $eventMessages[0]->payloadType()
+                && $descChanged === (string) $eventMessages[1]->payloadType()
+                && $descChanged === (string) $eventMessages[2]->payloadType()
+        );
     }
 
     public function test_that_it_allows_adding_individual_events()
@@ -46,48 +63,75 @@ class InMemoryEventStoreTest extends PHPUnit_Framework_TestCase
         foreach ($stream as $event) {
             $this->store->appendEvent($event);
         }
-        $task->commitRecordedEvents();
+        $task->clearRecordedEvents();
+
         $task->changeDescription('Updating the description');
         $stream = $task->getRecordedEvents();
         foreach ($stream as $event) {
             $this->store->appendEvent($event);
         }
-        $task->commitRecordedEvents();
+        $task->clearRecordedEvents();
+
         $task->changeDescription('Testing the event store');
         $stream = $task->getRecordedEvents();
         foreach ($stream as $event) {
             $this->store->appendEvent($event);
         }
-        $task->commitRecordedEvents();
-        // load event history and build new aggregate
-        $history = $this->store->loadStream($task->id(), Type::create($task));
-        $object = Task::reconstitute($history);
-        $this->assertSame('Testing the event store', $object->description());
+        $task->clearRecordedEvents();
+
+        $idString = $task->id()->toString();
+
+        $eventStream = $this->store->loadStream(
+            TaskId::fromString($idString),
+            Type::create(Task::class)
+        );
+        $eventMessages = [];
+        foreach ($eventStream as $eventMessage) {
+            $eventMessages[] = $eventMessage;
+        }
+        $taskCreated = 'Novuso.Test.Common.Doubles.Domain.Model.TaskCreatedEvent';
+        $descChanged = 'Novuso.Test.Common.Doubles.Domain.Model.DescriptionChangedEvent';
+        $this->assertTrue(
+            $taskCreated === (string) $eventMessages[0]->payloadType()
+                && $descChanged === (string) $eventMessages[1]->payloadType()
+                && $descChanged === (string) $eventMessages[2]->payloadType()
+        );
     }
 
-    public function test_that_has_stream_returns_false_when_stream_not_present_for_type()
-    {
-        $task = Task::create('First task description');
-        $this->assertFalse($this->store->hasStream($task->id(), Type::create($task)));
-    }
-
-    public function test_that_has_stream_returns_false_when_stream_not_present_for_id()
+    public function test_that_it_allows_loading_partial_streams()
     {
         $task = Task::create('First task description');
         $stream = $task->getRecordedEvents();
         $this->store->appendStream($stream);
-        $task->commitRecordedEvents();
-        $other = Task::create('Another task');
-        $this->assertFalse($this->store->hasStream($other->id(), Type::create($other)));
-    }
+        $task->clearRecordedEvents();
 
-    public function test_that_has_stream_returns_true_when_stream_present()
-    {
-        $task = Task::create('First task description');
+        $task->changeDescription('Updating the description');
         $stream = $task->getRecordedEvents();
         $this->store->appendStream($stream);
-        $task->commitRecordedEvents();
-        $this->assertTrue($this->store->hasStream($task->id(), Type::create($task)));
+        $task->clearRecordedEvents();
+
+        $task->changeDescription('Testing the event store');
+        $stream = $task->getRecordedEvents();
+        $this->store->appendStream($stream);
+        $task->clearRecordedEvents();
+
+        $idString = $task->id()->toString();
+
+        $eventStream = $this->store->loadStream(
+            TaskId::fromString($idString),
+            Type::create(Task::class),
+            1,
+            1
+        );
+        $eventMessages = [];
+        foreach ($eventStream as $eventMessage) {
+            $eventMessages[] = $eventMessage;
+        }
+        $descChanged = 'Novuso.Test.Common.Doubles.Domain.Model.DescriptionChangedEvent';
+        $this->assertTrue(
+            count($eventMessages) === 1
+            && $descChanged === (string) $eventMessages[0]->payloadType()
+        );
     }
 
     /**
@@ -98,12 +142,14 @@ class InMemoryEventStoreTest extends PHPUnit_Framework_TestCase
         $task = Task::create('First task description');
         $stream = $task->getRecordedEvents();
         $this->store->appendStream($stream);
-        $task->commitRecordedEvents();
+        $task->clearRecordedEvents();
+
         $task->changeDescription('Updating the description');
         $stream = $task->getRecordedEvents();
+        $this->store->appendStream($stream);
         // simulating updates out of sync
-        // $this->store->appendStream($stream);
-        $task->commitRecordedEvents();
+        // $task->clearRecordedEvents();
+
         $task->changeDescription('Testing the event store');
         $stream = $task->getRecordedEvents();
         $this->store->appendStream($stream);
@@ -119,14 +165,16 @@ class InMemoryEventStoreTest extends PHPUnit_Framework_TestCase
         foreach ($stream as $event) {
             $this->store->appendEvent($event);
         }
-        $task->commitRecordedEvents();
+        $task->clearRecordedEvents();
+
         $task->changeDescription('Updating the description');
         $stream = $task->getRecordedEvents();
+        foreach ($stream as $event) {
+            $this->store->appendEvent($event);
+        }
         // simulating updates out of sync
-        // foreach ($stream as $event) {
-        //     $this->store->appendEvent($event);
-        // }
-        $task->commitRecordedEvents();
+        // $task->clearRecordedEvents();
+
         $task->changeDescription('Testing the event store');
         $stream = $task->getRecordedEvents();
         foreach ($stream as $event) {
@@ -151,7 +199,7 @@ class InMemoryEventStoreTest extends PHPUnit_Framework_TestCase
         $task = Task::create('First task description');
         $stream = $task->getRecordedEvents();
         $this->store->appendStream($stream);
-        $task->commitRecordedEvents();
+        $task->clearRecordedEvents();
         $other = Task::create('Another task');
         $this->store->loadStream($other->id(), Type::create($other));
     }

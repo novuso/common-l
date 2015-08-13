@@ -16,6 +16,13 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
  */
 class CommandFilterCompilerPass implements CompilerPassInterface
 {
+    /**
+     * Processes command filter tags
+     *
+     * @param ContainerBuilder $container The container builder
+     *
+     * @return void
+     */
     public function process(ContainerBuilder $container)
     {
         if (!$container->has('novuso_common.command_bus')) {

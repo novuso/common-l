@@ -2,7 +2,7 @@
 
 namespace Novuso\Common\Domain\EventSourcing;
 
-use Novuso\Common\Domain\Event\EventStream;
+use Novuso\Common\Domain\Messaging\Event\EventStream;
 use Novuso\System\Exception\TypeException;
 use Novuso\System\Type\Type;
 use Novuso\System\Utility\Test;

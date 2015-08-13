@@ -2,6 +2,7 @@
 
 namespace Novuso\Common\Domain\EventStore;
 
+use Countable;
 use Novuso\System\Utility\Test;
 
 /**
@@ -12,26 +13,12 @@ use Novuso\System\Utility\Test;
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-class StreamData
+class StreamData implements Countable
 {
-    /**
-     * Object ID
-     *
-     * @var string
-     */
-    protected $objectId;
-
-    /**
-     * Object type
-     *
-     * @var string
-     */
-    protected $objectType;
-
     /**
      * Stream version
      *
-     * @var int
+     * @var int|null
      */
     protected $version;
 
@@ -43,35 +30,13 @@ class StreamData
     protected $events = [];
 
     /**
-     * Constructs StreamData
+     * Retrieves the count
      *
-     * @param string $objectId     The object ID
-     * @param string $objectType   The object type
+     * @return int
      */
-    public function __construct($objectId, $objectType)
+    public function count()
     {
-        $this->objectId = $objectId;
-        $this->objectType = $objectType;
-    }
-
-    /**
-     * Retrieves the object ID
-     *
-     * @return string
-     */
-    public function getObjectId()
-    {
-        return $this->objectId;
-    }
-
-    /**
-     * Retrieves the object type
-     *
-     * @return string
-     */
-    public function getObjectType()
-    {
-        return $this->objectType;
+        return count($this->events);
     }
 
     /**
@@ -84,6 +49,7 @@ class StreamData
     public function setVersion($version)
     {
         assert(Test::isInt($version), 'Version must be an integer');
+
         $this->version = $version;
     }
 
@@ -122,9 +88,12 @@ class StreamData
     {
         $sequence = $event->getSequence();
 
-        if (!isset($this->events[$sequence])) {
-            $this->events[$sequence] = $event;
-        }
+        assert(
+            !Test::keyIsset($this->events, $sequence),
+            sprintf('An event with sequence %s is already committed', $sequence)
+        );
+
+        $this->events[$sequence] = $event;
     }
 
     /**
