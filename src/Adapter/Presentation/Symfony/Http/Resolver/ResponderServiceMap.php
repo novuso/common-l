@@ -77,7 +77,7 @@ class ResponderServiceMap
      */
     public function registerResponder($actionClass, $serviceId)
     {
-        if (!Test::implementsInterface($actionClass, Action::class)) {
+        if (!Test::isSubclassOf($actionClass, Action::class)) {
             $message = sprintf('Invalid action class: %s', $actionClass);
             throw new LogicException($message);
         }
