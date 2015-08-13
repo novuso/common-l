@@ -4,6 +4,9 @@ namespace Novuso\Common\Adapter\Framework\Silex;
 
 use Novuso\Common\Adapter\Infrastructure\Container\PimpleContainer;
 use Novuso\Common\Adapter\Infrastructure\Logging\PsrLogger;
+use Novuso\Common\Adapter\Presentation\Symfony\Http\Resolver\ResponderServiceMap;
+use Novuso\Common\Adapter\Presentation\Symfony\Http\Resolver\ResponderServiceResolver;
+use Novuso\Common\Adapter\Presentation\Symfony\Http\Subscriber\ResponderSubscriber;
 use Novuso\Common\Application\Messaging\Command\CommandHandlerBus;
 use Novuso\Common\Application\Messaging\Command\CommandPipeline;
 use Novuso\Common\Application\Messaging\Command\Resolver\CommandServiceMap;
@@ -15,6 +18,8 @@ use Novuso\Common\Application\Messaging\Query\Resolver\QueryServiceMap;
 use Novuso\Common\Application\Messaging\Query\Resolver\QueryServiceResolver;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
+use Silex\Api\EventListenerProviderInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * NovusoCommonServiceProvider provides common services for the application
@@ -29,7 +34,7 @@ use Pimple\ServiceProviderInterface;
  * @author    John Nickell <email@johnnickell.com>
  * @version   0.0.0
  */
-class NovusoCommonServiceProvider implements ServiceProviderInterface
+class NovusoCommonServiceProvider implements EventListenerProviderInterface, ServiceProviderInterface
 {
     /**
      * Registers services on the given container
@@ -113,6 +118,24 @@ class NovusoCommonServiceProvider implements ServiceProviderInterface
             return $queryServiceMap;
         };
 
+        $app['novuso_common.responder_subscriber'] = function ($app) {
+            return new ResponderSubscriber($app['novuso_common.responder_service_resolver']);
+        };
+
+        $app['novuso_common.responder_service_resolver'] = function ($app) {
+            return new ResponderServiceResolver($app['novuso_common.responder_service_map']);
+        };
+
+        $app['novuso_common.responder_service_map'] = function ($app) {
+            $responderServiceMap = new ResponderServiceMap($app['novuso_common.service_container']);
+
+            foreach ($app['novuso_common.responders'] as $serviceId => $actionClass) {
+                $responderServiceMap->registerResponder($actionClass, $serviceId);
+            }
+
+            return $responderServiceMap;
+        };
+
         // List of command filter instances
         // [$commandFilter1, $commandFilter2]
         // Command filter must implement:
@@ -142,5 +165,24 @@ class NovusoCommonServiceProvider implements ServiceProviderInterface
         // Event subscriber must implement:
         // Novuso\Common\Domain\Messaging\Event\Subscriber
         $app['novuso_common.event_subscribers'] = [];
+
+        // Map of HTTP responder services
+        // ['responder_service_id' => 'Action\\ClassName']
+        // Responder must extend:
+        // Novuso\Common\Adapter\Presentation\Symfony\Http\Responder
+        $app['novuso_common.responders'] = [];
+    }
+
+    /**
+     * Registers event listeners with the Silex dispatcher
+     *
+     * @param Container                $app        The application instance
+     * @param EventDispatcherInterface $dispatcher The event dispatcher
+     *
+     * @return void
+     */
+    public function subscribe(Container $app, EventDispatcherInterface $dispatcher)
+    {
+        $dispatcher->addSubscriber($app['novuso_common.responder_subscriber']);
     }
 }

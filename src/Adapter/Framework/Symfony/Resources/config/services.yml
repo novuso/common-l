@@ -88,6 +88,8 @@ services:
         class: Novuso\Common\Adapter\Presentation\Http\Subscriber\ResponderSubscriber
         arguments:
             - @novuso_common.responder_service_resolver
+        tags:
+            - { name: kernel.event_subscriber }
     novuso_common.responder_service_resolver:
         class: Novuso\Common\Adapter\Presentation\Http\Resolver\ResponderServiceResolver
         arguments:
