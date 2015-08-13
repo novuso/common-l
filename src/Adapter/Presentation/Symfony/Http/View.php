@@ -98,4 +98,34 @@ class View
     {
         return $this->parameters;
     }
+
+    /**
+     * Retrieves the mime type
+     *
+     * @return string|null
+     */
+    public function mimeType()
+    {
+        return $this->request->attributes->get('_mime_type');
+    }
+
+    /**
+     * Retrieves the format
+     *
+     * @return string|null
+     */
+    public function format()
+    {
+        return $this->request->attributes->get('_format');
+    }
+
+    /**
+     * Retrieves the language
+     *
+     * @return string|null
+     */
+    public function language()
+    {
+        return $this->request->attributes->get('_language');
+    }
 }
