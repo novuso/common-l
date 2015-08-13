@@ -32,7 +32,7 @@ class QueryHandlerCompilerPass implements CompilerPassInterface
         }
 
         $definition = $container->findDefinition('novuso_common.query_service_map');
-        $taggedServices = $container->findTaggedServices('novuso_common.query_handler');
+        $taggedServices = $container->findTaggedServiceIds('novuso_common.query_handler');
 
         foreach ($taggedServices as $id => $tags) {
             $def = $container->getDefinition($id);

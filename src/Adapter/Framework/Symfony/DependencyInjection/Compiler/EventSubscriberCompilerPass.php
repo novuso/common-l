@@ -32,7 +32,7 @@ class EventSubscriberCompilerPass implements CompilerPassInterface
         }
 
         $definition = $container->findDefinition('novuso_common.event_dispatcher');
-        $taggedServices = $container->findTaggedServices('novuso_common.event_subscriber');
+        $taggedServices = $container->findTaggedServiceIds('novuso_common.event_subscriber');
 
         foreach (array_keys($taggedServices) as $id) {
             $def = $container->getDefinition($id);
