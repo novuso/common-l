@@ -53,7 +53,7 @@ abstract class Responder
      *
      * @return Response
      */
-    protected function httpResponse($content, $status = Response::HTTP_OK, array $headers = [])
+    protected function response($content, $status = Response::HTTP_OK, array $headers = [])
     {
         return new Response($content, $status, $headers);
     }
