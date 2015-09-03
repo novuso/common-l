@@ -10,19 +10,18 @@ use Exception;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
 interface QueryFilter
 {
     /**
      * Processes a query message and the return value of the next filter
      *
-     * Next signature: function (QueryMessage $message): mixed {}
+     * Next signature: function (QueryMessage $message): ViewData {}
      *
      * @param QueryMessage $message The query message
      * @param callable     $next    The next filter
      *
-     * @return mixed
+     * @return ViewData
      *
      * @throws Exception When an error occurs during processing
      */

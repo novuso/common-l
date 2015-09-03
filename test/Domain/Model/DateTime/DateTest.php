@@ -45,6 +45,22 @@ class DateTest extends PHPUnit_Framework_TestCase
         $this->assertSame($dateString, $date->toString());
     }
 
+    public function test_that_it_is_json_encodable()
+    {
+        $dateString = '2015-06-20';
+        $date = Date::fromString($dateString);
+        $data = ['date' => $date];
+        $this->assertSame('{"date":"2015-06-20"}', json_encode($data));
+    }
+
+    public function test_that_it_is_serializable()
+    {
+        $dateString = '2015-06-20';
+        $string = serialize(Date::fromString($dateString));
+        $date = unserialize($string);
+        $this->assertSame($dateString, $date->toString());
+    }
+
     public function test_that_year_returns_expected_value()
     {
         $date = Date::create(2015, 6, 20);

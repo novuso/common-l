@@ -5,6 +5,10 @@ namespace Novuso\Common\Domain\Model\DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
+use Novuso\Common\Domain\Model\Serialization;
+use Novuso\Common\Domain\Model\StringCast;
+use Novuso\Common\Domain\Model\StringEquals;
+use Novuso\Common\Domain\Model\StringJson;
 use Novuso\Common\Domain\Model\ValueObject;
 use Novuso\System\Exception\DomainException;
 use Novuso\System\Type\Comparable;
@@ -17,10 +21,14 @@ use Novuso\System\Utility\VarPrinter;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
-final class Time extends ValueObject implements Comparable
+final class Time implements Comparable, ValueObject
 {
+    use Serialization;
+    use StringCast;
+    use StringEquals;
+    use StringJson;
+
     /**
      * Minimum hour
      *
@@ -82,28 +90,28 @@ final class Time extends ValueObject implements Comparable
      *
      * @var int
      */
-    protected $hour;
+    private $hour;
 
     /**
      * Minute
      *
      * @var int
      */
-    protected $minute;
+    private $minute;
 
     /**
      * Second
      *
      * @var int
      */
-    protected $second;
+    private $second;
 
     /**
      * Microsecond
      *
      * @var int
      */
-    protected $micro;
+    private $micro;
 
     /**
      * Constructs Time

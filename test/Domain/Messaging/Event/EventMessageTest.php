@@ -2,11 +2,10 @@
 
 namespace Novuso\Test\Common\Domain\Messaging\Event;
 
-use Novuso\Common\Domain\Messaging\Event\EventMessage;
+use Novuso\Common\Domain\Messaging\Event\DomainEventMessage;
 use Novuso\Common\Domain\Messaging\MessageId;
 use Novuso\Common\Domain\Messaging\MetaData;
 use Novuso\Common\Domain\Model\DateTime\DateTime;
-use Novuso\System\Serialization\JsonSerializer;
 use Novuso\System\Type\Type;
 use Novuso\Test\Common\Doubles\Domain\Messaging\Event\ThingHappenedEvent;
 use Novuso\Test\Common\Doubles\Domain\Model\Thing;
@@ -14,7 +13,7 @@ use Novuso\Test\Common\Doubles\Domain\Model\ThingId;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @covers Novuso\Common\Domain\Messaging\Event\EventMessage
+ * @covers Novuso\Common\Domain\Messaging\Event\DomainEventMessage
  */
 class EventMessageTest extends PHPUnit_Framework_TestCase
 {
@@ -29,7 +28,7 @@ class EventMessageTest extends PHPUnit_Framework_TestCase
         $payload = new ThingHappenedEvent('foo', 'bar');
         $metaData = new MetaData();
         $sequence = 0;
-        $this->eventMessage = new EventMessage(
+        $this->eventMessage = new DomainEventMessage(
             $thingId,
             $thingType,
             $messageId,
@@ -42,9 +41,8 @@ class EventMessageTest extends PHPUnit_Framework_TestCase
 
     public function test_that_it_is_serializable()
     {
-        $serializer = new JsonSerializer();
-        $string = $serializer->serialize($this->eventMessage);
-        $object = $serializer->deserialize($string);
+        $string = serialize($this->eventMessage);
+        $object = unserialize($string);
         $this->assertTrue($object->equals($this->eventMessage));
     }
 
@@ -138,8 +136,7 @@ class EventMessageTest extends PHPUnit_Framework_TestCase
 
     public function test_that_compare_to_returns_zero_for_same_value()
     {
-        $serializer = new JsonSerializer();
-        $eventMessage = $serializer->deserialize($serializer->serialize($this->eventMessage));
+        $eventMessage = unserialize(serialize($this->eventMessage));
         $this->assertSame(0, $this->eventMessage->compareTo($eventMessage));
     }
 
@@ -162,8 +159,7 @@ class EventMessageTest extends PHPUnit_Framework_TestCase
 
     public function test_that_equals_returns_true_for_same_value()
     {
-        $serializer = new JsonSerializer();
-        $eventMessage = $serializer->deserialize($serializer->serialize($this->eventMessage));
+        $eventMessage = unserialize(serialize($this->eventMessage));
         $this->assertTrue($this->eventMessage->equals($eventMessage));
     }
 
@@ -193,7 +189,7 @@ class EventMessageTest extends PHPUnit_Framework_TestCase
         $payload = new ThingHappenedEvent('foo', 'bar');
         $sequence = 1;
 
-        return new EventMessage(
+        return new DomainEventMessage(
             $thingId,
             $thingType,
             $messageId,
@@ -211,7 +207,6 @@ class EventMessageTest extends PHPUnit_Framework_TestCase
             .'"event_type":"Novuso.Test.Common.Doubles.Domain.Messaging.Event.ThingHappenedEvent",'
             .'"event_data":{"foo":"foo","bar":"bar"},"meta_data":[],'
             .'"aggregate_type":"Novuso.Test.Common.Doubles.Domain.Model.Thing",'
-            .'"aggregate_id":{"type":"Novuso.Test.Common.Doubles.Domain.Model.ThingId",'
-            .'"id":"014ec11d-2f21-4d33-a624-5df1196a4f85"},"sequence":0}';
+            .'"aggregate_id":"014ec11d-2f21-4d33-a624-5df1196a4f85","sequence":0}';
     }
 }

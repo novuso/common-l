@@ -71,6 +71,15 @@ class EventCollectionTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->eventCollection->isEmpty());
     }
 
+    public function test_that_it_is_serializable()
+    {
+        $domainEvent = new ThingHappenedEvent('foo', 'bar');
+        $this->eventCollection->record($domainEvent);
+        $string = serialize($this->eventCollection);
+        $eventCollection = unserialize($string);
+        $this->assertSame(1, count($eventCollection));
+    }
+
     public function test_that_stream_returns_expected_event_stream()
     {
         // assuming the last event committed had a sequence number of 3

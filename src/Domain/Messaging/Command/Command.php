@@ -2,8 +2,8 @@
 
 namespace Novuso\Common\Domain\Messaging\Command;
 
-use Novuso\System\Exception\DomainException;
-use Novuso\System\Serialization\Serializable;
+use JsonSerializable;
+use Serializable;
 
 /**
  * Command is the interface for a domain command
@@ -18,25 +18,29 @@ use Novuso\System\Serialization\Serializable;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
-interface Command extends Serializable
+interface Command extends JsonSerializable, Serializable
 {
     /**
-     * Creates instance from serialized representation
-     *
-     * @param array $data The serialized representation
-     *
-     * @return Command
-     *
-     * @throws DomainException When the data is invalid
-     */
-    public static function deserialize(array $data);
-
-    /**
-     * Retrieves serialized representation
+     * Retrieves a value for JSON encoding
      *
      * @return array
      */
+    public function jsonSerialize();
+
+    /**
+     * Retrieves a serialized representation
+     *
+     * @return string
+     */
     public function serialize();
+
+    /**
+     * Handles construction from a serialized representation
+     *
+     * @param string $serialized The serialized representation
+     *
+     * @return void
+     */
+    public function unserialize($serialized);
 }

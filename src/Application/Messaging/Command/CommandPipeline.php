@@ -7,6 +7,7 @@ use Novuso\Common\Application\Messaging\Command\Exception\CommandException;
 use Novuso\Common\Domain\Messaging\Command\Command;
 use Novuso\Common\Domain\Messaging\Command\CommandFilter;
 use Novuso\Common\Domain\Messaging\Command\CommandMessage;
+use Novuso\Common\Domain\Messaging\Command\DomainCommandMessage;
 use Novuso\Common\Domain\Messaging\MessageId;
 use Novuso\Common\Domain\Messaging\MetaData;
 use Novuso\Common\Domain\Model\DateTime\DateTime;
@@ -18,7 +19,6 @@ use Novuso\System\Collection\LinkedStack;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
 class CommandPipeline implements CommandBus, CommandFilter
 {
@@ -87,7 +87,7 @@ class CommandPipeline implements CommandBus, CommandFilter
         $messageId = MessageId::generate();
         $metaData = new MetaData();
 
-        $this->pipe(new CommandMessage($messageId, $timetamp, $command, $metaData));
+        $this->pipe(new DomainCommandMessage($messageId, $timetamp, $command, $metaData));
     }
 
     /**

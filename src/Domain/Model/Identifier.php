@@ -11,9 +11,8 @@ use Novuso\System\Type\Comparable;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
-interface Identifier extends Comparable, Value
+interface Identifier extends Comparable, ValueObject
 {
     /**
      * Creates instance from a string representation

@@ -2,6 +2,7 @@
 
 namespace Novuso\Common\Domain\EventStore;
 
+use Novuso\Common\Domain\Messaging\Event\DomainEventMessage;
 use Novuso\Common\Domain\Messaging\Event\EventMessage;
 use Novuso\Common\Domain\Messaging\MessageId;
 use Novuso\Common\Domain\Messaging\MetaData;
@@ -14,7 +15,6 @@ use Novuso\System\Type\Type;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
 class StoredEvent
 {
@@ -93,9 +93,9 @@ class StoredEvent
         $this->aggregateType = $message->aggregateType()->toString();
         $this->messageId = $message->messageId()->toString();
         $this->timestamp = $message->timestamp()->toString();
-        $this->payload = json_encode($message->payload()->serialize());
+        $this->payload = serialize($message->payload());
         $this->payloadType = $message->payloadType()->toString();
-        $this->metaData = json_encode($message->metaData()->serialize());
+        $this->metaData = serialize($message->metaData());
         $this->sequence = $message->sequence();
     }
 
@@ -201,14 +201,11 @@ class StoredEvent
         $aggregateType = Type::create($this->aggregateType);
         $messageId = MessageId::fromString($this->messageId);
         $timestamp = DateTime::fromString($this->timestamp);
-        $payloadClass = Type::create($this->payloadType)->toClassName();
-        $payloadArray = json_decode($this->payload, true);
-        $payload = $payloadClass::deserialize($payloadArray);
-        $metaDataArray = json_decode($this->metaData, true);
-        $metaData = MetaData::deserialize($metaDataArray);
+        $payload = unserialize($this->payload);
+        $metaData = unserialize($this->metaData);
         $sequence = $this->sequence;
 
-        $message = new EventMessage(
+        $message = new DomainEventMessage(
             $aggregateId,
             $aggregateType,
             $messageId,

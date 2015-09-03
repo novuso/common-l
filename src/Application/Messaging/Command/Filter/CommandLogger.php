@@ -2,10 +2,12 @@
 
 namespace Novuso\Common\Application\Messaging\Command\Filter;
 
-use Novuso\Common\Application\Command\Exception\CommandException;
+use Exception;
+use Novuso\Common\Application\Messaging\Command\Exception\CommandException;
 use Novuso\Common\Application\Logging\Logger;
 use Novuso\Common\Domain\Messaging\Command\Command;
 use Novuso\Common\Domain\Messaging\Command\CommandFilter;
+use Novuso\Common\Domain\Messaging\Command\CommandMessage;
 use Novuso\System\Utility\ClassName;
 
 /**
@@ -14,7 +16,6 @@ use Novuso\System\Utility\ClassName;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
 class CommandLogger implements CommandFilter
 {

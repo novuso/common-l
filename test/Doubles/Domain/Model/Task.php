@@ -3,13 +3,18 @@
 namespace Novuso\Test\Common\Doubles\Domain\Model;
 
 use Novuso\Common\Domain\Model\AggregateRoot;
+use Novuso\Common\Domain\Model\EventRecords;
+use Novuso\Common\Domain\Model\Identity;
 
-final class Task extends AggregateRoot
+final class Task implements AggregateRoot
 {
-    protected $id;
-    protected $description;
+    use EventRecords;
+    use Identity;
 
-    protected function __construct(TaskId $id, $description)
+    private $id;
+    private $description;
+
+    private function __construct(TaskId $id, $description)
     {
         $this->id = $id;
         $this->description = (string) $description;
@@ -52,8 +57,8 @@ final class Task extends AggregateRoot
     /**
      * Made public to allow triggering exception
      */
-    public function initializeCommittedVersion($committedVersion)
+    public function initializeVersion($committedVersion)
     {
-        parent::initializeCommittedVersion($committedVersion);
+        $this->initializeCommittedVersion($committedVersion);
     }
 }

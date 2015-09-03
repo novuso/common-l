@@ -6,7 +6,10 @@ use Novuso\Test\Common\Doubles\Domain\Model\FullName;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @covers Novuso\Common\Domain\Model\ValueObject
+ * @covers Novuso\Common\Domain\Model\Serialization
+ * @covers Novuso\Common\Domain\Model\StringCast
+ * @covers Novuso\Common\Domain\Model\StringEquals
+ * @covers Novuso\Common\Domain\Model\StringJson
  */
 class ValueObjectTest extends PHPUnit_Framework_TestCase
 {
@@ -19,6 +22,20 @@ class ValueObjectTest extends PHPUnit_Framework_TestCase
     public function test_that_string_cast_returns_expected_value()
     {
         $fullName = FullName::fromParts('John', 'Nickell', 'R');
+        $this->assertSame('John R Nickell', (string) $fullName);
+    }
+
+    public function test_that_it_is_json_encodable()
+    {
+        $fullName = FullName::fromParts('John', 'Nickell', 'R');
+        $data = ['name' => $fullName];
+        $this->assertSame('{"name":"John R Nickell"}', json_encode($data));
+    }
+
+    public function test_that_it_is_serializable()
+    {
+        $string = serialize(FullName::fromParts('John', 'Nickell', 'R'));
+        $fullName = unserialize($string);
         $this->assertSame('John R Nickell', (string) $fullName);
     }
 

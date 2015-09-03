@@ -3,7 +3,7 @@
 namespace Novuso\Test\Common\Domain\EventStore;
 
 use Novuso\Common\Domain\EventStore\StoredEvent;
-use Novuso\Common\Domain\Messaging\Event\EventMessage;
+use Novuso\Common\Domain\Messaging\Event\DomainEventMessage;
 use Novuso\Common\Domain\Messaging\MessageId;
 use Novuso\Common\Domain\Messaging\MetaData;
 use Novuso\Common\Domain\Model\DateTime\DateTime;
@@ -30,7 +30,7 @@ class StoredEventTest extends PHPUnit_Framework_TestCase
         $payload = new ThingHappenedEvent('foo', 'bar');
         $metaData = new MetaData(['ip_address' => '127.0.0.1']);
         $sequence = 0;
-        $this->eventMessage = new EventMessage(
+        $this->eventMessage = new DomainEventMessage(
             $thingId,
             $thingType,
             $messageId,
@@ -74,8 +74,8 @@ class StoredEventTest extends PHPUnit_Framework_TestCase
 
     public function test_that_get_payload_returns_expected_value()
     {
-        $expected = '{"foo":"foo","bar":"bar"}';
-        $this->assertSame($expected, $this->storedEvent->getPayload());
+        $payload = unserialize($this->storedEvent->getPayload());
+        $this->assertSame('{"foo":"foo","bar":"bar"}', json_encode($payload));
     }
 
     public function test_that_get_payload_type_returns_expected_value()
@@ -86,8 +86,8 @@ class StoredEventTest extends PHPUnit_Framework_TestCase
 
     public function test_that_get_meta_data_returns_expected_value()
     {
-        $expected = '{"ip_address":"127.0.0.1"}';
-        $this->assertSame($expected, $this->storedEvent->getMetaData());
+        $metaData = unserialize($this->storedEvent->getMetaData());
+        $this->assertSame('{"ip_address":"127.0.0.1"}', json_encode($metaData));
     }
 
     public function test_that_get_sequence_returns_expected_value()

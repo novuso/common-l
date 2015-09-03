@@ -2,14 +2,23 @@
 
 namespace Novuso\Test\Common\Doubles\Domain\Model;
 
+use Novuso\Common\Domain\Model\Serialization;
+use Novuso\Common\Domain\Model\StringCast;
+use Novuso\Common\Domain\Model\StringEquals;
+use Novuso\Common\Domain\Model\StringJson;
 use Novuso\Common\Domain\Model\ValueObject;
 use Novuso\System\Exception\DomainException;
 
-final class FullName extends ValueObject
+final class FullName implements ValueObject
 {
-    protected $first;
-    protected $last;
-    protected $middle;
+    use Serialization;
+    use StringCast;
+    use StringEquals;
+    use StringJson;
+
+    private $first;
+    private $last;
+    private $middle;
 
     private function __construct($first, $last, $middle = null)
     {

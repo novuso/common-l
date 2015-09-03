@@ -4,9 +4,11 @@ namespace Novuso\Common\Application\Messaging\Query;
 
 use Exception;
 use Novuso\Common\Application\Messaging\Query\Exception\QueryException;
+use Novuso\Common\Domain\Messaging\Query\DomainQueryMessage;
 use Novuso\Common\Domain\Messaging\Query\Query;
 use Novuso\Common\Domain\Messaging\Query\QueryFilter;
 use Novuso\Common\Domain\Messaging\Query\QueryMessage;
+use Novuso\Common\Domain\Messaging\Query\ViewData;
 use Novuso\Common\Domain\Messaging\MessageId;
 use Novuso\Common\Domain\Messaging\MetaData;
 use Novuso\Common\Domain\Model\DateTime\DateTime;
@@ -18,7 +20,6 @@ use Novuso\System\Collection\LinkedStack;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
 class QueryPipeline implements QueryService, QueryFilter
 {
@@ -87,7 +88,7 @@ class QueryPipeline implements QueryService, QueryFilter
         $messageId = MessageId::generate();
         $metaData = new MetaData();
 
-        return $this->pipe(new QueryMessage($messageId, $timetamp, $query, $metaData));
+        return $this->pipe(new DomainQueryMessage($messageId, $timetamp, $query, $metaData));
     }
 
     /**
@@ -103,17 +104,17 @@ class QueryPipeline implements QueryService, QueryFilter
      *
      * @param QueryMessage $message The query message
      *
-     * @return mixed
+     * @return ViewData
      */
     public function pipe(QueryMessage $message)
     {
         try {
             $filter = $this->filters->pop();
-            $data = $filter->process($message, [$this, 'pipe']);
+            $viewData = $filter->process($message, [$this, 'pipe']);
         } catch (Exception $exception) {
             throw QueryException::create($exception->getMessage(), $exception);
         }
 
-        return $data;
+        return $viewData;
     }
 }

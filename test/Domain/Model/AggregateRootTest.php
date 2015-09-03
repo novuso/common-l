@@ -7,7 +7,7 @@ use Novuso\Test\Common\Doubles\Domain\Model\TaskId;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @covers Novuso\Common\Domain\Model\AggregateRoot
+ * @covers Novuso\Common\Domain\Model\EventRecords
  */
 class AggregateRootTest extends PHPUnit_Framework_TestCase
 {
@@ -100,6 +100,6 @@ class AggregateRootTest extends PHPUnit_Framework_TestCase
     public function test_initialize_committed_version_throws_exception_with_invalid_call()
     {
         $task = Task::create('Go to the store');
-        $task->initializeCommittedVersion(0);
+        $task->initializeVersion(0);
     }
 }

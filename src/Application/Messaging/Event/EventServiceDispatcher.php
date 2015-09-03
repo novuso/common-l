@@ -12,7 +12,6 @@ use Novuso\System\Utility\ClassName;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
 class EventServiceDispatcher extends InMemoryDispatcher
 {
@@ -22,6 +21,13 @@ class EventServiceDispatcher extends InMemoryDispatcher
      * @var Container
      */
     protected $container;
+
+    /**
+     * Services
+     *
+     * @var array
+     */
+    protected $services = [];
 
     /**
      * Service IDs
@@ -126,7 +132,7 @@ class EventServiceDispatcher extends InMemoryDispatcher
      */
     public function dispatch(EventMessage $message)
     {
-        $this->lazyLoad(ClassName::underscore((string) $message->eventType()));
+        $this->lazyLoad(ClassName::underscore((string) $message->payloadType()));
 
         return parent::dispatch($message);
     }
@@ -179,11 +185,11 @@ class EventServiceDispatcher extends InMemoryDispatcher
             foreach ($this->serviceIds[$eventType] as $i => $args) {
                 list($serviceId, $method) = $args;
                 $key = $serviceId.'.'.$method;
-                if (isset($this->handlers[$eventType][$key])
-                    && $handler === [$this->handlers[$eventType][$key], $method]) {
-                    unset($this->handlers[$eventType][$key]);
-                    if (empty($this->handlers[$eventType])) {
-                        unset($this->handlers[$eventType]);
+                if (isset($this->services[$eventType][$key])
+                    && $handler === [$this->services[$eventType][$key], $method]) {
+                    unset($this->services[$eventType][$key]);
+                    if (empty($this->services[$eventType])) {
+                        unset($this->services[$eventType]);
                     }
                     unset($this->serviceIds[$eventType][$i]);
                     if (empty($this->serviceIds[$eventType])) {
@@ -210,13 +216,13 @@ class EventServiceDispatcher extends InMemoryDispatcher
                 list($serviceId, $method, $priority) = $args;
                 $service = $this->container->get($serviceId);
                 $key = $serviceId.'.'.$method;
-                if (!isset($this->handlers[$eventType][$key])) {
+                if (!isset($this->services[$eventType][$key])) {
                     $this->addHandler($eventType, [$service, $method], $priority);
-                } elseif ($service !== $this->handlers[$eventType][$key]) {
-                    parent::removeHandler($eventType, [$this->handlers[$eventType][$key], $method]);
+                } elseif ($service !== $this->services[$eventType][$key]) {
+                    parent::removeHandler($eventType, [$this->services[$eventType][$key], $method]);
                     $this->addHandler($eventType, [$service, $method], $priority);
                 }
-                $this->handlers[$eventType][$key] = $service;
+                $this->services[$eventType][$key] = $service;
             }
         }
     }

@@ -58,6 +58,13 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    public function test_that_iso_8601_returns_expected_value()
+    {
+        $dateTimeString = '2015-06-20T16:30:06.032401[America/Chicago]';
+        $dateTime = DateTime::fromString($dateTimeString);
+        $this->assertSame('2015-06-20T16:30:06-05:00', $dateTime->iso8601());
+    }
+
     public function test_that_date_returns_expected_instance()
     {
         $dateTime = DateTime::create(2015, 6, 20, 16, 30, 6, 32401, 'America/Chicago');

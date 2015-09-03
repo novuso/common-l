@@ -2,16 +2,15 @@
 
 namespace Novuso\Test\Common\Domain\Messaging\Command;
 
-use Novuso\Common\Domain\Messaging\Command\CommandMessage;
+use Novuso\Common\Domain\Messaging\Command\DomainCommandMessage;
 use Novuso\Common\Domain\Messaging\MessageId;
 use Novuso\Common\Domain\Messaging\MetaData;
 use Novuso\Common\Domain\Model\DateTime\DateTime;
-use Novuso\System\Serialization\JsonSerializer;
 use Novuso\Test\Common\Doubles\Domain\Messaging\Command\MakeThingCommand;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @covers Novuso\Common\Domain\Messaging\Command\CommandMessage
+ * @covers Novuso\Common\Domain\Messaging\Command\DomainCommandMessage
  */
 class CommandMessageTest extends PHPUnit_Framework_TestCase
 {
@@ -23,14 +22,13 @@ class CommandMessageTest extends PHPUnit_Framework_TestCase
         $timestamp = DateTime::fromString('2015-01-01T13:12:31.045234[America/Chicago]');
         $payload = new MakeThingCommand('foo', 'bar');
         $metaData = new MetaData();
-        $this->commandMessage = new CommandMessage($messageId, $timestamp, $payload, $metaData);
+        $this->commandMessage = new DomainCommandMessage($messageId, $timestamp, $payload, $metaData);
     }
 
     public function test_that_it_is_serializable()
     {
-        $serializer = new JsonSerializer();
-        $string = $serializer->serialize($this->commandMessage);
-        $object = $serializer->deserialize($string);
+        $string = serialize($this->commandMessage);
+        $object = unserialize($string);
         $this->assertTrue($object->equals($this->commandMessage));
     }
 
@@ -107,8 +105,7 @@ class CommandMessageTest extends PHPUnit_Framework_TestCase
 
     public function test_that_compare_to_returns_zero_for_same_value()
     {
-        $serializer = new JsonSerializer();
-        $commandMessage = $serializer->deserialize($serializer->serialize($this->commandMessage));
+        $commandMessage = unserialize(serialize($this->commandMessage));
         $this->assertSame(0, $this->commandMessage->compareTo($commandMessage));
     }
 
@@ -131,8 +128,7 @@ class CommandMessageTest extends PHPUnit_Framework_TestCase
 
     public function test_that_equals_returns_true_for_same_value()
     {
-        $serializer = new JsonSerializer();
-        $commandMessage = $serializer->deserialize($serializer->serialize($this->commandMessage));
+        $commandMessage = unserialize(serialize($this->commandMessage));
         $this->assertTrue($this->commandMessage->equals($commandMessage));
     }
 
@@ -159,7 +155,7 @@ class CommandMessageTest extends PHPUnit_Framework_TestCase
         $metaData = new MetaData();
         $payload = new MakeThingCommand('foo', 'bar');
 
-        return new CommandMessage(
+        return new DomainCommandMessage(
             $messageId,
             $timestamp,
             $payload,

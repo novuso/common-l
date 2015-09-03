@@ -3,7 +3,6 @@
 namespace Novuso\Test\Common\Domain\Messaging;
 
 use Novuso\Common\Domain\Messaging\MetaData;
-use Novuso\System\Serialization\JsonSerializer;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -11,21 +10,6 @@ use PHPUnit_Framework_TestCase;
  */
 class MetaDataTest extends PHPUnit_Framework_TestCase
 {
-    public function test_that_it_is_serializable()
-    {
-        $serializer = new JsonSerializer();
-        $metaData = new MetaData([
-            'credentials' => [
-                'username' => 'jrnickell',
-                'password' => 'secret'
-            ],
-            'ip_address'  => '127.0.0.1'
-        ]);
-        $string = $serializer->serialize($metaData);
-        $object = $serializer->deserialize($string);
-        $this->assertSame('jrnickell', $object->get('credentials')['username']);
-    }
-
     public function test_that_is_empty_returns_true_when_data_is_empty()
     {
         $metaData = new MetaData();
@@ -154,6 +138,33 @@ class MetaDataTest extends PHPUnit_Framework_TestCase
         ]);
         $expected = '{"username":"jrnickell","ip_address":"127.0.0.1"}';
         $this->assertSame($expected, (string) $metaData);
+    }
+
+    public function test_that_it_is_json_encodable()
+    {
+        $metaData = new MetaData([
+            'credentials' => [
+                'username' => 'jrnickell',
+                'password' => 'secret'
+            ],
+            'ip_address'  => '127.0.0.1'
+        ]);
+        $expected = '{"credentials":{"username":"jrnickell","password":"secret"},"ip_address":"127.0.0.1"}';
+        $this->assertSame($expected, json_encode($metaData));
+    }
+
+    public function test_that_it_is_serializable()
+    {
+        $metaData = new MetaData([
+            'credentials' => [
+                'username' => 'jrnickell',
+                'password' => 'secret'
+            ],
+            'ip_address'  => '127.0.0.1'
+        ]);
+        $string = serialize($metaData);
+        $object = unserialize($string);
+        $this->assertSame('jrnickell', $object->get('credentials')['username']);
     }
 
     public function test_that_it_is_traversable()

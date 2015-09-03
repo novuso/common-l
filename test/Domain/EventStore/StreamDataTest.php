@@ -4,7 +4,7 @@ namespace Novuso\Test\Common\Domain\EventStore;
 
 use Novuso\Common\Domain\EventStore\StoredEvent;
 use Novuso\Common\Domain\EventStore\StreamData;
-use Novuso\Common\Domain\Messaging\Event\EventMessage;
+use Novuso\Common\Domain\Messaging\Event\DomainEventMessage;
 use Novuso\Common\Domain\Messaging\MessageId;
 use Novuso\Common\Domain\Messaging\MetaData;
 use Novuso\Common\Domain\Model\DateTime\DateTime;
@@ -30,7 +30,7 @@ class StreamDataTest extends PHPUnit_Framework_TestCase
         $payload = new ThingHappenedEvent('foo', 'bar');
         $metaData = new MetaData(['ip_address' => '127.0.0.1']);
         $sequence = 0;
-        $eventMessage = new EventMessage(
+        $eventMessage = new DomainEventMessage(
             $thingId,
             $thingType,
             $messageId,

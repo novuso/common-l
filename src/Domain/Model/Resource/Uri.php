@@ -2,6 +2,10 @@
 
 namespace Novuso\Common\Domain\Model\Resource;
 
+use Novuso\Common\Domain\Model\Serialization;
+use Novuso\Common\Domain\Model\StringCast;
+use Novuso\Common\Domain\Model\StringEquals;
+use Novuso\Common\Domain\Model\StringJson;
 use Novuso\Common\Domain\Model\ValueObject;
 use Novuso\System\Exception\DomainException;
 use Novuso\System\Type\Comparable;
@@ -16,10 +20,14 @@ use Novuso\System\Utility\VarPrinter;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
-class Uri extends ValueObject implements Comparable
+class Uri implements Comparable, ValueObject
 {
+    use Serialization;
+    use StringCast;
+    use StringEquals;
+    use StringJson;
+
     /**
      * URI capture pattern
      *
@@ -99,56 +107,56 @@ class Uri extends ValueObject implements Comparable
      *
      * @var string
      */
-    protected $scheme;
+    private $scheme;
 
     /**
      * Authority
      *
      * @var string|null
      */
-    protected $authority;
+    private $authority;
 
     /**
      * Path
      *
      * @var string
      */
-    protected $path;
+    private $path;
 
     /**
      * Query
      *
      * @var string|null
      */
-    protected $query;
+    private $query;
 
     /**
      * Fragment
      *
      * @var string|null
      */
-    protected $fragment;
+    private $fragment;
 
     /**
      * User info
      *
      * @var string|null
      */
-    protected $userInfo;
+    private $userInfo;
 
     /**
      * Host
      *
      * @var string|null
      */
-    protected $host;
+    private $host;
 
     /**
      * Port
      *
      * @var int|null
      */
-    protected $port;
+    private $port;
 
     /**
      * Constructs Uri

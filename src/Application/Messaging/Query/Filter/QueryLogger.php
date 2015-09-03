@@ -2,10 +2,12 @@
 
 namespace Novuso\Common\Application\Messaging\Query\Filter;
 
-use Novuso\Common\Application\Query\Exception\QueryException;
+use Exception;
+use Novuso\Common\Application\Messaging\Query\Exception\QueryException;
 use Novuso\Common\Application\Logging\Logger;
 use Novuso\Common\Domain\Messaging\Query\Query;
 use Novuso\Common\Domain\Messaging\Query\QueryFilter;
+use Novuso\Common\Domain\Messaging\Query\QueryMessage;
 use Novuso\System\Utility\ClassName;
 
 /**
@@ -14,7 +16,6 @@ use Novuso\System\Utility\ClassName;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
 class QueryLogger implements QueryFilter
 {
@@ -48,7 +49,7 @@ class QueryLogger implements QueryFilter
                 ['message' => $message->serialize()]
             );
 
-            $data = $next($message);
+            $viewData = $next($message);
 
             $this->logger->debug(
                 sprintf('Query (%s) handled: %s', $query, date(DATE_ATOM)),
@@ -62,6 +63,6 @@ class QueryLogger implements QueryFilter
             throw QueryException::create($exception->getMessage(), $exception);
         }
 
-        return $data;
+        return $viewData;
     }
 }

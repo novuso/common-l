@@ -4,6 +4,8 @@ namespace Novuso\Common\Domain\Model;
 
 use Countable;
 use Novuso\Common\Domain\Messaging\Event\DomainEvent;
+use Novuso\Common\Domain\Messaging\Event\DomainEventMessage;
+use Novuso\Common\Domain\Messaging\Event\DomainEventStream;
 use Novuso\Common\Domain\Messaging\Event\EventMessage;
 use Novuso\Common\Domain\Messaging\Event\EventStream;
 use Novuso\Common\Domain\Messaging\MessageId;
@@ -12,6 +14,7 @@ use Novuso\Common\Domain\Model\DateTime\DateTime;
 use Novuso\System\Collection\ArrayList;
 use Novuso\System\Type\Type;
 use Novuso\System\Utility\Test;
+use Serializable;
 
 /**
  * EventCollection is a collection of events for a single aggregate
@@ -19,44 +22,43 @@ use Novuso\System\Utility\Test;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
-class EventCollection implements Countable
+class EventCollection implements Countable, Serializable
 {
     /**
      * Aggregate ID
      *
      * @var Identifier
      */
-    protected $aggregateId;
+    private $aggregateId;
 
     /**
      * Aggregate type
      *
      * @var Type
      */
-    protected $aggregateType;
+    private $aggregateType;
 
     /**
      * Committed sequence number
      *
      * @var int|null
      */
-    protected $committedSequence;
+    private $committedSequence;
 
     /**
      * Last sequence number
      *
      * @var int|null
      */
-    protected $lastSequence;
+    private $lastSequence;
 
     /**
      * Event messages
      *
      * @var ArrayList
      */
-    protected $messages;
+    private $messages;
 
     /**
      * Constructs EventCollection
@@ -98,7 +100,7 @@ class EventCollection implements Countable
      */
     public function stream()
     {
-        $stream = new EventStream(
+        $stream = new DomainEventStream(
             $this->aggregateId,
             $this->aggregateType,
             $this->committedSequence(),
@@ -122,7 +124,7 @@ class EventCollection implements Countable
         $messageId = MessageId::generate();
         $metaData = new MetaData();
 
-        $message = new EventMessage(
+        $message = new DomainEventMessage(
             $this->aggregateId,
             $this->aggregateType,
             $messageId,
@@ -185,11 +187,47 @@ class EventCollection implements Countable
     }
 
     /**
+     * Retrieves a serialized representation
+     *
+     * @return string
+     */
+    public function serialize()
+    {
+        return serialize([
+            'aggregate_id'       => $this->aggregateId,
+            'aggregate_type'     => $this->aggregateType,
+            'committed_sequence' => $this->committedSequence,
+            'last_sequence'      => $this->lastSequence,
+            'messages'           => $this->messages->toArray()
+        ]);
+    }
+
+    /**
+     * Handles construction from a serialized representation
+     *
+     * @param string $serialized The serialized representation
+     *
+     * @return void
+     */
+    public function unserialize($serialized)
+    {
+        $data = unserialize($serialized);
+        $this->aggregateId = $data['aggregate_id'];
+        $this->aggregateType = $data['aggregate_type'];
+        $this->committedSequence = $data['committed_sequence'];
+        $this->lastSequence = $data['last_sequence'];
+        $this->messages = ArrayList::of(EventMessage::class);
+        foreach ($data['messages'] as $message) {
+            $this->messages->add($message);
+        }
+    }
+
+    /**
      * Retrieves the next sequence number
      *
      * @return int
      */
-    protected function nextSequence()
+    private function nextSequence()
     {
         $sequence = $this->lastSequence();
 

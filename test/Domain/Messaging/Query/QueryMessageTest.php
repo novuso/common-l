@@ -2,16 +2,15 @@
 
 namespace Novuso\Test\Common\Domain\Messaging\Query;
 
-use Novuso\Common\Domain\Messaging\Query\QueryMessage;
+use Novuso\Common\Domain\Messaging\Query\DomainQueryMessage;
 use Novuso\Common\Domain\Messaging\MessageId;
 use Novuso\Common\Domain\Messaging\MetaData;
 use Novuso\Common\Domain\Model\DateTime\DateTime;
-use Novuso\System\Serialization\JsonSerializer;
 use Novuso\Test\Common\Doubles\Domain\Messaging\Query\GetThingQuery;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @covers Novuso\Common\Domain\Messaging\Query\QueryMessage
+ * @covers Novuso\Common\Domain\Messaging\Query\DomainQueryMessage
  */
 class QueryMessageTest extends PHPUnit_Framework_TestCase
 {
@@ -23,14 +22,13 @@ class QueryMessageTest extends PHPUnit_Framework_TestCase
         $timestamp = DateTime::fromString('2015-01-01T13:12:31.045234[America/Chicago]');
         $payload = new GetThingQuery('014ec11d-2f21-4d33-a624-5df1196a4f85');
         $metaData = new MetaData();
-        $this->queryMessage = new QueryMessage($messageId, $timestamp, $payload, $metaData);
+        $this->queryMessage = new DomainQueryMessage($messageId, $timestamp, $payload, $metaData);
     }
 
     public function test_that_it_is_serializable()
     {
-        $serializer = new JsonSerializer();
-        $string = $serializer->serialize($this->queryMessage);
-        $object = $serializer->deserialize($string);
+        $string = serialize($this->queryMessage);
+        $object = unserialize($string);
         $this->assertTrue($object->equals($this->queryMessage));
     }
 
@@ -107,8 +105,7 @@ class QueryMessageTest extends PHPUnit_Framework_TestCase
 
     public function test_that_compare_to_returns_zero_for_same_value()
     {
-        $serializer = new JsonSerializer();
-        $queryMessage = $serializer->deserialize($serializer->serialize($this->queryMessage));
+        $queryMessage = unserialize(serialize($this->queryMessage));
         $this->assertSame(0, $this->queryMessage->compareTo($queryMessage));
     }
 
@@ -131,8 +128,7 @@ class QueryMessageTest extends PHPUnit_Framework_TestCase
 
     public function test_that_equals_returns_true_for_same_value()
     {
-        $serializer = new JsonSerializer();
-        $queryMessage = $serializer->deserialize($serializer->serialize($this->queryMessage));
+        $queryMessage = unserialize(serialize($this->queryMessage));
         $this->assertTrue($this->queryMessage->equals($queryMessage));
     }
 
@@ -159,7 +155,7 @@ class QueryMessageTest extends PHPUnit_Framework_TestCase
         $metaData = new MetaData();
         $payload = new GetThingQuery('014ec11d-2f21-4d33-a624-5df1196a4f85');
 
-        return new QueryMessage(
+        return new DomainQueryMessage(
             $messageId,
             $timestamp,
             $payload,

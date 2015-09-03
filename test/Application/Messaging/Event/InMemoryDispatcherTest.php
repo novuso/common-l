@@ -3,7 +3,7 @@
 namespace Novuso\Test\Common\Application\Messaging\Event;
 
 use Novuso\Common\Application\Messaging\Event\InMemoryDispatcher;
-use Novuso\Common\Domain\Messaging\Event\EventMessage;
+use Novuso\Common\Domain\Messaging\Event\DomainEventMessage;
 use Novuso\Common\Domain\Messaging\MessageId;
 use Novuso\Common\Domain\Messaging\MetaData;
 use Novuso\Common\Domain\Model\DateTime\DateTime;
@@ -38,7 +38,7 @@ class InMemoryDispatcherTest extends PHPUnit_Framework_TestCase
         $payload = new ThingHappenedEvent('foo', 'bar');
         $metaData = new MetaData();
         $sequence = 0;
-        $eventMessage = new EventMessage(
+        $eventMessage = new DomainEventMessage(
             $thingId,
             $thingType,
             $messageId,
@@ -62,7 +62,7 @@ class InMemoryDispatcherTest extends PHPUnit_Framework_TestCase
         $payload = new ThingHappenedEvent('foo', 'bar');
         $metaData = new MetaData();
         $sequence = 0;
-        $eventMessage = new EventMessage(
+        $eventMessage = new DomainEventMessage(
             $thingId,
             $thingType,
             $messageId,
@@ -100,7 +100,7 @@ class InMemoryDispatcherTest extends PHPUnit_Framework_TestCase
         $payload = new ThingHappenedEvent('foo', 'bar');
         $metaData = new MetaData();
         $sequence = 0;
-        $eventMessage = new EventMessage(
+        $eventMessage = new DomainEventMessage(
             $thingId,
             $thingType,
             $messageId,
@@ -116,8 +116,7 @@ class InMemoryDispatcherTest extends PHPUnit_Framework_TestCase
             .'"event_type":"Novuso.Test.Common.Doubles.Domain.Messaging.Event.ThingHappenedEvent",'
             .'"event_data":{"foo":"foo","bar":"bar"},"meta_data":[],'
             .'"aggregate_type":"Novuso.Test.Common.Doubles.Domain.Model.Thing",'
-            .'"aggregate_id":{"type":"Novuso.Test.Common.Doubles.Domain.Model.ThingId",'
-            .'"id":"014ec11d-2f21-4d33-a624-5df1196a4f85"},"sequence":0}';
+            .'"aggregate_id":"014ec11d-2f21-4d33-a624-5df1196a4f85","sequence":0}';
         $this->assertSame($expected, $logs[0]);
     }
 }

@@ -12,12 +12,13 @@ use Novuso\Common\Domain\Model\Entity;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
 interface EventSourcedEntity extends Entity
 {
     /**
      * Registers the aggregate root
+     *
+     * @internal
      *
      * @param EventSourcedAggregateRoot $aggregateRoot The aggregate root
      *
@@ -28,11 +29,15 @@ interface EventSourcedEntity extends Entity
     public function registerAggregateRoot(EventSourcedAggregateRoot $aggregateRoot);
 
     /**
-     * Handles event recursively
+     * Handles a domain event recursively
+     *
+     * @internal
      *
      * @param DomainEvent $domainEvent The domain event
      *
      * @return void
+     *
+     * @throws RegisterAggregateException When the aggregate root is invalid
      */
     public function handleRecursively(DomainEvent $domainEvent);
 }

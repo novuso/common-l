@@ -2,11 +2,12 @@
 
 namespace Novuso\Common\Domain\Messaging;
 
+use JsonSerializable;
 use Novuso\Common\Domain\Model\DateTime\DateTime;
-use Novuso\System\Serialization\Serializable;
 use Novuso\System\Type\Comparable;
 use Novuso\System\Type\Equatable;
 use Novuso\System\Type\Type;
+use Serializable;
 
 /**
  * Message is the interface for an application message
@@ -14,9 +15,8 @@ use Novuso\System\Type\Type;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
-interface Message extends Comparable, Equatable, Serializable
+interface Message extends Comparable, Equatable, JsonSerializable, Serializable
 {
     /**
      * Retrieves the message ID
@@ -84,4 +84,27 @@ interface Message extends Comparable, Equatable, Serializable
      * @return string
      */
     public function __toString();
+
+    /**
+     * Retrieves a value for JSON encoding
+     *
+     * @return array
+     */
+    public function jsonSerialize();
+
+    /**
+     * Retrieves a serialized representation
+     *
+     * @return string
+     */
+    public function serialize();
+
+    /**
+     * Handles construction from a serialized representation
+     *
+     * @param string $serialized The serialized representation
+     *
+     * @return void
+     */
+    public function unserialize($serialized);
 }

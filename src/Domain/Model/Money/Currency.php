@@ -12,7 +12,6 @@ use Novuso\System\Type\Enum;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
 final class Currency extends Enum
 {
@@ -2553,7 +2552,7 @@ final class Currency extends Enum
      */
     public function displayName()
     {
-        return self::$currencies[$this->value]['display'];
+        return self::$currencies[$this->value()]['display'];
     }
 
     /**
@@ -2563,7 +2562,7 @@ final class Currency extends Enum
      */
     public function code()
     {
-        return self::$currencies[$this->value]['code'];
+        return self::$currencies[$this->value()]['code'];
     }
 
     /**
@@ -2573,7 +2572,7 @@ final class Currency extends Enum
      */
     public function numericCode()
     {
-        return self::$currencies[$this->value]['numeric'];
+        return self::$currencies[$this->value()]['numeric'];
     }
 
     /**
@@ -2585,7 +2584,7 @@ final class Currency extends Enum
      */
     public function digits()
     {
-        return self::$currencies[$this->value]['digits'];
+        return self::$currencies[$this->value()]['digits'];
     }
 
     /**
@@ -2595,6 +2594,6 @@ final class Currency extends Enum
      */
     public function minor()
     {
-        return self::$currencies[$this->value]['minor'];
+        return self::$currencies[$this->value()]['minor'];
     }
 }

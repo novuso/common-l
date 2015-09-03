@@ -2,6 +2,10 @@
 
 namespace Novuso\Common\Domain\Model\Money;
 
+use Novuso\Common\Domain\Model\Serialization;
+use Novuso\Common\Domain\Model\StringCast;
+use Novuso\Common\Domain\Model\StringEquals;
+use Novuso\Common\Domain\Model\StringJson;
 use Novuso\Common\Domain\Model\ValueObject;
 use Novuso\System\Exception\DomainException;
 use Novuso\System\Exception\RangeException;
@@ -16,10 +20,14 @@ use Novuso\System\Utility\VarPrinter;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
-final class Money extends ValueObject implements Comparable
+final class Money implements Comparable, ValueObject
 {
+    use Serialization;
+    use StringCast;
+    use StringEquals;
+    use StringJson;
+
     /**
      * Monetary amount
      *
@@ -27,14 +35,14 @@ final class Money extends ValueObject implements Comparable
      *
      * @var int
      */
-    protected $amount;
+    private $amount;
 
     /**
      * Currency
      *
      * @var Currency
      */
-    protected $currency;
+    private $currency;
 
     /**
      * Constructs Money
@@ -340,7 +348,7 @@ final class Money extends ValueObject implements Comparable
      */
     public function format($locale = 'en_US')
     {
-        return LocaleFormatter::fromLocale($locale)->format($this);
+        return LocaleMoneyFormatter::fromLocale($locale)->format($this);
     }
 
     /**

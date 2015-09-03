@@ -8,23 +8,22 @@ namespace Novuso\Common\Domain\Specification;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
-class AndSpecification extends CompositeSpecification
+final class AndSpecification extends CompositeSpecification
 {
     /**
      * First specification
      *
      * @var Specification
      */
-    protected $firstSpec;
+    private $firstSpec;
 
     /**
      * Second specification
      *
      * @var Specification
      */
-    protected $secondSpec;
+    private $secondSpec;
 
     /**
      * Constructs AndSpecification

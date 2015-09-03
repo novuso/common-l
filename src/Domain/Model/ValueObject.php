@@ -2,10 +2,12 @@
 
 namespace Novuso\Common\Domain\Model;
 
-use Novuso\System\Utility\Test;
+use JsonSerializable;
+use Novuso\System\Type\Equatable;
+use Serializable;
 
 /**
- * ValueObject is the base class for a domain value object
+ * ValueObject is the interface for a domain value object
  *
  * Implementations must adhere to value characteristics:
  *
@@ -20,44 +22,43 @@ use Novuso\System\Utility\Test;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
-abstract class ValueObject implements Value
+interface ValueObject extends Equatable, JsonSerializable, Serializable
 {
     /**
-     * {@inheritdoc}
+     * Retrieves a string representation
+     *
+     * @return string
      */
-    abstract public function toString();
+    public function toString();
 
     /**
-     * {@inheritdoc}
+     * Handles casting to a string
+     *
+     * @return string
      */
-    public function __toString()
-    {
-        return $this->toString();
-    }
+    public function __toString();
 
     /**
-     * {@inheritdoc}
+     * Retrieves a value for JSON encoding
+     *
+     * @return mixed
      */
-    public function equals($object)
-    {
-        if ($this === $object) {
-            return true;
-        }
-
-        if (!Test::areSameType($this, $object)) {
-            return false;
-        }
-
-        return $this->toString() === $object->toString();
-    }
+    public function jsonSerialize();
 
     /**
-     * {@inheritdoc}
+     * Retrieves a serialized representation
+     *
+     * @return string
      */
-    public function hashValue()
-    {
-        return $this->toString();
-    }
+    public function serialize();
+
+    /**
+     * Handles construction from a serialized representation
+     *
+     * @param string $serialized The serialized representation
+     *
+     * @return void
+     */
+    public function unserialize($serialized);
 }

@@ -12,16 +12,20 @@ use Novuso\System\Utility\VarPrinter;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
-abstract class StringId extends ValueObject implements Identifier
+abstract class StringId implements Identifier
 {
+    use Serialization;
+    use StringCast;
+    use StringEquals;
+    use StringJson;
+
     /**
      * String ID
      *
      * @var string
      */
-    protected $id;
+    private $id;
 
     /**
      * Constructs StringId

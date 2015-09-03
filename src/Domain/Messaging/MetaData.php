@@ -6,10 +6,11 @@ use ArrayAccess;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
+use JsonSerializable;
 use Novuso\System\Exception\KeyException;
 use Novuso\System\Exception\TypeException;
-use Novuso\System\Serialization\Serializable;
 use Novuso\System\Utility\VarPrinter;
+use Serializable;
 use Traversable;
 
 /**
@@ -18,16 +19,15 @@ use Traversable;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
-class MetaData implements ArrayAccess, Countable, IteratorAggregate, Serializable
+final class MetaData implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable, Serializable
 {
     /**
      * Meta data
      *
      * @var array
      */
-    protected $data = [];
+    private $data = [];
 
     /**
      * Constructs MetaData
@@ -39,24 +39,6 @@ class MetaData implements ArrayAccess, Countable, IteratorAggregate, Serializabl
         foreach ($metaData as $key => $value) {
             $this->set($key, $value);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function deserialize(array $data)
-    {
-        return new static($data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function serialize()
-    {
-        $output = $this->data;
-
-        return $output;
     }
 
     /**
@@ -246,6 +228,39 @@ class MetaData implements ArrayAccess, Countable, IteratorAggregate, Serializabl
     }
 
     /**
+     * Retrieves a value for JSON encoding
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->data;
+    }
+
+    /**
+     * Retrieves a serialized representation
+     *
+     * @return string
+     */
+    public function serialize()
+    {
+        return serialize(['data' => $this->data]);
+    }
+
+    /**
+     * Handles construction from a serialized representation
+     *
+     * @param string $serialized The serialized representation
+     *
+     * @return void
+     */
+    public function unserialize($serialized)
+    {
+        $data = unserialize($serialized);
+        $this->data = $data['data'];
+    }
+
+    /**
      * Retrieves an iterator
      *
      * @return Traversable
@@ -264,7 +279,7 @@ class MetaData implements ArrayAccess, Countable, IteratorAggregate, Serializabl
      *
      * @throws TypeException When value is an invalid type
      */
-    protected function guardValue($value)
+    private function guardValue($value)
     {
         if (!$this->isValid($value)) {
             $message = 'Value must be scalar or an array of scalars';
@@ -279,7 +294,7 @@ class MetaData implements ArrayAccess, Countable, IteratorAggregate, Serializabl
      *
      * @return bool
      */
-    protected function isValid($value)
+    private function isValid($value)
     {
         $type = gettype($value);
         switch ($type) {

@@ -6,26 +6,13 @@ use Novuso\Common\Domain\Messaging\Event\DomainEvent;
 
 final class ThingHappenedEvent implements DomainEvent
 {
-    protected $foo;
-    protected $bar;
+    private $foo;
+    private $bar;
 
     public function __construct($foo, $bar)
     {
         $this->foo = $foo;
         $this->bar = $bar;
-    }
-
-    public static function deserialize(array $data)
-    {
-        return new self($data['foo'], $data['bar']);
-    }
-
-    public function serialize()
-    {
-        return [
-            'foo' => $this->foo,
-            'bar' => $this->bar
-        ];
     }
 
     public function foo()
@@ -36,5 +23,27 @@ final class ThingHappenedEvent implements DomainEvent
     public function bar()
     {
         return $this->bar;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'foo' => $this->foo,
+            'bar' => $this->bar
+        ];
+    }
+
+    public function serialize()
+    {
+        return serialize([
+            'foo' => $this->foo,
+            'bar' => $this->bar
+        ]);
+    }
+
+    public function unserialize($serialized)
+    {
+        $data = unserialize($serialized);
+        $this->__construct($data['foo'], $data['bar']);
     }
 }

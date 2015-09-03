@@ -4,6 +4,7 @@ namespace Novuso\Common\Domain\EventStore;
 
 use Novuso\Common\Domain\EventStore\Exception\ConcurrencyException;
 use Novuso\Common\Domain\EventStore\Exception\StreamNotFoundException;
+use Novuso\Common\Domain\Messaging\Event\DomainEventStream;
 use Novuso\Common\Domain\Messaging\Event\EventMessage;
 use Novuso\Common\Domain\Messaging\Event\EventStream;
 use Novuso\Common\Domain\Model\Identifier;
@@ -15,16 +16,15 @@ use Novuso\System\Type\Type;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
-class InMemoryEventStore implements EventStore
+final class InMemoryEventStore implements EventStore
 {
     /**
      * Stream data
      *
      * @var array
      */
-    protected $streamData = [];
+    private $streamData = [];
 
     /**
      * {@inheritdoc}
@@ -121,7 +121,7 @@ class InMemoryEventStore implements EventStore
             }
         }
 
-        return new EventStream($aggregateId, $aggregateType, $version, $version, $messages);
+        return new DomainEventStream($aggregateId, $aggregateType, $version, $version, $messages);
     }
 
     /**
@@ -150,7 +150,7 @@ class InMemoryEventStore implements EventStore
      *
      * @return int
      */
-    protected function normalizeFirst($first)
+    private function normalizeFirst($first)
     {
         if ($first === null) {
             return 0;
@@ -167,7 +167,7 @@ class InMemoryEventStore implements EventStore
      *
      * @return int
      */
-    protected function normalizeLast($last, $count)
+    private function normalizeLast($last, $count)
     {
         if ($last === null) {
             return $count - 1;

@@ -13,7 +13,6 @@ use Novuso\Common\Domain\Messaging\Query\Query;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
 class QueryHandlerService implements QueryService
 {
@@ -42,11 +41,11 @@ class QueryHandlerService implements QueryService
         $handler = $this->resolver->resolve($query);
 
         try {
-            $data = $handler->handle($query);
+            $viewData = $handler->handle($query);
         } catch (Exception $exception) {
             throw QueryException::create($exception->getMessage(), $exception);
         }
 
-        return $data;
+        return $viewData;
     }
 }

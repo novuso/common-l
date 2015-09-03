@@ -6,25 +6,31 @@ use Novuso\Common\Domain\Messaging\Query\Query;
 
 final class GetThingQuery implements Query
 {
-    protected $id;
+    private $id;
 
     public function __construct($id)
     {
         $this->id = $id;
     }
 
-    public static function deserialize(array $data)
+    public function id()
     {
-        return new self($data['id']);
+        return $this->id;
     }
 
-    public function serialize()
+    public function jsonSerialize()
     {
         return ['id' => $this->id];
     }
 
-    public function id()
+    public function serialize()
     {
-        return $this->id;
+        return serialize(['id' => $this->id]);
+    }
+
+    public function unserialize($serialized)
+    {
+        $data = unserialize($serialized);
+        $this->__construct($data['id']);
     }
 }

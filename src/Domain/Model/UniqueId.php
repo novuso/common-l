@@ -13,16 +13,19 @@ use Novuso\System\Utility\VarPrinter;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
-abstract class UniqueId extends ValueObject implements Identifier, IdentifierFactory
+abstract class UniqueId implements Identifier, IdentifierFactory
 {
+    use Serialization;
+    use StringCast;
+    use StringJson;
+
     /**
      * UUID
      *
      * @var Uuid
      */
-    protected $uuid;
+    private $uuid;
 
     /**
      * Constructs UniqueId

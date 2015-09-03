@@ -4,6 +4,7 @@ namespace Novuso\Common\Application\Messaging\Query;
 
 use Novuso\Common\Application\Messaging\Query\Exception\QueryException;
 use Novuso\Common\Domain\Messaging\Query\Query;
+use Novuso\Common\Domain\Messaging\Query\ViewData;
 
 /**
  * QueryService is the interface for a query service
@@ -11,7 +12,6 @@ use Novuso\Common\Domain\Messaging\Query\Query;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
 interface QueryService
 {
@@ -20,7 +20,7 @@ interface QueryService
      *
      * @param Query $query The query
      *
-     * @return mixed
+     * @return ViewData
      *
      * @throws QueryException When an error occurs during processing
      */

@@ -2,9 +2,14 @@
 
 namespace Novuso\Common\Domain\Model\DateTime;
 
+use DateTime as NativeDateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
+use Novuso\Common\Domain\Model\Serialization;
+use Novuso\Common\Domain\Model\StringCast;
+use Novuso\Common\Domain\Model\StringEquals;
+use Novuso\Common\Domain\Model\StringJson;
 use Novuso\Common\Domain\Model\ValueObject;
 use Novuso\System\Exception\DomainException;
 use Novuso\System\Type\Comparable;
@@ -17,10 +22,14 @@ use Novuso\System\Utility\VarPrinter;
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
- * @version   0.0.1
  */
-final class DateTime extends ValueObject implements Comparable
+final class DateTime implements Comparable, ValueObject
 {
+    use Serialization;
+    use StringCast;
+    use StringEquals;
+    use StringJson;
+
     /**
      * String format
      *
@@ -33,28 +42,28 @@ final class DateTime extends ValueObject implements Comparable
      *
      * @var Date
      */
-    protected $date;
+    private $date;
 
     /**
      * Time
      *
      * @var Time
      */
-    protected $time;
+    private $time;
 
     /**
      * Timezone
      *
      * @var Timezone
      */
-    protected $timezone;
+    private $timezone;
 
     /**
      * Native DateTime
      *
      * @var DateTimeInterface|null
      */
-    protected $dateTime;
+    private $dateTime;
 
     /**
      * Constructs DateTime
@@ -277,6 +286,16 @@ final class DateTime extends ValueObject implements Comparable
         // @codeCoverageIgnoreEnd
 
         return strftime((string) $format, $this->timestamp());
+    }
+
+    /**
+     * Retrieves ISO-8601 string representation
+     *
+     * @return string
+     */
+    public function iso8601()
+    {
+        return $this->format('Y-m-d\TH:i:sP');
     }
 
     /**
@@ -537,7 +556,11 @@ final class DateTime extends ValueObject implements Comparable
      */
     public function toNative()
     {
-        return $this->dateTime();
+        $time = sprintf('%d.%06d', $this->timestamp(), $this->micro());
+        $dateTime = NativeDateTime::createFromFormat('U.u', $time, new DateTimeZone('UTC'));
+        $dateTime->setTimezone(new DateTimeZone($this->timezone->toString()));
+
+        return $dateTime;
     }
 
     /**
@@ -590,7 +613,7 @@ final class DateTime extends ValueObject implements Comparable
      *
      * @return DateTimeInterface
      */
-    protected function dateTime()
+    private function dateTime()
     {
         if ($this->dateTime === null) {
             $year = $this->year();
