@@ -19,54 +19,54 @@ class SpecificationTest extends PHPUnit_Framework_TestCase
     {
         $usernameIsUnique = new UsernameIsUnique();
         $usernameIsAlphaOnly = new UsernameIsAlphaOnly();
-        $usernameIsValid = $usernameIsUnique->andIf($usernameIsAlphaOnly);
+        $usernameValidTest = $usernameIsUnique->andIf($usernameIsAlphaOnly);
 
         $username = Username::fromString('georgejones');
 
-        $this->assertTrue($usernameIsValid->isSatisfiedBy($username));
+        $this->assertTrue($usernameValidTest->isSatisfiedBy($username));
     }
 
     public function test_that_and_spec_returns_false_when_one_invalid()
     {
         $usernameIsUnique = new UsernameIsUnique();
         $usernameIsAlphaOnly = new UsernameIsAlphaOnly();
-        $usernameIsValid = $usernameIsUnique->andIf($usernameIsAlphaOnly);
+        $usernameValidTest = $usernameIsUnique->andIf($usernameIsAlphaOnly);
 
         $username = Username::fromString('johnnickell');
 
-        $this->assertFalse($usernameIsValid->isSatisfiedBy($username));
+        $this->assertFalse($usernameValidTest->isSatisfiedBy($username));
     }
 
     public function test_that_or_spec_returns_true_when_either_valid()
     {
         $usernameIsUnique = new UsernameIsUnique();
         $usernameIsAlphaOnly = new UsernameIsAlphaOnly();
-        $usernameIsValid = $usernameIsUnique->orIf($usernameIsAlphaOnly);
+        $usernameValidTest = $usernameIsUnique->orIf($usernameIsAlphaOnly);
 
         $username = Username::fromString('johnnickell');
 
-        $this->assertTrue($usernameIsValid->isSatisfiedBy($username));
+        $this->assertTrue($usernameValidTest->isSatisfiedBy($username));
     }
 
     public function test_that_or_spec_returns_false_when_both_invalid()
     {
         $usernameIsUnique = new UsernameIsUnique();
         $usernameIsAlphaOnly = new UsernameIsAlphaOnly();
-        $usernameIsValid = $usernameIsUnique->orIf($usernameIsAlphaOnly);
+        $usernameValidTest = $usernameIsUnique->orIf($usernameIsAlphaOnly);
 
         $username = Username::fromString('admin123');
 
-        $this->assertFalse($usernameIsValid->isSatisfiedBy($username));
+        $this->assertFalse($usernameValidTest->isSatisfiedBy($username));
     }
 
     public function test_that_not_spec_flips_meaning_of_a_spec()
     {
         $usernameIsUnique = new UsernameIsUnique();
         $usernameIsAlphaOnly = new UsernameIsAlphaOnly();
-        $usernameIsValid = $usernameIsUnique->andIf($usernameIsAlphaOnly->not());
+        $usernameValidTest = $usernameIsUnique->andIf($usernameIsAlphaOnly->not());
 
         $username = Username::fromString('user2015');
 
-        $this->assertTrue($usernameIsValid->isSatisfiedBy($username));
+        $this->assertTrue($usernameValidTest->isSatisfiedBy($username));
     }
 }
