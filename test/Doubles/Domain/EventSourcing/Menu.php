@@ -2,16 +2,11 @@
 
 namespace Novuso\Test\Common\Doubles\Domain\EventSourcing;
 
-use Novuso\Common\Domain\EventSourcing\AggregateEventSourcing;
 use Novuso\Common\Domain\EventSourcing\EventSourcedAggregateRoot;
 use Novuso\Common\Domain\Messaging\Event\EventStream;
-use Novuso\Common\Domain\Model\Identity;
 
-final class Menu implements EventSourcedAggregateRoot
+final class Menu extends EventSourcedAggregateRoot
 {
-    use AggregateEventSourcing;
-    use Identity;
-
     private $id;
     private $name;
     private $items;
@@ -28,7 +23,7 @@ final class Menu implements EventSourcedAggregateRoot
         $id = MenuId::generate();
         $name = MenuName::fromString($name);
         $menu = new self($id);
-        $menu->apply(new MenuCreated($id, $name));
+        $menu->raiseEvent(new MenuCreated($id, $name));
 
         return $menu;
     }
@@ -60,7 +55,7 @@ final class Menu implements EventSourcedAggregateRoot
     public function addMenuItem($path, $text)
     {
         $menuItemId = MenuItemId::generate();
-        $this->apply(new MenuItemAdded($this->id, $menuItemId, $path, $text));
+        $this->raiseEvent(new MenuItemAdded($this->id, $menuItemId, $path, $text));
     }
 
     public function moveMenuItem($menuItemId, $parentItemId)
@@ -71,16 +66,15 @@ final class Menu implements EventSourcedAggregateRoot
         } else {
             $parentItem = null;
         }
-        $this->apply(new MenuItemMoved($menuItem->id(), $parentItem !== null ? $parentItem->id() : null));
+        $this->raiseEvent(new MenuItemMoved($menuItem->id(), $parentItem !== null ? $parentItem->id() : null));
     }
 
-    private function applyMenuCreated(MenuCreated $domainEvent)
+    protected function applyMenuCreated(MenuCreated $domainEvent)
     {
-        $this->id = $domainEvent->menuId();
         $this->name = $domainEvent->menuName();
     }
 
-    private function applyMenuItemAdded(MenuItemAdded $domainEvent)
+    protected function applyMenuItemAdded(MenuItemAdded $domainEvent)
     {
         $menuItem = MenuItem::create(
             $domainEvent->menuItemId(),
@@ -91,7 +85,7 @@ final class Menu implements EventSourcedAggregateRoot
         $this->items[$menuItem->id()->toString()] = $menuItem;
     }
 
-    private function childEntities()
+    protected function childEntities()
     {
         return $this->items;
     }

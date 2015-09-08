@@ -16,7 +16,7 @@ use PHPUnit_Framework_TestCase;
 /**
  * @covers Novuso\Common\Domain\Messaging\Event\DomainEventStream
  */
-class EventStreamTest extends PHPUnit_Framework_TestCase
+class DomainEventStreamTest extends PHPUnit_Framework_TestCase
 {
     protected $thingId;
     protected $thingType;

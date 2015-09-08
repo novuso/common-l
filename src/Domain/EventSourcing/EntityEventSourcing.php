@@ -2,6 +2,7 @@
 
 namespace Novuso\Common\Domain\EventSourcing;
 
+use Novuso\Common\Domain\EventSourcing\Api\EventSourcedRootEntity;
 use Novuso\Common\Domain\EventSourcing\Exception\RegisterAggregateException;
 use Novuso\Common\Domain\Messaging\Event\DomainEvent;
 use Novuso\System\Utility\ClassName;
@@ -19,22 +20,22 @@ trait EntityEventSourcing
     /**
      * Aggregate root
      *
-     * @var EventSourcedAggregateRoot
+     * @var EventSourcedRootEntity
      */
-    private $aggregateRoot;
+    protected $aggregateRoot;
 
     /**
      * Registers the aggregate root
      *
      * @internal
      *
-     * @param EventSourcedAggregateRoot $aggregateRoot The aggregate root
+     * @param EventSourcedRootEntity $aggregateRoot The aggregate root
      *
      * @return void
      *
      * @throws RegisterAggregateException When the registration is invalid
      */
-    public function registerAggregateRoot(EventSourcedAggregateRoot $aggregateRoot)
+    public function internalRegisterAggregateRoot(EventSourcedRootEntity $aggregateRoot)
     {
         if ($this->aggregateRoot !== null && $this->aggregateRoot !== $aggregateRoot) {
             throw RegisterAggregateException::create('Aggregate root already registered');
@@ -54,15 +55,15 @@ trait EntityEventSourcing
      *
      * @throws RegisterAggregateException When the aggregate root is invalid
      */
-    public function handleRecursively(DomainEvent $domainEvent)
+    public function internalHandleRecursively(DomainEvent $domainEvent)
     {
         $this->handle($domainEvent);
 
         $childEntities = $this->childEntities();
         if ($childEntities !== null) {
             foreach ($childEntities as $entity) {
-                $entity->registerAggregateRoot($this->getAggregateRoot());
-                $entity->handleRecursively($domainEvent);
+                $entity->internalRegisterAggregateRoot($this->getAggregateRoot());
+                $entity->internalHandleRecursively($domainEvent);
             }
         }
     }
@@ -70,14 +71,14 @@ trait EntityEventSourcing
     /**
      * Handles event if the apply method is available
      *
-     * This method delegates to a private method based on the domain event
+     * This method delegates to a protected method based on the domain event
      * class name: 'apply'.$className
      *
      * @param DomainEvent $domainEvent The domain event
      *
      * @return void
      */
-    private function handle(DomainEvent $domainEvent)
+    protected function handle(DomainEvent $domainEvent)
     {
         $method = 'apply'.ClassName::short($domainEvent);
 
@@ -95,7 +96,7 @@ trait EntityEventSourcing
      *
      * @return array|Traversable|null
      */
-    private function childEntities()
+    protected function childEntities()
     {
         return null;
     }
@@ -107,7 +108,7 @@ trait EntityEventSourcing
      *
      * @throws RegisterAggregateException When the aggregate root is invalid
      */
-    private function getAggregateRoot()
+    protected function getAggregateRoot()
     {
         if ($this->aggregateRoot === null) {
             throw RegisterAggregateException::create('Aggregate root is not registered');

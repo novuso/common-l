@@ -1,10 +1,10 @@
 <?php
 
-namespace Novuso\Common\Domain\EventSourcing;
+namespace Novuso\Common\Domain\EventSourcing\Api;
 
 use Novuso\Common\Domain\EventSourcing\Exception\RegisterAggregateException;
 use Novuso\Common\Domain\Messaging\Event\DomainEvent;
-use Novuso\Common\Domain\Model\Entity;
+use Novuso\Common\Domain\Model\Api\Entity;
 
 /**
  * EventSourcedEntity is the interface for an event sourced entity
@@ -20,13 +20,13 @@ interface EventSourcedEntity extends Entity
      *
      * @internal
      *
-     * @param EventSourcedAggregateRoot $aggregateRoot The aggregate root
+     * @param EventSourcedRootEntity $aggregateRoot The aggregate root
      *
      * @return void
      *
      * @throws RegisterAggregateException When the registration is invalid
      */
-    public function registerAggregateRoot(EventSourcedAggregateRoot $aggregateRoot);
+    public function internalRegisterAggregateRoot(EventSourcedRootEntity $aggregateRoot);
 
     /**
      * Handles a domain event recursively
@@ -39,5 +39,5 @@ interface EventSourcedEntity extends Entity
      *
      * @throws RegisterAggregateException When the aggregate root is invalid
      */
-    public function handleRecursively(DomainEvent $domainEvent);
+    public function internalHandleRecursively(DomainEvent $domainEvent);
 }

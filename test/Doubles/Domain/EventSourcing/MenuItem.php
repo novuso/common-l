@@ -2,15 +2,10 @@
 
 namespace Novuso\Test\Common\Doubles\Domain\EventSourcing;
 
-use Novuso\Common\Domain\EventSourcing\EntityEventSourcing;
-use Novuso\Common\Domain\EventSourcing\EventSourcedEntity;
-use Novuso\Common\Domain\Model\Identity;
+use Novuso\Common\Domain\EventSourcing\EventSourcedDomainEntity;
 
-final class MenuItem implements EventSourcedEntity
+final class MenuItem extends EventSourcedDomainEntity
 {
-    use EntityEventSourcing;
-    use Identity;
-
     private $id;
     private $menuId;
     private $path;
@@ -44,7 +39,7 @@ final class MenuItem implements EventSourcedEntity
         return $this->parent;
     }
 
-    private function applyMenuItemMoved(MenuItemMoved $domainEvent)
+    protected function applyMenuItemMoved(MenuItemMoved $domainEvent)
     {
         $menuItemId = $domainEvent->menuItemId();
         if (!$menuItemId->equals($this->id)) {
@@ -64,12 +59,12 @@ final class MenuItem implements EventSourcedEntity
         $this->setParent($parent);
     }
 
-    private function childEntities()
+    protected function childEntities()
     {
         return $this->children;
     }
 
-    private function setParent(MenuItem $parent = null)
+    protected function setParent(MenuItem $parent = null)
     {
         if ($this->parent !== null) {
             $this->parent->removeChild($this);
@@ -80,14 +75,14 @@ final class MenuItem implements EventSourcedEntity
         }
     }
 
-    private function addChild(MenuItem $child)
+    protected function addChild(MenuItem $child)
     {
         if (!in_array($child, $this->children, true)) {
             $this->children[] = $child;
         }
     }
 
-    private function removeChild(MenuItem $child)
+    protected function removeChild(MenuItem $child)
     {
         $key = array_search($child, $this->children, true);
         if ($key !== false) {

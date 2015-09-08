@@ -2,12 +2,11 @@
 
 namespace Novuso\Common\Domain\Model;
 
-use JsonSerializable;
-use Novuso\System\Type\Equatable;
-use Serializable;
+use Novuso\Common\Domain\Model\Api\Value;
+use Novuso\System\Utility\Test;
 
 /**
- * ValueObject is the interface for a domain value object
+ * ValueObject is the base class for a domain value object
  *
  * Implementations must adhere to value characteristics:
  *
@@ -23,42 +22,52 @@ use Serializable;
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  */
-interface ValueObject extends Equatable, JsonSerializable, Serializable
+abstract class ValueObject implements Value
 {
-    /**
-     * Retrieves a string representation
-     *
-     * @return string
-     */
-    public function toString();
+    use Serialization;
 
     /**
-     * Handles casting to a string
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function __toString();
+    abstract public function toString();
 
     /**
-     * Retrieves a value for JSON encoding
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function jsonSerialize();
+    public function __toString()
+    {
+        return $this->toString();
+    }
 
     /**
-     * Retrieves a serialized representation
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function serialize();
+    public function jsonSerialize()
+    {
+        return $this->toString();
+    }
 
     /**
-     * Handles construction from a serialized representation
-     *
-     * @param string $serialized The serialized representation
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function unserialize($serialized);
+    public function equals($object)
+    {
+        if ($this === $object) {
+            return true;
+        }
+
+        if (!Test::areSameType($this, $object)) {
+            return false;
+        }
+
+        return $this->toString() === $object->toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hashValue()
+    {
+        return $this->toString();
+    }
 }

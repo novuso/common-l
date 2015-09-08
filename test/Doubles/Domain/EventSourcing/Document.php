@@ -2,16 +2,11 @@
 
 namespace Novuso\Test\Common\Doubles\Domain\EventSourcing;
 
-use Novuso\Common\Domain\EventSourcing\AggregateEventSourcing;
 use Novuso\Common\Domain\EventSourcing\EventSourcedAggregateRoot;
 use Novuso\Common\Domain\Messaging\Event\EventStream;
-use Novuso\Common\Domain\Model\Identity;
 
-final class Document implements EventSourcedAggregateRoot
+final class Document extends EventSourcedAggregateRoot
 {
-    use AggregateEventSourcing;
-    use Identity;
-
     private $id;
     private $notes;
 
@@ -25,7 +20,7 @@ final class Document implements EventSourcedAggregateRoot
     {
         $id = DocumentId::generate();
         $document = new self($id);
-        $document->apply(new DocumentCreated($id));
+        $document->raiseEvent(new DocumentCreated($id));
 
         return $document;
     }
@@ -52,15 +47,10 @@ final class Document implements EventSourcedAggregateRoot
     public function addNote($text)
     {
         $noteId = NoteId::generate();
-        $this->apply(new NoteAdded($this->id, $noteId, $text));
+        $this->raiseEvent(new NoteAdded($this->id, $noteId, $text));
     }
 
-    private function applyDocumentCreated(DocumentCreated $domainEvent)
-    {
-        $this->id = $domainEvent->documentId();
-    }
-
-    private function applyNoteAdded(NoteAdded $domainEvent)
+    protected function applyNoteAdded(NoteAdded $domainEvent)
     {
         $noteId = $domainEvent->noteId();
         $text = $domainEvent->noteText();
@@ -68,7 +58,7 @@ final class Document implements EventSourcedAggregateRoot
         $this->notes[] = $note;
     }
 
-    private function childEntities()
+    protected function childEntities()
     {
         return $this->notes;
     }

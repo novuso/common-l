@@ -2,6 +2,7 @@
 
 namespace Novuso\Common\Domain\Model;
 
+use Novuso\Common\Domain\Model\Api\Identifier;
 use Novuso\System\Exception\DomainException;
 use Novuso\System\Utility\Test;
 use Novuso\System\Utility\VarPrinter;
@@ -13,19 +14,14 @@ use Novuso\System\Utility\VarPrinter;
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  */
-abstract class StringId implements Identifier
+abstract class StringId extends ValueObject implements Identifier
 {
-    use Serialization;
-    use StringCast;
-    use StringEquals;
-    use StringJson;
-
     /**
      * String ID
      *
      * @var string
      */
-    private $id;
+    protected $id;
 
     /**
      * Constructs StringId

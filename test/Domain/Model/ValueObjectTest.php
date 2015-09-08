@@ -7,9 +7,7 @@ use PHPUnit_Framework_TestCase;
 
 /**
  * @covers Novuso\Common\Domain\Model\Serialization
- * @covers Novuso\Common\Domain\Model\StringCast
- * @covers Novuso\Common\Domain\Model\StringEquals
- * @covers Novuso\Common\Domain\Model\StringJson
+ * @covers Novuso\Common\Domain\Model\ValueObject
  */
 class ValueObjectTest extends PHPUnit_Framework_TestCase
 {

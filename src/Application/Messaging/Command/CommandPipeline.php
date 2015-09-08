@@ -4,6 +4,7 @@ namespace Novuso\Common\Application\Messaging\Command;
 
 use Exception;
 use Novuso\Common\Application\Messaging\Command\Exception\CommandException;
+use Novuso\Common\Application\Messaging\Command\Resolver\CommandHandlerResolver;
 use Novuso\Common\Domain\Messaging\Command\Command;
 use Novuso\Common\Domain\Messaging\Command\CommandFilter;
 use Novuso\Common\Domain\Messaging\Command\CommandMessage;
@@ -23,11 +24,11 @@ use Novuso\System\Collection\LinkedStack;
 class CommandPipeline implements CommandBus, CommandFilter
 {
     /**
-     * Command bus
+     * Command handler resolver
      *
-     * @var CommandBus
+     * @var CommandHandlerResolver
      */
-    protected $commandBus;
+    protected $resolver;
 
     /**
      * Command filters
@@ -39,12 +40,12 @@ class CommandPipeline implements CommandBus, CommandFilter
     /**
      * Constructs CommandPipeline
      *
-     * @param CommandBus      $commandBus The command bus
-     * @param CommandFilter[] $filters    A list of filters
+     * @param CommandHandlerResolver $resolver The handler resolver
+     * @param CommandFilter[]        $filters  A list of filters
      */
-    public function __construct(CommandBus $commandBus, array $filters = [])
+    public function __construct(CommandHandlerResolver $resolver, array $filters = [])
     {
-        $this->commandBus = $commandBus;
+        $this->resolver = $resolver;
 
         $this->filters = LinkedStack::of(CommandFilter::class);
         $this->filters->push($this);
@@ -83,11 +84,14 @@ class CommandPipeline implements CommandBus, CommandFilter
      */
     public function execute(Command $command)
     {
-        $timetamp = DateTime::now();
-        $messageId = MessageId::generate();
-        $metaData = new MetaData();
-
-        $this->pipe(new DomainCommandMessage($messageId, $timetamp, $command, $metaData));
+        try {
+            $timetamp = DateTime::now();
+            $messageId = MessageId::generate();
+            $metaData = new MetaData();
+            $this->pipe(new DomainCommandMessage($messageId, $timetamp, $command, $metaData));
+        } catch (Exception $exception) {
+            throw CommandException::create($exception->getMessage(), $exception);
+        }
     }
 
     /**
@@ -95,7 +99,9 @@ class CommandPipeline implements CommandBus, CommandFilter
      */
     public function process(CommandMessage $message, callable $next)
     {
-        $this->commandBus->execute($message->payload());
+        $command = $message->payload();
+        $handler = $this->resolver->resolve($command);
+        $handler->handle($command);
     }
 
     /**
@@ -107,11 +113,7 @@ class CommandPipeline implements CommandBus, CommandFilter
      */
     public function pipe(CommandMessage $message)
     {
-        try {
-            $filter = $this->filters->pop();
-            $filter->process($message, [$this, 'pipe']);
-        } catch (Exception $exception) {
-            throw CommandException::create($exception->getMessage(), $exception);
-        }
+        $filter = $this->filters->pop();
+        $filter->process($message, [$this, 'pipe']);
     }
 }

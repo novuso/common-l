@@ -2,10 +2,11 @@
 
 namespace Novuso\Common\Domain\Model;
 
+use Novuso\Common\Domain\Model\Api\Identifier;
+use Novuso\Common\Domain\Model\Api\IdentifierFactory;
 use Novuso\Common\Domain\Model\Identifier\Uuid;
 use Novuso\System\Exception\DomainException;
 use Novuso\System\Utility\Test;
-use Novuso\System\Utility\VarPrinter;
 
 /**
  * UniqueId is the base class for UUID based identifiers
@@ -14,18 +15,14 @@ use Novuso\System\Utility\VarPrinter;
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  */
-abstract class UniqueId implements Identifier, IdentifierFactory
+abstract class UniqueId extends ValueObject implements Identifier, IdentifierFactory
 {
-    use Serialization;
-    use StringCast;
-    use StringJson;
-
     /**
      * UUID
      *
      * @var Uuid
      */
-    private $uuid;
+    protected $uuid;
 
     /**
      * Constructs UniqueId

@@ -4,7 +4,7 @@ namespace Novuso\Common\Application\Messaging\Query;
 
 use Novuso\Common\Application\Messaging\Query\Exception\QueryException;
 use Novuso\Common\Domain\Messaging\Query\Query;
-use Novuso\Common\Domain\Messaging\Query\ViewData;
+use Novuso\Common\Domain\Messaging\Query\ViewModel;
 
 /**
  * QueryService is the interface for a query service
@@ -20,7 +20,7 @@ interface QueryService
      *
      * @param Query $query The query
      *
-     * @return ViewData
+     * @return ViewModel
      *
      * @throws QueryException When an error occurs during processing
      */

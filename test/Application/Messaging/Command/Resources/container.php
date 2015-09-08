@@ -10,7 +10,7 @@ $container->service('logger', function () {
 
 $container->service('command.pipeline', function ($container) {
     return new Novuso\Common\Application\Messaging\Command\CommandPipeline(
-        $container->get('command.bus'),
+        $container->get('command.handler_resolver'),
         $container->getParameter('command.filters', [])
     );
 });

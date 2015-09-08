@@ -2,10 +2,6 @@
 
 namespace Novuso\Common\Domain\Model\Resource;
 
-use Novuso\Common\Domain\Model\Serialization;
-use Novuso\Common\Domain\Model\StringCast;
-use Novuso\Common\Domain\Model\StringEquals;
-use Novuso\Common\Domain\Model\StringJson;
 use Novuso\Common\Domain\Model\ValueObject;
 use Novuso\System\Exception\DomainException;
 use Novuso\System\Type\Comparable;
@@ -21,13 +17,8 @@ use Novuso\System\Utility\VarPrinter;
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  */
-class Uri implements Comparable, ValueObject
+class Uri extends ValueObject implements Comparable
 {
-    use Serialization;
-    use StringCast;
-    use StringEquals;
-    use StringJson;
-
     /**
      * URI capture pattern
      *
@@ -107,56 +98,56 @@ class Uri implements Comparable, ValueObject
      *
      * @var string
      */
-    private $scheme;
+    protected $scheme;
 
     /**
      * Authority
      *
      * @var string|null
      */
-    private $authority;
+    protected $authority;
 
     /**
      * Path
      *
      * @var string
      */
-    private $path;
+    protected $path;
 
     /**
      * Query
      *
      * @var string|null
      */
-    private $query;
+    protected $query;
 
     /**
      * Fragment
      *
      * @var string|null
      */
-    private $fragment;
+    protected $fragment;
 
     /**
      * User info
      *
      * @var string|null
      */
-    private $userInfo;
+    protected $userInfo;
 
     /**
      * Host
      *
      * @var string|null
      */
-    private $host;
+    protected $host;
 
     /**
      * Port
      *
      * @var int|null
      */
-    private $port;
+    protected $port;
 
     /**
      * Constructs Uri
@@ -508,30 +499,6 @@ class Uri implements Comparable, ValueObject
         }
 
         return 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function equals($object)
-    {
-        if ($this === $object) {
-            return true;
-        }
-
-        if (!Test::areSameType($this, $object)) {
-            return false;
-        }
-
-        return $this->toString() === $object->toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hashValue()
-    {
-        return $this->toString();
     }
 
     /**

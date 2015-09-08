@@ -2,11 +2,11 @@
 
 namespace Novuso\Common\Domain\Model;
 
-use Novuso\System\Type\Comparable;
-use Novuso\System\Type\Equatable;
+use Novuso\Common\Domain\Model\Api\Entity;
+use Novuso\System\Utility\Test;
 
 /**
- * Entity is the interface for a domain entity
+ * DomainEntity is the base class for a domain entity
  *
  * Implementations must adhere to entity characteristics:
  *
@@ -20,12 +20,7 @@ use Novuso\System\Type\Equatable;
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  */
-interface Entity extends Comparable, Equatable
+abstract class DomainEntity implements Entity
 {
-    /**
-     * Retrieves the identifier
-     *
-     * @return Identifier
-     */
-    public function id();
+    use Identity;
 }

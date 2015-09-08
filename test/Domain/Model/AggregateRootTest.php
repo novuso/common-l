@@ -7,6 +7,7 @@ use Novuso\Test\Common\Doubles\Domain\Model\TaskId;
 use PHPUnit_Framework_TestCase;
 
 /**
+ * @covers Novuso\Common\Domain\Model\AggregateRoot
  * @covers Novuso\Common\Domain\Model\EventRecords
  */
 class AggregateRootTest extends PHPUnit_Framework_TestCase
@@ -18,8 +19,7 @@ class AggregateRootTest extends PHPUnit_Framework_TestCase
         $task->changeDescription($desc);
         $commit = $task->committedVersion();
         $hasEvents = $task->hasRecordedEvents();
-        $stream = $task->getRecordedEvents();
-        $task->clearRecordedEvents();
+        $stream = $task->extractRecordedEvents();
         $newVersion = $task->committedVersion();
         $valid = true;
         if (!$hasEvents) {

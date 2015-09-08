@@ -20,7 +20,7 @@ trait AggregateEventSourcing
     use EventRecords;
 
     /**
-     * Applies a domain event
+     * Raises a domain event
      *
      * Calling this method results in the domain event being recorded and
      * state changes applied. Should only be called internally or from a child
@@ -32,7 +32,7 @@ trait AggregateEventSourcing
      *
      * @return void
      */
-    public function apply(DomainEvent $domainEvent)
+    public function raiseEvent(DomainEvent $domainEvent)
     {
         $this->recordThat($domainEvent);
         $this->handleRecursively($domainEvent);
@@ -45,7 +45,7 @@ trait AggregateEventSourcing
      *
      * @return void
      */
-    private function initializeFromEventStream(EventStream $eventStream)
+    protected function initializeFromEventStream(EventStream $eventStream)
     {
         $lastSequence = null;
 
@@ -64,15 +64,15 @@ trait AggregateEventSourcing
      *
      * @return void
      */
-    private function handleRecursively(DomainEvent $domainEvent)
+    protected function handleRecursively(DomainEvent $domainEvent)
     {
         $this->handle($domainEvent);
 
         $childEntities = $this->childEntities();
         if ($childEntities !== null) {
             foreach ($childEntities as $entity) {
-                $entity->registerAggregateRoot($this);
-                $entity->handleRecursively($domainEvent);
+                $entity->internalRegisterAggregateRoot($this);
+                $entity->internalHandleRecursively($domainEvent);
             }
         }
     }
@@ -80,14 +80,14 @@ trait AggregateEventSourcing
     /**
      * Handles event if the apply method is available
      *
-     * This method delegates to a private method based on the domain event
+     * This method delegates to a protected method based on the domain event
      * class name: 'apply'.$className
      *
      * @param DomainEvent $domainEvent The domain event
      *
      * @return void
      */
-    private function handle(DomainEvent $domainEvent)
+    protected function handle(DomainEvent $domainEvent)
     {
         $method = 'apply'.ClassName::short($domainEvent);
 
@@ -105,7 +105,7 @@ trait AggregateEventSourcing
      *
      * @return array|Traversable|null
      */
-    private function childEntities()
+    protected function childEntities()
     {
         return null;
     }

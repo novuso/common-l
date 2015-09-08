@@ -3,10 +3,6 @@
 namespace Novuso\Common\Domain\Model\DateTime;
 
 use DateTimeZone;
-use Novuso\Common\Domain\Model\Serialization;
-use Novuso\Common\Domain\Model\StringCast;
-use Novuso\Common\Domain\Model\StringEquals;
-use Novuso\Common\Domain\Model\StringJson;
 use Novuso\Common\Domain\Model\ValueObject;
 use Novuso\System\Exception\DomainException;
 use Novuso\System\Type\Comparable;
@@ -20,19 +16,14 @@ use Novuso\System\Utility\VarPrinter;
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  */
-final class Timezone implements Comparable, ValueObject
+final class Timezone extends ValueObject implements Comparable
 {
-    use Serialization;
-    use StringCast;
-    use StringEquals;
-    use StringJson;
-
     /**
      * Timezone value
      *
      * @var string
      */
-    private $value;
+    protected $value;
 
     /**
      * Constructs Timezone

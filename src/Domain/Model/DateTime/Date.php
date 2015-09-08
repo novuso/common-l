@@ -5,10 +5,6 @@ namespace Novuso\Common\Domain\Model\DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
-use Novuso\Common\Domain\Model\Serialization;
-use Novuso\Common\Domain\Model\StringCast;
-use Novuso\Common\Domain\Model\StringEquals;
-use Novuso\Common\Domain\Model\StringJson;
 use Novuso\Common\Domain\Model\ValueObject;
 use Novuso\System\Exception\DomainException;
 use Novuso\System\Type\Comparable;
@@ -22,33 +18,28 @@ use Novuso\System\Utility\VarPrinter;
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  */
-final class Date implements Comparable, ValueObject
+final class Date extends ValueObject implements Comparable
 {
-    use Serialization;
-    use StringCast;
-    use StringEquals;
-    use StringJson;
-
     /**
      * Year
      *
      * @var int
      */
-    private $year;
+    protected $year;
 
     /**
      * Month
      *
      * @var int
      */
-    private $month;
+    protected $month;
 
     /**
      * Day
      *
      * @var int
      */
-    private $day;
+    protected $day;
 
     /**
      * Constructs Date
@@ -69,12 +60,14 @@ final class Date implements Comparable, ValueObject
             gettype($year),
             VarPrinter::toString($year)
         ));
+
         assert(Test::isInt($month), sprintf(
             '%s expects $month to be an integer; received (%s) %s',
             __METHOD__,
             gettype($month),
             VarPrinter::toString($month)
         ));
+
         assert(Test::isInt($day), sprintf(
             '%s expects $day to be an integer; received (%s) %s',
             __METHOD__,

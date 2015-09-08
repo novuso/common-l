@@ -2,15 +2,10 @@
 
 namespace Novuso\Test\Common\Doubles\Domain\EventSourcing;
 
-use Novuso\Common\Domain\EventSourcing\EntityEventSourcing;
-use Novuso\Common\Domain\EventSourcing\EventSourcedEntity;
-use Novuso\Common\Domain\Model\Identity;
+use Novuso\Common\Domain\EventSourcing\EventSourcedDomainEntity;
 
-final class Note implements EventSourcedEntity
+final class Note extends EventSourcedDomainEntity
 {
-    use EntityEventSourcing;
-    use Identity;
-
     private $id;
     private $text;
 

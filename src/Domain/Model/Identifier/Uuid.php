@@ -2,9 +2,6 @@
 
 namespace Novuso\Common\Domain\Model\Identifier;
 
-use Novuso\Common\Domain\Model\Serialization;
-use Novuso\Common\Domain\Model\StringCast;
-use Novuso\Common\Domain\Model\StringJson;
 use Novuso\Common\Domain\Model\ValueObject;
 use Novuso\System\Exception\DomainException;
 use Novuso\System\Type\Comparable;
@@ -20,12 +17,8 @@ use Novuso\System\Utility\VarPrinter;
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  */
-final class Uuid implements Comparable, ValueObject
+final class Uuid extends ValueObject implements Comparable
 {
-    use Serialization;
-    use StringCast;
-    use StringJson;
-
     /**
      * UUID regex pattern
      *
@@ -153,42 +146,42 @@ final class Uuid implements Comparable, ValueObject
      *
      * @var string
      */
-    private $timeLow;
+    protected $timeLow;
 
     /**
      * Middle field of the timestamp
      *
      * @var string
      */
-    private $timeMid;
+    protected $timeMid;
 
     /**
      * High field of the timestamp multiplexed with version
      *
      * @var string
      */
-    private $timeHiAndVersion;
+    protected $timeHiAndVersion;
 
     /**
      * High field of the clock sequence multiplexed with variant
      *
      * @var string
      */
-    private $clockSeqHiAndReserved;
+    protected $clockSeqHiAndReserved;
 
     /**
      * Low field of the timestamp
      *
      * @var string
      */
-    private $clockSeqLow;
+    protected $clockSeqLow;
 
     /**
      * Spatially unique node identifier
      *
      * @var string
      */
-    private $node;
+    protected $node;
 
     /**
      * Constructs Uuid

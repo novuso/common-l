@@ -7,7 +7,7 @@ use Novuso\Common\Domain\EventStore\Exception\StreamNotFoundException;
 use Novuso\Common\Domain\Messaging\Event\DomainEventStream;
 use Novuso\Common\Domain\Messaging\Event\EventMessage;
 use Novuso\Common\Domain\Messaging\Event\EventStream;
-use Novuso\Common\Domain\Model\Identifier;
+use Novuso\Common\Domain\Model\Api\Identifier;
 use Novuso\System\Type\Type;
 
 /**

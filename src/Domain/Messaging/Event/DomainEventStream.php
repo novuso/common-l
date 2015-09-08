@@ -2,7 +2,7 @@
 
 namespace Novuso\Common\Domain\Messaging\Event;
 
-use Novuso\Common\Domain\Model\Identifier;
+use Novuso\Common\Domain\Model\Api\Identifier;
 use Novuso\System\Collection\SortedSet;
 use Novuso\System\Type\Type;
 

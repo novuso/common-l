@@ -1,6 +1,6 @@
 <?php
 
-namespace Novuso\Common\Domain\Model;
+namespace Novuso\Common\Domain\Model\Api;
 
 /**
  * IdentifierFactory is the interface for an identifier factory

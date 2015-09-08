@@ -2,19 +2,10 @@
 
 namespace Novuso\Test\Common\Doubles\Domain\EventSourcing;
 
-use Novuso\Common\Domain\Model\Serialization;
-use Novuso\Common\Domain\Model\StringCast;
-use Novuso\Common\Domain\Model\StringEquals;
-use Novuso\Common\Domain\Model\StringJson;
 use Novuso\Common\Domain\Model\ValueObject;
 
-final class MenuName implements ValueObject
+final class MenuName extends ValueObject
 {
-    use Serialization;
-    use StringCast;
-    use StringEquals;
-    use StringJson;
-
     private $name;
 
     private function __construct($name)

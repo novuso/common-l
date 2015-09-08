@@ -18,7 +18,7 @@ interface QueryHandler
      *
      * @param Query $query The query
      *
-     * @return ViewData
+     * @return ViewModel
      *
      * @throws Exception When an error occurs during processing
      */
