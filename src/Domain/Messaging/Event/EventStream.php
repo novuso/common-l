@@ -5,7 +5,7 @@ namespace Novuso\Common\Domain\Messaging\Event;
 use Countable;
 use IteratorAggregate;
 use JsonSerializable;
-use Novuso\Common\Domain\Model\Identifier;
+use Novuso\Common\Domain\Model\Api\Identifier;
 use Novuso\System\Type\Type;
 use Traversable;
 

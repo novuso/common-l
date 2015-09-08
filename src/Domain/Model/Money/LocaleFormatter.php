@@ -7,13 +7,13 @@ use Novuso\System\Utility\VarPrinter;
 use NumberFormatter;
 
 /**
- * LocaleMoneyFormatter is a locale-aware money formatter
+ * LocaleFormatter is a locale-aware money formatter
  *
  * @copyright Copyright (c) 2015, Novuso. <http://novuso.com>
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  */
-final class LocaleMoneyFormatter implements MoneyFormatter
+final class LocaleFormatter implements MoneyFormatter
 {
     /**
      * Formatter
@@ -23,7 +23,7 @@ final class LocaleMoneyFormatter implements MoneyFormatter
     private $formatter;
 
     /**
-     * Constructs LocaleMoneyFormatter
+     * Constructs LocaleFormatter
      *
      * @internal
      *
@@ -39,7 +39,7 @@ final class LocaleMoneyFormatter implements MoneyFormatter
      *
      * @param string $locale The locale string
      *
-     * @return LocaleMoneyFormatter
+     * @return LocaleFormatter
      */
     public static function fromLocale($locale)
     {

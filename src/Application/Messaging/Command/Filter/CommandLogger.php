@@ -3,7 +3,6 @@
 namespace Novuso\Common\Application\Messaging\Command\Filter;
 
 use Exception;
-use Novuso\Common\Application\Messaging\Command\Exception\CommandException;
 use Novuso\Common\Application\Logging\Logger;
 use Novuso\Common\Domain\Messaging\Command\Command;
 use Novuso\Common\Domain\Messaging\Command\CommandFilter;
@@ -60,7 +59,7 @@ class CommandLogger implements CommandFilter
                 sprintf('Command (%s) failed: %s', $command, date(DATE_ATOM)),
                 ['message' => $message->toString(), 'exception' => $exception]
             );
-            throw CommandException::create($exception->getMessage(), $exception);
+            throw $exception;
         }
     }
 }

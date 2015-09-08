@@ -4,11 +4,12 @@ namespace Novuso\Common\Application\Messaging\Query;
 
 use Exception;
 use Novuso\Common\Application\Messaging\Query\Exception\QueryException;
+use Novuso\Common\Application\Messaging\Query\Resolver\QueryHandlerResolver;
 use Novuso\Common\Domain\Messaging\Query\DomainQueryMessage;
 use Novuso\Common\Domain\Messaging\Query\Query;
 use Novuso\Common\Domain\Messaging\Query\QueryFilter;
 use Novuso\Common\Domain\Messaging\Query\QueryMessage;
-use Novuso\Common\Domain\Messaging\Query\ViewData;
+use Novuso\Common\Domain\Messaging\Query\ViewModel;
 use Novuso\Common\Domain\Messaging\MessageId;
 use Novuso\Common\Domain\Messaging\MetaData;
 use Novuso\Common\Domain\Model\DateTime\DateTime;
@@ -24,11 +25,11 @@ use Novuso\System\Collection\LinkedStack;
 class QueryPipeline implements QueryService, QueryFilter
 {
     /**
-     * Query service
+     * Query handler resolver
      *
-     * @var QueryService
+     * @var QueryHandlerResolver
      */
-    protected $queryService;
+    protected $resolver;
 
     /**
      * Query filters
@@ -40,12 +41,12 @@ class QueryPipeline implements QueryService, QueryFilter
     /**
      * Constructs QueryPipeline
      *
-     * @param QueryService  $queryService The query service
-     * @param QueryFilter[] $filters      A list of filters
+     * @param QueryHandlerResolver $resolver The handler resolver
+     * @param QueryFilter[]        $filters  A list of filters
      */
-    public function __construct(QueryService $queryService, array $filters = [])
+    public function __construct(QueryHandlerResolver $resolver, array $filters = [])
     {
-        $this->queryService = $queryService;
+        $this->resolver = $resolver;
 
         $this->filters = LinkedStack::of(QueryFilter::class);
         $this->filters->push($this);
@@ -84,11 +85,16 @@ class QueryPipeline implements QueryService, QueryFilter
      */
     public function fetch(Query $query)
     {
-        $timetamp = DateTime::now();
-        $messageId = MessageId::generate();
-        $metaData = new MetaData();
+        try {
+            $timetamp = DateTime::now();
+            $messageId = MessageId::generate();
+            $metaData = new MetaData();
+            $viewModel = $this->pipe(new DomainQueryMessage($messageId, $timetamp, $query, $metaData));
+        } catch (Exception $exception) {
+            throw QueryException::create($exception->getMessage(), $exception);
+        }
 
-        return $this->pipe(new DomainQueryMessage($messageId, $timetamp, $query, $metaData));
+        return $viewModel;
     }
 
     /**
@@ -96,7 +102,10 @@ class QueryPipeline implements QueryService, QueryFilter
      */
     public function process(QueryMessage $message, callable $next)
     {
-        return $this->queryService->fetch($message->payload());
+        $query = $message->payload();
+        $handler = $this->resolver->resolve($query);
+
+        return $handler->handle($query);
     }
 
     /**
@@ -104,17 +113,12 @@ class QueryPipeline implements QueryService, QueryFilter
      *
      * @param QueryMessage $message The query message
      *
-     * @return ViewData
+     * @return ViewModel
      */
     public function pipe(QueryMessage $message)
     {
-        try {
-            $filter = $this->filters->pop();
-            $viewData = $filter->process($message, [$this, 'pipe']);
-        } catch (Exception $exception) {
-            throw QueryException::create($exception->getMessage(), $exception);
-        }
+        $filter = $this->filters->pop();
 
-        return $viewData;
+        return $filter->process($message, [$this, 'pipe']);
     }
 }

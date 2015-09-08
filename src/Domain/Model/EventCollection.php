@@ -10,6 +10,7 @@ use Novuso\Common\Domain\Messaging\Event\EventMessage;
 use Novuso\Common\Domain\Messaging\Event\EventStream;
 use Novuso\Common\Domain\Messaging\MessageId;
 use Novuso\Common\Domain\Messaging\MetaData;
+use Novuso\Common\Domain\Model\Api\Identifier;
 use Novuso\Common\Domain\Model\DateTime\DateTime;
 use Novuso\System\Collection\ArrayList;
 use Novuso\System\Type\Type;

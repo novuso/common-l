@@ -21,14 +21,14 @@ trait EventRecords
      *
      * @var EventCollection|null
      */
-    private $eventCollection;
+    protected $eventCollection;
 
     /**
      * Committed version
      *
      * @var int|null
      */
-    private $committedVersion;
+    protected $committedVersion;
 
     /**
      * Retrieves the identifier
@@ -49,6 +49,19 @@ trait EventRecords
         }
 
         return $this->committedVersion;
+    }
+
+    /**
+     * Retrieves and clears recorded event messages
+     *
+     * @return EventStream
+     */
+    public function extractRecordedEvents()
+    {
+        $stream = $this->getRecordedEvents();
+        $this->clearRecordedEvents();
+
+        return $stream;
     }
 
     /**
@@ -90,7 +103,7 @@ trait EventRecords
      *
      * @return void
      */
-    private function recordThat(DomainEvent $domainEvent)
+    protected function recordThat(DomainEvent $domainEvent)
     {
         $this->eventCollection()->record($domainEvent);
     }
@@ -100,7 +113,7 @@ trait EventRecords
      *
      * @return EventCollection
      */
-    private function eventCollection()
+    protected function eventCollection()
     {
         if ($this->eventCollection === null) {
             $this->eventCollection = new EventCollection($this->id(), Type::create($this));
@@ -118,7 +131,7 @@ trait EventRecords
      *
      * @throws OperationException When called with recorded events
      */
-    private function initializeCommittedVersion($committedVersion)
+    protected function initializeCommittedVersion($committedVersion)
     {
         if (!$this->eventCollection()->isEmpty()) {
             $message = 'Cannot initialize version after recording events';

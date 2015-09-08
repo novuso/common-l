@@ -6,10 +6,6 @@ use DateTime as NativeDateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
-use Novuso\Common\Domain\Model\Serialization;
-use Novuso\Common\Domain\Model\StringCast;
-use Novuso\Common\Domain\Model\StringEquals;
-use Novuso\Common\Domain\Model\StringJson;
 use Novuso\Common\Domain\Model\ValueObject;
 use Novuso\System\Exception\DomainException;
 use Novuso\System\Type\Comparable;
@@ -23,13 +19,8 @@ use Novuso\System\Utility\VarPrinter;
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  */
-final class DateTime implements Comparable, ValueObject
+final class DateTime extends ValueObject implements Comparable
 {
-    use Serialization;
-    use StringCast;
-    use StringEquals;
-    use StringJson;
-
     /**
      * String format
      *
@@ -42,28 +33,28 @@ final class DateTime implements Comparable, ValueObject
      *
      * @var Date
      */
-    private $date;
+    protected $date;
 
     /**
      * Time
      *
      * @var Time
      */
-    private $time;
+    protected $time;
 
     /**
      * Timezone
      *
      * @var Timezone
      */
-    private $timezone;
+    protected $timezone;
 
     /**
      * Native DateTime
      *
      * @var DateTimeInterface|null
      */
-    private $dateTime;
+    protected $dateTime;
 
     /**
      * Constructs DateTime

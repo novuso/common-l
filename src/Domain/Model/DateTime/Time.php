@@ -5,10 +5,6 @@ namespace Novuso\Common\Domain\Model\DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
-use Novuso\Common\Domain\Model\Serialization;
-use Novuso\Common\Domain\Model\StringCast;
-use Novuso\Common\Domain\Model\StringEquals;
-use Novuso\Common\Domain\Model\StringJson;
 use Novuso\Common\Domain\Model\ValueObject;
 use Novuso\System\Exception\DomainException;
 use Novuso\System\Type\Comparable;
@@ -22,13 +18,8 @@ use Novuso\System\Utility\VarPrinter;
  * @license   http://opensource.org/licenses/MIT The MIT License
  * @author    John Nickell <email@johnnickell.com>
  */
-final class Time implements Comparable, ValueObject
+final class Time extends ValueObject implements Comparable
 {
-    use Serialization;
-    use StringCast;
-    use StringEquals;
-    use StringJson;
-
     /**
      * Minimum hour
      *
@@ -90,28 +81,28 @@ final class Time implements Comparable, ValueObject
      *
      * @var int
      */
-    private $hour;
+    protected $hour;
 
     /**
      * Minute
      *
      * @var int
      */
-    private $minute;
+    protected $minute;
 
     /**
      * Second
      *
      * @var int
      */
-    private $second;
+    protected $second;
 
     /**
      * Microsecond
      *
      * @var int
      */
-    private $micro;
+    protected $micro;
 
     /**
      * Constructs Time
@@ -133,18 +124,21 @@ final class Time implements Comparable, ValueObject
             gettype($hour),
             VarPrinter::toString($hour)
         ));
+
         assert(Test::isInt($minute), sprintf(
             '%s expects $minute to be an integer; received (%s) %s',
             __METHOD__,
             gettype($minute),
             VarPrinter::toString($minute)
         ));
+
         assert(Test::isInt($second), sprintf(
             '%s expects $second to be an integer; received (%s) %s',
             __METHOD__,
             gettype($second),
             VarPrinter::toString($second)
         ));
+
         assert(Test::isInt($micro), sprintf(
             '%s expects $micro to be an integer; received (%s) %s',
             __METHOD__,

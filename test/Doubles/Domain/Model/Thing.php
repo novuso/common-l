@@ -2,13 +2,10 @@
 
 namespace Novuso\Test\Common\Doubles\Domain\Model;
 
-use Novuso\Common\Domain\Model\Entity;
-use Novuso\Common\Domain\Model\Identity;
+use Novuso\Common\Domain\Model\DomainEntity;
 
-final class Thing implements Entity
+final class Thing extends DomainEntity
 {
-    use Identity;
-
     private $id;
 
     public function __construct(ThingId $id)

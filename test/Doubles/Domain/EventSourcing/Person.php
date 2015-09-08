@@ -2,16 +2,11 @@
 
 namespace Novuso\Test\Common\Doubles\Domain\EventSourcing;
 
-use Novuso\Common\Domain\EventSourcing\AggregateEventSourcing;
 use Novuso\Common\Domain\EventSourcing\EventSourcedAggregateRoot;
 use Novuso\Common\Domain\Messaging\Event\EventStream;
-use Novuso\Common\Domain\Model\Identity;
 
-final class Person implements EventSourcedAggregateRoot
+final class Person extends EventSourcedAggregateRoot
 {
-    use AggregateEventSourcing;
-    use Identity;
-
     private $id;
     private $name;
 
@@ -25,7 +20,7 @@ final class Person implements EventSourcedAggregateRoot
     {
         $id = PersonId::generate();
         $person = new self($id, $name);
-        $person->apply(new PersonRegistered($id, $name));
+        $person->raiseEvent(new PersonRegistered($id, $name));
 
         return $person;
     }

@@ -7,9 +7,10 @@ use Novuso\Test\Common\Doubles\Domain\Model\ThingId;
 use PHPUnit_Framework_TestCase;
 
 /**
+ * @covers Novuso\Common\Domain\Model\DomainEntity
  * @covers Novuso\Common\Domain\Model\Identity
  */
-class EntityTest extends PHPUnit_Framework_TestCase
+class DomainEntityTest extends PHPUnit_Framework_TestCase
 {
     public function test_that_compare_to_returns_zero_for_same_instance()
     {

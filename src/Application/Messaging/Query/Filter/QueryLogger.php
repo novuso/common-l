@@ -3,7 +3,6 @@
 namespace Novuso\Common\Application\Messaging\Query\Filter;
 
 use Exception;
-use Novuso\Common\Application\Messaging\Query\Exception\QueryException;
 use Novuso\Common\Application\Logging\Logger;
 use Novuso\Common\Domain\Messaging\Query\Query;
 use Novuso\Common\Domain\Messaging\Query\QueryFilter;
@@ -49,7 +48,7 @@ class QueryLogger implements QueryFilter
                 ['message' => $message->serialize()]
             );
 
-            $viewData = $next($message);
+            $viewModel = $next($message);
 
             $this->logger->debug(
                 sprintf('Query (%s) handled: %s', $query, date(DATE_ATOM)),
@@ -60,9 +59,9 @@ class QueryLogger implements QueryFilter
                 sprintf('Query (%s) failed: %s', $query, date(DATE_ATOM)),
                 ['message' => $message->serialize(), 'exception' => $exception]
             );
-            throw QueryException::create($exception->getMessage(), $exception);
+            throw $exception;
         }
 
-        return $viewData;
+        return $viewModel;
     }
 }

@@ -12,6 +12,8 @@ use PHPUnit_Framework_TestCase;
 /**
  * @covers Novuso\Common\Domain\EventSourcing\AggregateEventSourcing
  * @covers Novuso\Common\Domain\EventSourcing\EntityEventSourcing
+ * @covers Novuso\Common\Domain\EventSourcing\EventSourcedAggregateRoot
+ * @covers Novuso\Common\Domain\EventSourcing\EventSourcedDomainEntity
  */
 class EventSourcingTest extends PHPUnit_Framework_TestCase
 {
@@ -76,9 +78,9 @@ class EventSourcingTest extends PHPUnit_Framework_TestCase
     {
         $note = Note::write(NoteId::generate(), 'test');
         $doc1 = Document::create();
-        $note->registerAggregateRoot($doc1);
+        $note->internalRegisterAggregateRoot($doc1);
         $doc2 = Document::create();
-        $note->registerAggregateRoot($doc2);
+        $note->internalRegisterAggregateRoot($doc2);
     }
 
     /**

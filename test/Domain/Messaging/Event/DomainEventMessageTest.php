@@ -15,7 +15,7 @@ use PHPUnit_Framework_TestCase;
 /**
  * @covers Novuso\Common\Domain\Messaging\Event\DomainEventMessage
  */
-class EventMessageTest extends PHPUnit_Framework_TestCase
+class DomainEventMessageTest extends PHPUnit_Framework_TestCase
 {
     protected $eventMessage;
 

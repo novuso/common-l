@@ -3,14 +3,9 @@
 namespace Novuso\Test\Common\Doubles\Domain\Model;
 
 use Novuso\Common\Domain\Model\AggregateRoot;
-use Novuso\Common\Domain\Model\EventRecords;
-use Novuso\Common\Domain\Model\Identity;
 
-final class Task implements AggregateRoot
+final class Task extends AggregateRoot
 {
-    use EventRecords;
-    use Identity;
-
     private $id;
     private $description;
 
