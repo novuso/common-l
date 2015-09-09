@@ -20,7 +20,7 @@ final class Person extends EventSourcedAggregateRoot
     {
         $id = PersonId::generate();
         $person = new self($id, $name);
-        $person->raiseEvent(new PersonRegistered($id, $name));
+        $person->recordThat(new PersonRegistered($id, $name));
 
         return $person;
     }

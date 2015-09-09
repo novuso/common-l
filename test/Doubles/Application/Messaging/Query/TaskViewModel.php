@@ -2,10 +2,9 @@
 
 namespace Novuso\Test\Common\Doubles\Application\Messaging\Query;
 
-use Novuso\Common\Domain\Messaging\Query\ViewModel;
 use Novuso\Test\Common\Doubles\Domain\Model\Task;
 
-final class TaskViewModel implements ViewModel
+class TaskViewModel
 {
     private $id;
     private $description;

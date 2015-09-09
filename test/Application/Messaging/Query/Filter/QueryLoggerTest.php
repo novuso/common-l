@@ -22,7 +22,7 @@ class QueryLoggerTest extends PHPUnit_Framework_TestCase
     {
         $this->container->setParameter('query.filters', [$this->container->get('query.filter.logger')]);
         $query = new GetTaskQuery('014faa02-b67c-4aa4-b063-ceaf27f4a9b3');
-        $viewModel = $this->container->get('query.pipeline')->fetch($query);
+        $data = $this->container->get('query.pipeline')->fetch($query);
         $logger = $this->container->get('logger');
         $logs = $logger->logs();
         $expected1 = 'Query (GetTaskQuery) received';
@@ -37,7 +37,7 @@ class QueryLoggerTest extends PHPUnit_Framework_TestCase
         try {
             $this->container->setParameter('query.filters', [$this->container->get('query.filter.logger')]);
             $query = new GetTaskQuery('014faa07-826e-4773-8aad-e8d9bef7617c');
-            $viewModel = $this->container->get('query.pipeline')->fetch($query);
+            $data = $this->container->get('query.pipeline')->fetch($query);
         } catch (Exception $exception) {
             $logger = $this->container->get('logger');
             $logs = $logger->logs();

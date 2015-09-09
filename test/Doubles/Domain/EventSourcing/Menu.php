@@ -23,7 +23,7 @@ final class Menu extends EventSourcedAggregateRoot
         $id = MenuId::generate();
         $name = MenuName::fromString($name);
         $menu = new self($id);
-        $menu->raiseEvent(new MenuCreated($id, $name));
+        $menu->recordThat(new MenuCreated($id, $name));
 
         return $menu;
     }
@@ -55,7 +55,7 @@ final class Menu extends EventSourcedAggregateRoot
     public function addMenuItem($path, $text)
     {
         $menuItemId = MenuItemId::generate();
-        $this->raiseEvent(new MenuItemAdded($this->id, $menuItemId, $path, $text));
+        $this->recordThat(new MenuItemAdded($this->id, $menuItemId, $path, $text));
     }
 
     public function moveMenuItem($menuItemId, $parentItemId)
@@ -66,7 +66,7 @@ final class Menu extends EventSourcedAggregateRoot
         } else {
             $parentItem = null;
         }
-        $this->raiseEvent(new MenuItemMoved($menuItem->id(), $parentItem !== null ? $parentItem->id() : null));
+        $this->recordThat(new MenuItemMoved($menuItem->id(), $parentItem !== null ? $parentItem->id() : null));
     }
 
     protected function applyMenuCreated(MenuCreated $domainEvent)

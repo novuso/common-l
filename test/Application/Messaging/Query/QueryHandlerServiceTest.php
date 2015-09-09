@@ -20,8 +20,8 @@ class QueryHandlerServiceTest extends PHPUnit_Framework_TestCase
     public function test_that_query_results_in_view_model()
     {
         $query = new GetTaskQuery('014faa02-b67c-4aa4-b063-ceaf27f4a9b3');
-        $viewModel = $this->container->get('query.service')->fetch($query);
-        $this->assertSame('Test task two', $viewModel->description());
+        $data = $this->container->get('query.service')->fetch($query);
+        $this->assertSame('Test task two', $data->description());
     }
 
     /**
@@ -30,6 +30,6 @@ class QueryHandlerServiceTest extends PHPUnit_Framework_TestCase
     public function test_that_exceptions_are_thrown_as_query_exceptions()
     {
         $query = new GetTaskQuery('014faa07-826e-4773-8aad-e8d9bef7617c');
-        $viewModel = $this->container->get('query.service')->fetch($query);
+        $data = $this->container->get('query.service')->fetch($query);
     }
 }

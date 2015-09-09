@@ -20,7 +20,7 @@ final class Document extends EventSourcedAggregateRoot
     {
         $id = DocumentId::generate();
         $document = new self($id);
-        $document->raiseEvent(new DocumentCreated($id));
+        $document->recordThat(new DocumentCreated($id));
 
         return $document;
     }
@@ -47,7 +47,7 @@ final class Document extends EventSourcedAggregateRoot
     public function addNote($text)
     {
         $noteId = NoteId::generate();
-        $this->raiseEvent(new NoteAdded($this->id, $noteId, $text));
+        $this->recordThat(new NoteAdded($this->id, $noteId, $text));
     }
 
     protected function applyNoteAdded(NoteAdded $domainEvent)
