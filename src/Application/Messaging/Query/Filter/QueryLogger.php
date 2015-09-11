@@ -48,7 +48,7 @@ class QueryLogger implements QueryFilter
                 ['message' => $message->serialize()]
             );
 
-            $viewModel = $next($message);
+            $data = $next($message);
 
             $this->logger->debug(
                 sprintf('Query (%s) handled: %s', $query, date(DATE_ATOM)),
@@ -62,6 +62,6 @@ class QueryLogger implements QueryFilter
             throw $exception;
         }
 
-        return $viewModel;
+        return $data;
     }
 }

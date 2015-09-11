@@ -25,7 +25,7 @@ interface EventSourcedRootEntity extends RootEntity
     public static function reconstitute(EventStream $eventStream);
 
     /**
-     * Raises a domain event
+     * Records a domain event
      *
      * Calling this method results in the domain event being recorded and
      * state changes applied. Should only be called internally or from a child
@@ -37,5 +37,5 @@ interface EventSourcedRootEntity extends RootEntity
      *
      * @return void
      */
-    public function raiseEvent(DomainEvent $domainEvent);
+    public function recordThat(DomainEvent $domainEvent);
 }

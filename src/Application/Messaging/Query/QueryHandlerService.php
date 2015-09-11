@@ -41,11 +41,11 @@ class QueryHandlerService implements QueryService
         $handler = $this->resolver->resolve($query);
 
         try {
-            $viewModel = $handler->handle($query);
+            $data = $handler->handle($query);
         } catch (Exception $exception) {
             throw QueryException::create($exception->getMessage(), $exception);
         }
 
-        return $viewModel;
+        return $data;
     }
 }

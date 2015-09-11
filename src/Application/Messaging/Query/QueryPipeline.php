@@ -9,7 +9,6 @@ use Novuso\Common\Domain\Messaging\Query\DomainQueryMessage;
 use Novuso\Common\Domain\Messaging\Query\Query;
 use Novuso\Common\Domain\Messaging\Query\QueryFilter;
 use Novuso\Common\Domain\Messaging\Query\QueryMessage;
-use Novuso\Common\Domain\Messaging\Query\ViewModel;
 use Novuso\Common\Domain\Messaging\MessageId;
 use Novuso\Common\Domain\Messaging\MetaData;
 use Novuso\Common\Domain\Model\DateTime\DateTime;
@@ -89,12 +88,12 @@ class QueryPipeline implements QueryService, QueryFilter
             $timetamp = DateTime::now();
             $messageId = MessageId::generate();
             $metaData = new MetaData();
-            $viewModel = $this->pipe(new DomainQueryMessage($messageId, $timetamp, $query, $metaData));
+            $data = $this->pipe(new DomainQueryMessage($messageId, $timetamp, $query, $metaData));
         } catch (Exception $exception) {
             throw QueryException::create($exception->getMessage(), $exception);
         }
 
-        return $viewModel;
+        return $data;
     }
 
     /**
@@ -113,7 +112,7 @@ class QueryPipeline implements QueryService, QueryFilter
      *
      * @param QueryMessage $message The query message
      *
-     * @return ViewModel
+     * @return mixed
      */
     public function pipe(QueryMessage $message)
     {

@@ -16,12 +16,12 @@ interface QueryFilter
     /**
      * Processes a query message and the return value of the next filter
      *
-     * Next signature: function (QueryMessage $message): ViewModel {}
+     * Next signature: function (QueryMessage $message): mixed {}
      *
      * @param QueryMessage $message The query message
      * @param callable     $next    The next filter
      *
-     * @return ViewModel
+     * @return mixed
      *
      * @throws Exception When an error occurs during processing
      */
